@@ -1,4 +1,36 @@
-sonar-2013-visualizations
+Sónar 2013
+=========================
+Visualizations
 =========================
 
-data visualizations of Barcelona city data
+data visualizations of various Barcelona city data-points for display during Sónar 2013. These visualizations accompany 
+
+
+Loading
+---------
+
+The visualization can be ran locally via a very basic Node.js implementation, in terminal enter:
+
+```
+$ node server.js
+```
+
+simply load http://localhost:8888/index.html in your (webkit) browser of choice. In order to shut the Node.js server down, toggle back to terminal and hit ```ctrl+c```.
+
+
+Components
+---------
+The visualization primarily runs on (a currently unofficial fork of) Paper.js (https://github.com/frederickk/Paper.js)
+
+As well as frederickkPaper (https://github.com/frederickk/frederickPaper) which extends Paper.js functionality.
+
+
+Credits
+---------
+
+Marc Pous
+
+Ken Frederick
+
+Simone Rebaduengo
+
