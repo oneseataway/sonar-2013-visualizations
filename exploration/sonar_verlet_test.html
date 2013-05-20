@@ -26,79 +26,18 @@
 		
 		<!-- JavaScript -->
 		<script type="text/javascript" src="http://kennethfrederick.com/js/jquery/jquery.1.8.3.min.js"></script>
-		<!-- // <script type="text/javascript" src="js/iso8601/iso8601.js"></script> -->
+		<script type="text/javascript" src="../js/core.js"></script>
 
-		<script type="text/javascript" src="js/verlet-js/vec2.js"></script>
-		<script type="text/javascript" src="js/verlet-js/constraint.js"></script>
-		<script type="text/javascript" src="js/verlet-js/verlet.js"></script>
-		<script type="text/javascript" src="js/verlet-js/objects.js"></script>
+		<script type="text/javascript" src="../js/verlet-js/vec2.js"></script>
+		<script type="text/javascript" src="../js/verlet-js/constraint.js"></script>
+		<script type="text/javascript" src="../js/verlet-js/verlet.js"></script>
+		<script type="text/javascript" src="../js/verlet-js/objects.js"></script>
 
 
 		<!-- LOAD PAPERJS -->
-		<script type="text/javascript" src="http://kennethfrederick.com/js/paper/paper-nightly.js"></script>
+		<script type="text/javascript" src="../js/paper/paper.js"></script>
 		<script>
-			// ------------------------------------------------------------------------
-			// Global Properties
-			// ------------------------------------------------------------------------
-			// global properties
-			// var bicing;
 
-
-
-			// // ------------------------------------------------------------------------
-			// // Global Methods
-			// // ------------------------------------------------------------------------
-			// function loadData() {
-			//	bicing = new Array();
-			//	var jsonUrl = 'http://api.citybik.es/bicing.json';
-
-			//	$.ajax({
-			//		url: jsonUrl,
-			//		context: document.body
-			//	}).done(function(result) {
-			//		// console.log( 'done' );
-			//		$.each(result, function(i, field) {
-			//			// console.log( field );
-
-			//			// flush out the entries
-			//			var name = field.cleaname;
-			//			var nearby = field.nearby_stations.split(',');
-			//			var id = field.id;
-			//			var bikes = field.bikes;
-			//			var free = field.free;
-			//			var lat = field.lat;
-			//			var lon = field.lng;
-
-			//			var _t = Date.parse(field.timestamp);
-			//			var _d = new Date(_t);
-			//			var time = {
-			//				year:		_d.getFullYear(),
-			//				month:		_d.getMonth(),
-			//				day:		_d.getDate(),
-			//				hours:		_d.getHours(),
-			//				minutes:	_d.getMinutes(),
-			//				seconds:	_d.getSeconds()
-			//			};
-
-			//			bicing.push([
-			//				name,
-			//				nearby,
-			//				id,
-			//				bikes,
-			//				free,
-			//				lat,
-			//				lon,
-			//				time
-			//			]);
-
-			//			// $('#textContainer').append(name + ' --- ' + bikes + ' --- ' + lat + ':' + lon + ' <br />');
-			//		});
-
-			//	});
-
-			// };
-
-			// // ------------------------------------------------------------------------
 			paper.install(window);
 			$(document).ready(function(){
 				paper.setup('canvas');
@@ -195,10 +134,10 @@
 
 
 		<!-- LOAD ADDITIONAL JAVASCRIPTS -->
-		<!-- // <script type="text/javascript" src="js/frederickk/frederickkPaper.js"></script> -->
+		<!-- // <script type="text/javascript" src="../js/frederickk/frederickkPaper.js"></script> -->
 
 		<!-- LOAD PAPER SCRIPT -->
-		<script type="text/javascript" src="scripts/sonarVerletTest_0_0.js"></script>
+		<script type="text/javascript" src="../scripts/sonarVerletTest_0_0.js"></script>
 
 
 

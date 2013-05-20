@@ -60,7 +60,9 @@ function loadBicing(arr) {
 
 	$.ajax({
 		url: jsonUrl,
-		context: document.body
+		dataType: 'jsonp', //use jsonp data type in order to perform cross domain ajax
+		context: document.body,
+		crossDomain: true
 	}).done(function(result) {
 		$.each(result, function(i, field) {
 			// format the data into a way
@@ -120,7 +122,9 @@ function loadTraffic(arr) {
 	var datTemp = [];
 	$.ajax({
 		url: datUrl,
-		context: document.body
+		dataType: 'jsonp', //use jsonp data type in order to perform cross domain ajax
+		context: document.body,
+		crossDomain: true
 	}).done(function(result) {
 		var fields = result.split('\n');
 
@@ -147,7 +151,9 @@ function loadTraffic(arr) {
 	// push to main array
 	$.ajax({
 		url: locUrl,
-		context: document.body
+		dataType: 'jsonp', //use jsonp data type in order to perform cross domain ajax
+		context: document.body,
+		crossDomain: true
 	}).done(function(result) {
 		// console.log( result.data.streets );
 
@@ -185,7 +191,9 @@ function loadBus(arr) {
 
 	$.ajax({
 		url: jsonUrl,
-		context: document.body
+		dataType: 'jsonp', //use jsonp data type in order to perform cross domain ajax
+		context: document.body,
+		crossDomain: true
 	}).done(function(result) {
 		$.each(result, function(i, field) {
 
@@ -208,7 +216,9 @@ function loadWeather(arr) {
 
 	$.ajax({
 		url: jsonUrl,
-		context: document.body
+		dataType: 'jsonp', //use jsonp data type in order to perform cross domain ajax
+		context: document.body,
+		crossDomain: true
 	}).done(function(result) {
 		arr.temperature	= result.current_observation.feelslike_c;
 		arr.humidty 	= parseInt(result.current_observation.relative_humidity);

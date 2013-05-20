@@ -10,10 +10,10 @@ Loading
 The visualization can be ran locally via a very basic Node.js implementation, in terminal enter:
 
 ```
-$ node server.js
+$ node node_server.js 9000
 ```
 
-simply load http://localhost:8888/index.html in your (webkit) browser of choice. In order to shut the Node.js server down, toggle back to terminal and hit ```ctrl+c```.
+simply load http://localhost:9000/index.html in your (webkit) browser of choice. In order to shut the Node.js server down, toggle back to terminal and hit ```ctrl+c```.
 
 
 Components
