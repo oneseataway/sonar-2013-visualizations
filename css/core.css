@@ -1,0 +1,63 @@
+/**
+ *	Sónar Visualization
+ *
+ *	Ken Frederick
+ *	ken.frederick@gmx.de
+ *
+ *	http://cargocollective.com/kenfrederick/
+ *	http://kenfrederick.blogspot.com/
+ *
+ *
+ */
+
+
+/*
+ *	import typefaces
+ *
+ */
+@font-face {
+    font-family: 'Futura-kf';
+    src: url('../typefaces/FuturaOTKF/futuraotkf-book-webfont.eot');
+    src: url('../typefaces/FuturaOTKF/futuraotkf-book-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../typefaces/FuturaOTKF/futuraotkf-book-webfont.woff') format('woff'),
+         url('../typefaces/FuturaOTKF/futuraotkf-book-webfont.ttf') format('truetype'),
+         url('../typefaces/FuturaOTKF/futuraotkf-book-webfont.svg#FuturaOTKFRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Futura-kf-Bold';
+    src: url('../typefaces/FuturaOTKF/futuraotkf-bold-webfont.eot');
+    src: url('../typefaces/FuturaOTKF/futuraotkf-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../typefaces/FuturaOTKF/futuraotkf-bold-webfont.woff') format('woff'),
+         url('../typefaces/FuturaOTKF/futuraotkf-bold-webfont.ttf') format('truetype'),
+         url('../typefaces/FuturaOTKF/futuraotkf-bold-webfont.svg#FuturaOTKFBold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Futura-kf-Demi';
+    src: url('../typefaces/FuturaOTKF/futuraotkf-demi-webfont.eot');
+    src: url('../typefaces/FuturaOTKF/futuraotkf-demi-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../typefaces/FuturaOTKF/futuraotkf-demi-webfont.woff') format('woff'),
+         url('../typefaces/FuturaOTKF/futuraotkf-demi-webfont.ttf') format('truetype'),
+         url('../typefaces/FuturaOTKF/futuraotkf-demi-webfont.svg#FuturaOTKFDemi') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+#futura-kf {
+  font-family: 'Futura-kf';
+}
+#futura-kf-demi {
+  font-family: 'Futura-kf-Demi';
+}
+#futura-kf-bold {
+  font-family: 'Futura-kf-Bold';
+}
+
+

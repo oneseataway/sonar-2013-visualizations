@@ -1,0 +1,234 @@
+<!-- 
+  -	Sónar Visualization
+  -
+  -	Ken Frederick
+  -	ken.frederick@gmx.de
+  -
+  -	http://cargocollective.com/kenfrederick/
+  -	http://blog.kennethfrederick.de/
+  -
+  -
+  -->
+
+<!-- DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" -->
+<html>
+	<head>
+		<!-- META -->
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+		
+		<title>S&#243;nar</title>
+		
+		
+		<!-- CSS -->
+		<link href="css/FPaper.css" rel="stylesheet" type="text/css" />
+
+		
+		<!-- JavaScript -->
+		<script type="text/javascript" src="http://kennethfrederick.com/js/jquery/jquery.1.8.3.min.js"></script>
+		<!-- // <script type="text/javascript" src="js/iso8601/iso8601.js"></script> -->
+
+
+		<!-- LOAD PAPERJS -->
+		<script type="text/javascript" src="http://kennethfrederick.com/js/paper/paper-nightly.js"></script>
+		<script type="text/javascript" src="js/box2d/box2d.js"></script>
+		<script>
+			// ------------------------------------------------------------------------
+			// Global Properties
+			// ------------------------------------------------------------------------
+			// global properties
+			var bicing;
+
+
+
+			// ------------------------------------------------------------------------
+			// Global Methods
+			// ------------------------------------------------------------------------
+			function loadData() {
+				bicing = new Array();
+				var jsonUrl = 'http://api.citybik.es/bicing.json';
+
+				$.ajax({
+					url: jsonUrl,
+					context: document.body
+				}).done(function(result) {
+					// console.log( 'done' );
+					$.each(result, function(i, field) {
+						// console.log( field );
+
+						// flush out the entries
+						var name = field.cleaname;
+						var nearby = field.nearby_stations.split(',');
+						var id = field.id;
+						var bikes = field.bikes;
+						var free = field.free;
+						var lat = field.lat;
+						var lon = field.lng;
+
+						var _t = Date.parse(field.timestamp);
+						var _d = new Date(_t);
+						var time = {
+							year:		_d.getFullYear(),
+							month:		_d.getMonth(),
+							day:		_d.getDate(),
+							hours:		_d.getHours(),
+							minutes:	_d.getMinutes(),
+							seconds:	_d.getSeconds()
+						};
+
+						bicing.push([
+							name,
+							nearby,
+							id,
+							bikes,
+							free,
+							lat,
+							lon,
+							time
+						]);
+
+						// $('#textContainer').append(name + ' --- ' + bikes + ' --- ' + lat + ':' + lon + ' <br />');
+					});
+
+				});
+
+			};
+
+			// ------------------------------------------------------------------------
+			paper.install(window);
+			$(document).ready(function(){
+				paper.setup('canvas');
+				console.log('PaperJS is go!');
+				
+
+
+				// ------------------------------------------------------------------------
+				// PaperJS Methods
+				// ------------------------------------------------------------------------
+				Setup();
+
+
+				// ------------------------------------------------------------------------
+				Draw();
+
+				
+				
+				// ------------------------------------------------------------------------
+				// PaperJS Events
+				// ------------------------------------------------------------------------
+				view.onFrame = function(event) {
+					Update(event);
+				};
+				
+				view.onResize = function(event) {
+					onResize(event);
+				};
+
+				// ------------------------------------------------------------------------
+				var tool = new Tool();
+				tool.onMouseUp = function(event) {
+					onMouseUp(event);
+				};
+				
+				tool.onMouseDown = function(event) {
+					onMouseDown(event);
+				};
+				
+				tool.onMouseMove = function(event) {
+					onMouseMove(event);
+				};
+				
+				tool.onMouseDrag = function(event) {
+					onMouseDrag(event);
+				};
+
+
+				// ------------------------------------------------------------------------
+				tool.onKeyDown = function(event) {
+					onKeyDown(event);
+				};
+
+				tool.onKeyUp = function(event) {
+					onKeyUp(event);
+				};
+				
+				
+				// ------------------------------------------------------------------------
+				view.draw(); // draw the screen
+
+			});
+
+			/**
+			 *
+			 *	Supporting Methods
+			 *	
+			 */
+			$(function() {
+				// ------------------------------------------------------------------------
+				function resizeCanvas() {
+					var width = $('#container').width();
+					var height = $('#container').height();
+					
+					// set canvas width and height
+					$('#canvas').attr('width', width);
+					$('#canvas').attr('height', height)
+
+					Draw();
+					view.draw(); // draw the screen
+
+				};
+
+				// ------------------------------------------------------------------------
+				var resizeTimeout;
+				$(window).resize(function() {
+					clearTimeout(resizeTimeout);
+					resizeTimeout = setTimeout(resizeCanvas, 100);
+				});
+				resizeCanvas();
+			});
+
+		</script>
+
+
+		<!-- LOAD ADDITIONAL JAVASCRIPTS -->
+		<script type="text/javascript" src="js/frederickk/frederickkPaper.js"></script>
+
+		<!-- LOAD PAPER SCRIPT -->
+		<script type="text/javascript" src="scripts/sonarBox2dTest_0_0.js"></script>
+
+
+
+		<meta http-equiv="x-dns-prefetch-control" content="off"/>
+	</head>
+	<body>
+
+
+		<!-- CANVAS -->
+		<div id="container">
+			<canvas resize="true" id="canvas"></canvas>
+		</div>
+
+
+		<!-- TEXT -->
+		<div id="textContainer">
+		</div>
+
+		<div id="manual" class="black">
+		</div>
+
+
+		<!-- INPUTS -->
+		<div id="inputLabelContainer">
+		</div>
+
+		<div id="inputContainer">
+		</div>
+
+
+		<!-- IMAGES -->
+		<div id="rasterImages">
+		</div>
+
+		
+	</body>
+</html>
