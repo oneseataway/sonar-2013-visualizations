@@ -1,0 +1,502 @@
+{
+    "sonar": [
+        {
+            "code": 200,
+            "data": {
+                "tmb": {
+                    "id": "108",
+                    "street_name": "Pl Espanya-Ctra de la Bordeta",
+                    "city": "BARCELONA",
+                    "utm_x": "428851,2290",
+                    "utm_y": "4580875,0175",
+                    "lat": "41.3745189",
+                    "lon": "2.1481510",
+                    "furniture": "Marquesina",
+                    "buses": "09 - 37 - 46 - 65 - 79 - 91 - 109 - 165 - L70 - L72 - L94 - L95 - N1 - N13 - N15 - N16 - N17 - CJ",
+                    "times": [
+                        {
+                            "bus": "9",
+                            "time": "7 min"
+                        },
+                        {
+                            "bus": "9",
+                            "time": "14 min"
+                        },
+                        {
+                            "bus": "13",
+                            "time": "20 min"
+                        },
+                        {
+                            "bus": "37",
+                            "time": "5 min"
+                        },
+                        {
+                            "bus": "37",
+                            "time": "6 min"
+                        },
+                        {
+                            "bus": "65",
+                            "time": "1 min"
+                        },
+                        {
+                            "bus": "65",
+                            "time": "13 min"
+                        },
+                        {
+                            "bus": "79",
+                            "time": "10 min"
+                        },
+                        {
+                            "bus": "91",
+                            "time": "15 min"
+                        },
+                        {
+                            "bus": "109",
+                            "time": "6 min"
+                        },
+                        {
+                            "bus": "109",
+                            "time": "7 min"
+                        },
+                        {
+                            "bus": "165",
+                            "time": "7 min"
+                        },
+                        {
+                            "bus": "165",
+                            "time": "19 min"
+                        },
+                        {
+                            "bus": "H12",
+                            "time": "3 min"
+                        },
+                        {
+                            "bus": "H12",
+                            "time": "10 min"
+                        }
+                    ],
+                    "distance": null,
+                    "created_at": null
+                }
+            }
+        },
+        {
+            "code": 200,
+            "data": {
+                "tmb": {
+                    "id": "389",
+                    "street_name": "Pl Espanya-FGC",
+                    "city": "BARCELONA",
+                    "utm_x": "428886,6052",
+                    "utm_y": "4580856,7918",
+                    "lat": "41.3743325",
+                    "lon": "2.1485624",
+                    "furniture": "Marquesina",
+                    "buses": "09 - 37 - 46 - 65 - 79 - 91 - 109 - 165 - A1 - L70 - L72 - L94 - L95 - N1 - N13 - N15 - N16 - N17 - ",
+                    "times": [
+                        {
+                            "bus": "9",
+                            "time": "1 min"
+                        },
+                        {
+                            "bus": "9",
+                            "time": "8 min"
+                        },
+                        {
+                            "bus": "37",
+                            "time": "9 min"
+                        },
+                        {
+                            "bus": "46",
+                            "time": "imminent"
+                        },
+                        {
+                            "bus": "46",
+                            "time": "20 min"
+                        },
+                        {
+                            "bus": "65",
+                            "time": "13 min"
+                        },
+                        {
+                            "bus": "65",
+                            "time": "21 min"
+                        },
+                        {
+                            "bus": "79",
+                            "time": "18 min"
+                        },
+                        {
+                            "bus": "91",
+                            "time": "3 min"
+                        },
+                        {
+                            "bus": "91",
+                            "time": "19 min"
+                        },
+                        {
+                            "bus": "109",
+                            "time": "1 min"
+                        },
+                        {
+                            "bus": "109",
+                            "time": "12 min"
+                        },
+                        {
+                            "bus": "150",
+                            "time": "19 min"
+                        },
+                        {
+                            "bus": "165",
+                            "time": "3 min"
+                        },
+                        {
+                            "bus": "165",
+                            "time": "20 min"
+                        },
+                        {
+                            "bus": "H12",
+                            "time": "8 min"
+                        },
+                        {
+                            "bus": "H12",
+                            "time": "17 min"
+                        }
+                    ],
+                    "distance": null,
+                    "created_at": null
+                }
+            }
+        },
+        {
+            "code": 200,
+            "data": {
+                "tmb": {
+                    "id": "254",
+                    "street_name": "Pg de Colom-Moll d'Espanya",
+                    "city": "BARCELONA",
+                    "utm_x": "431656,9039",
+                    "utm_y": "4581512,6763",
+                    "lat": "41.3804913",
+                    "lon": "2.1816069",
+                    "furniture": "Marquesina",
+                    "buses": "14 - 36 - 57 - 59 - 64 - 120 - 157 - N0 - N6",
+                    "times": [
+                        {
+                            "bus": "14",
+                            "time": "2 min"
+                        },
+                        {
+                            "bus": "14",
+                            "time": "17 min"
+                        },
+                        {
+                            "bus": "36",
+                            "time": "1 min"
+                        },
+                        {
+                            "bus": "36",
+                            "time": "18 min"
+                        },
+                        {
+                            "bus": "59",
+                            "time": "6 min"
+                        },
+                        {
+                            "bus": "59",
+                            "time": "17 min"
+                        },
+                        {
+                            "bus": "64",
+                            "time": "15 min"
+                        },
+                        {
+                            "bus": "64",
+                            "time": "23 min"
+                        },
+                        {
+                            "bus": "120",
+                            "time": "3 min"
+                        },
+                        {
+                            "bus": "D20",
+                            "time": "imminent"
+                        },
+                        {
+                            "bus": "D20",
+                            "time": "2 min"
+                        }
+                    ],
+                    "distance": null,
+                    "created_at": null
+                }
+            }
+        },
+        {
+            "code": 200,
+            "data": {
+                "tmb": {
+                    "id": "21",
+                    "street_name": "Av Diagonal-Palau Reial",
+                    "city": "BARCELONA",
+                    "utm_x": "426194,0333",
+                    "utm_y": "4582144,2737",
+                    "lat": "41.3856356",
+                    "lon": "2.1161664",
+                    "furniture": "Marquesina",
+                    "buses": "07 - 33 - 67 - 74 - 75 - 113 - L14 - N12 - L79",
+                    "times": [
+                        {
+                            "bus": "7",
+                            "time": "15 min"
+                        },
+                        {
+                            "bus": "7",
+                            "time": "18 min"
+                        },
+                        {
+                            "bus": "33",
+                            "time": "2 min"
+                        },
+                        {
+                            "bus": "33",
+                            "time": "12 min"
+                        },
+                        {
+                            "bus": "67",
+                            "time": "16 min"
+                        },
+                        {
+                            "bus": "67",
+                            "time": "26 min"
+                        },
+                        {
+                            "bus": "75",
+                            "time": "21 min"
+                        },
+                        {
+                            "bus": "113",
+                            "time": "imminent"
+                        },
+                        {
+                            "bus": "H6",
+                            "time": "8 min"
+                        },
+                        {
+                            "bus": "H6",
+                            "time": "10 min"
+                        }
+                    ],
+                    "distance": null,
+                    "created_at": null
+                }
+            }
+        },
+        {
+            "code": 200,
+            "data": {
+                "tmb": {
+                    "id": "42",
+                    "street_name": "Av Diagonal-L'Illa Diagonal",
+                    "city": "BARCELONA",
+                    "utm_x": "427646,4200",
+                    "utm_y": "4582572,6670",
+                    "lat": "41.3896260",
+                    "lon": "2.1334840",
+                    "furniture": "Marquesina (x2)",
+                    "buses": "06 - 07 - 33 - 34 - 63 - 67 - N12",
+                    "times": [],
+                    "distance": null,
+                    "created_at": null
+                }
+            }
+        },
+        {
+            "code": 404,
+            "error": {
+                "message": "Bus not found",
+                "type": "Exception"
+            }
+        },
+        {
+            "code": 200,
+            "data": {
+                "tmb": {
+                    "id": "1009",
+                    "street_name": "Mallorca-Navas de Tolosa",
+                    "city": "BARCELONA",
+                    "utm_x": "432339,8443",
+                    "utm_y": "4585234,1763",
+                    "lat": "41.4140062",
+                    "lon": "2.1893182",
+                    "furniture": "Pal",
+                    "buses": "33 - 34 - 35 - 43 - 44 - 192 - B20 - N9",
+                    "times": [
+                        {
+                            "bus": "33",
+                            "time": "imminent"
+                        },
+                        {
+                            "bus": "33",
+                            "time": "11 min"
+                        },
+                        {
+                            "bus": "34",
+                            "time": "2 min"
+                        },
+                        {
+                            "bus": "34",
+                            "time": "8 min"
+                        },
+                        {
+                            "bus": "43",
+                            "time": "12 min"
+                        },
+                        {
+                            "bus": "43",
+                            "time": "25 min"
+                        },
+                        {
+                            "bus": "44",
+                            "time": "1 min"
+                        },
+                        {
+                            "bus": "44",
+                            "time": "16 min"
+                        },
+                        {
+                            "bus": "192",
+                            "time": "20 min"
+                        }
+                    ],
+                    "distance": null,
+                    "created_at": null
+                }
+            }
+        },
+        {
+            "code": 200,
+            "data": {
+                "tmb": {
+                    "id": "1297",
+                    "street_name": "Temple Expiatori de La Sagrada Família",
+                    "city": "BARCELONA",
+                    "utm_x": "431102,8436",
+                    "utm_y": "4584016,7196",
+                    "lat": "41.4029359",
+                    "lon": "2.1746573",
+                    "furniture": "Marquesina",
+                    "buses": "19 - 33 - 34 - 43 - 44 - 50 - 51 - B20 - B24 - N1 - N7",
+                    "times": [
+                        {
+                            "bus": "19",
+                            "time": "3 min"
+                        },
+                        {
+                            "bus": "19",
+                            "time": "11 min"
+                        },
+                        {
+                            "bus": "33",
+                            "time": "3 min"
+                        },
+                        {
+                            "bus": "33",
+                            "time": "9 min"
+                        },
+                        {
+                            "bus": "34",
+                            "time": "8 min"
+                        },
+                        {
+                            "bus": "34",
+                            "time": "11 min"
+                        },
+                        {
+                            "bus": "43",
+                            "time": "3 min"
+                        },
+                        {
+                            "bus": "43",
+                            "time": "21 min"
+                        },
+                        {
+                            "bus": "44",
+                            "time": "3 min"
+                        },
+                        {
+                            "bus": "44",
+                            "time": "10 min"
+                        },
+                        {
+                            "bus": "50",
+                            "time": "4 min"
+                        },
+                        {
+                            "bus": "50",
+                            "time": "19 min"
+                        },
+                        {
+                            "bus": "51",
+                            "time": "20 min"
+                        }
+                    ],
+                    "distance": null,
+                    "created_at": null
+                }
+            }
+        },
+        {
+            "code": 200,
+            "data": {
+                "tmb": {
+                    "id": "698",
+                    "street_name": "Av Icària-Marina",
+                    "city": "BARCELONA",
+                    "utm_x": "432799,0980",
+                    "utm_y": "4582496,8360",
+                    "lat": "41.3893907",
+                    "lon": "2.1951172",
+                    "furniture": "Pal",
+                    "buses": "14 - 41 - 71 - 92",
+                    "times": [
+                        {
+                            "bus": "14",
+                            "time": "3 min"
+                        },
+                        {
+                            "bus": "14",
+                            "time": "15 min"
+                        },
+                        {
+                            "bus": "41",
+                            "time": "3 min"
+                        },
+                        {
+                            "bus": "41",
+                            "time": "8 min"
+                        },
+                        {
+                            "bus": "71",
+                            "time": "5 min"
+                        },
+                        {
+                            "bus": "71",
+                            "time": "20 min"
+                        },
+                        {
+                            "bus": "92",
+                            "time": "8 min"
+                        },
+                        {
+                            "bus": "92",
+                            "time": "20 min"
+                        }
+                    ],
+                    "distance": null,
+                    "created_at": null
+                }
+            }
+        }
+    ]
+}

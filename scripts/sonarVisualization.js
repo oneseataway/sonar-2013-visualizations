@@ -182,12 +182,31 @@ function Setup() {
 
 	grid = new Group();
 
+	// TODO:	set the min and max sizes
+	//			define the high-medium-low
 	gridSize = new Size(
 		(view.bounds.width - (margins.left)) / cols,
 		(view.bounds.height - (margins.top)) / rows
 	);
 
 	// draw the grid nodes
+	// TODO:	while creating the nodes, they should be "smarter"
+	// 			and contain all of the data:
+	//			node[0].data = {
+	//				bicing = {
+	//					ids:  [##, ##, ##, ...],	// keep track of what ids are represneted by this node (array)
+	//					total: 	##,	// the total number of bike represented = (##.free + ##.bikes) + (...)
+	//					bikes: ##,	// the number of bikes "currently" at the station
+	//					free: ##,	// the total number of "free" slots
+	//				},
+	//				traffic = {
+	//				},
+	//				bus = {
+	//				}
+	//			};
+	//			by doing this i can "rip" through the nodes list 
+	//			and draw the appropriate number of circles
+	//			ids.length affects the size of the node
 	var radius = 3;
 	var index = 0;
 	for( var j=0; j<rows; j++ ) {
@@ -256,8 +275,8 @@ function Setup() {
 	 *	create weather data mask shapes
 	 *
 	 */
-	// TODO: make scalable for any col/row combination
-	// each node as percentage of total col*row?
+	// TODO:	make scalable for any col/row combination
+	// 			each node as percentage of total col*row?
 	// Temperature
 	temperatureMask = new Path(
 		nodePoints[9],
@@ -305,6 +324,9 @@ function Setup() {
 
 
 	console.log( '------------------' );
+
+
+	var mf = new MarkerFade('Booom', new Point(0,0));
 };
 
 
@@ -622,8 +644,36 @@ function init() {
 	//
 	//	Busses
 	//
-	if( transportation.traffic.length > 0 && !bBusLoad ) {
-		console.log( 'initial busses load!' );
+	if( transportation.bus.length > 0 && !bBusLoad ) {
+		for( var i=0; i<transportation.bus.length; i++ ) {
+			var b = transportation.bus[i];
+
+			var x = Calculation.norm( b.lon, 2.111615, 2.219377 );
+			var y = Calculation.norm( b.lat, 41.357067, 41.450882 );
+
+			var pt = new Point( x*view.bounds.width, y*view.bounds.height );
+			console.log( pt );
+			var radius = Calculation.snap(
+				b.total*3,
+				gridSize.height/3
+			);
+			// radius = Calculation.clamp(radius, 12,gridSize.height);
+
+			var dot = new Path.Circle( 
+				getClosest( grid, pt ),
+				radius
+			)
+			dot.fillColor = colors.red;
+			dot.strokeColor = null;
+			// dot.blendMode = 'screen';
+			// pass the original data through
+			// so that we have it in the group
+			dot.data = b;
+			
+			// add to group
+			busGroup.appendTop( dot );
+		}
+		console.log( 'initial bus load!' );
 		bBusLoad = true;
 	}
 
@@ -737,10 +787,94 @@ var getClosest = function( searchGroup, searchPoint ) {
 };
 
 // ------------------------------------------------------------------------
+// TODO:	create a class that can grow
+//			inject.Path?
+var Ring = function(event) {
+	var path;
+
+	return path;
+};
+
+// ------------------------------------------------------------------------
+// class TimerText {
+//   //-----------------------------------------------------------------------------
+//   //properties
+//   //-----------------------------------------------------------------------------
+//   float x,y;
+//   PFont typeface;
+//   int sz;
+
+//   float start, end;
+//   String content;
+//   color textColor;
+
+//   //-----------------------------------------------------------------------------
+//   //constructor
+//   //-----------------------------------------------------------------------------
+//   TimerText(String typeName, int sz) {
+//     setTypeface(typeName, sz);
+//   } 
+
+//   TimerText(PFont typeface, int sz) {
+//     setTypeface(typeface, sz);
+//   } 
+
+//   //-----------------------------------------------------------------------------
+//   //methods
+//   //-----------------------------------------------------------------------------
+//   void start(int i_end) {
+//     start = millis();
+
+//     end = i_end*1000;
+//     end = start + end;
+//   }
+
+//   void display(float x, float y, String content, color textColor) {
+//     this.x = x;
+//     this.y = y;
+//     this.content = content;
+//     this.textColor = textColor;
+
+//     if(millis() < end) {
+//       fill(textColor);
+//     } else {
+//       //fade
+//     }
+
+//     textFont(typeface, sz);
+//     if(millis() < end) {
+//       text(content, x,y);
+//     }
+
+//   }
+
+
+// }
+
+
+// ------------------------------------------------------------------------
+/**
+ *
+ *	Marker text
+ *
+ *	@param text
+ *			a String of text (should be a number)
+ *	@param point
+ *			the center point of the large text (above)
+ *
+ *	@example
+ */
+/**
+ *	@param text
+ *			an array of Strings [0] = large text [1] = small text
+ *	@param point
+ *			the center point of the large text (above)
+ *
+ *	@example
+ */
 var Marker = function(text, point) {
 	var _point = point.clone();
-	var group = new Group();
-
+	var _group = new Group();
 
 	function init() {	
 		// strip out 0 and replace with O
@@ -785,11 +919,11 @@ var Marker = function(text, point) {
 		underline.position = _point;
 
 		// add to group
-		group.appendTop( main );
-		group.appendTop( desc );
-		group.appendTop( underline );
+		_group.appendTop( main );
+		_group.appendTop( desc );
+		_group.appendTop( underline );
 
-		return group;
+		return _group;
 	};
 
 	function replaceZero(str) {
@@ -804,6 +938,44 @@ var Marker = function(text, point) {
 
 	return init();
 };
+
+/**
+ *
+ *	an "instance" of Marker that fades out after a certain time
+ *
+ */
+var MarkerFade = function(text, point, fadeTime) {
+	var _marker;
+	
+	// the amount of time to wait before fading
+	var _timer = new ft.FStepper();
+	_timer.setMillis( 3*1000 );	// default: 3 seconds
+
+	// the fade out time
+	fadeTime = (fadeTime != undefined) ? fadeTime : 1*1000;
+	var _fader = new ft.FStepper();
+	_fader.setMillis( fadeTime ); // default: 1 second
+
+	function init() {
+		_marker =  new Marker(text, point);
+		_marker.opacity *= _timer.delta;
+
+		// pass the timers to the data holder of _marker
+		_marker.data = {
+			start: false,
+			timer: _timer,
+			fader: _fader
+		};
+
+		return _marker;
+	};
+
+	return init();
+};
+
+
+
+
 
 
 

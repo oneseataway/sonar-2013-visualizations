@@ -38,6 +38,15 @@ var transportation = {
 	humidty:		null
  };
 
+/*
+ *	Social Data
+ */
+var social = {
+	twitter:	null,
+	instagram:	null,
+	foursquare:	null
+};
+
 
 
 // ------------------------------------------------------------------------
@@ -48,6 +57,10 @@ var transportation = {
  *	Input Data Methods
  *
  */
+
+//
+//	TODO:	make sure these methods are asynchronous
+//
 
 /*
  *	Transportation Data
@@ -60,8 +73,8 @@ function loadBicing(arr) {
 
 	$.ajax({
 		url: jsonUrl,
-		dataType: 'jsonp', //use jsonp data type in order to perform cross domain ajax
-		context: document.body,
+		dataType: 'json',
+		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
 		crossDomain: true
 	}).done(function(result) {
 		$.each(result, function(i, field) {
@@ -122,8 +135,8 @@ function loadTraffic(arr) {
 	var datTemp = [];
 	$.ajax({
 		url: datUrl,
-		dataType: 'jsonp', //use jsonp data type in order to perform cross domain ajax
-		context: document.body,
+		dataType: 'json',
+		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
 		crossDomain: true
 	}).done(function(result) {
 		var fields = result.split('\n');
@@ -151,8 +164,8 @@ function loadTraffic(arr) {
 	// push to main array
 	$.ajax({
 		url: locUrl,
-		dataType: 'jsonp', //use jsonp data type in order to perform cross domain ajax
-		context: document.body,
+		dataType: 'json',
+		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
 		crossDomain: true
 	}).done(function(result) {
 		// console.log( result.data.streets );
@@ -187,19 +200,41 @@ loadTraffic( transportation.traffic );
 
 // ------------------------------------------------------------------------
 function loadBus(arr) {
-	var jsonUrl = 'http://api.citybik.es/bicing.json';
+	// var jsonUrl = 'http://marcpous.com/oneseataway/sonarBus.php';
+	var jsonUrl = 'json/sonarBus.json';
 
 	$.ajax({
 		url: jsonUrl,
-		dataType: 'jsonp', //use jsonp data type in order to perform cross domain ajax
-		context: document.body,
+		dataType: 'json',
+		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
 		crossDomain: true
 	}).done(function(result) {
-		$.each(result, function(i, field) {
+		$.each(result.sonar, function(i, field) {
+
+			try {
+				// sometimes field.data.tmb is undefined
+				// format the data into a way
+				// that i can handle
+				var busses = field.data.tmb.buses.split(' - ');
+
+				arr.push({
+					// flush out the entries
+					name:		field.data.tmb.street_name,
+					id:			field.data.tmb.id,
+					busses:		busses,	// Numbers of busses which arrive at this station
+					total:		busses.length,
+					lat:		field.data.tmb.lat,
+					lon:		field.data.tmb.lon,
+					time:		field.data.tmb.times // list of times for busses [].bus = number [].time = when 
+				});
+			}
+			catch( err ) {
+				// console.log( 'loadBus( ' + err + ' )' );
+			}
 
 		});
-
 	});
+
 
 	return arr;
 };
@@ -216,8 +251,8 @@ function loadWeather(arr) {
 
 	$.ajax({
 		url: jsonUrl,
-		dataType: 'jsonp', //use jsonp data type in order to perform cross domain ajax
-		context: document.body,
+		dataType: 'json',
+		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
 		crossDomain: true
 	}).done(function(result) {
 		arr.temperature	= result.current_observation.feelslike_c;
@@ -228,4 +263,33 @@ function loadWeather(arr) {
 };
 // initial activation of data feed
 loadWeather( weather );
+
+
+
+/*
+ *	Social Data
+ */
+function loadTwitter(arr) {
+
+	return arr;
+};
+// initial activation of data feed
+loadTwitter( social.twitter );
+
+// ------------------------------------------------------------------------
+function loadInstagram(arr) {
+
+	return arr;
+};
+// initial activation of data feed
+loadInstagram( social.instagram );
+
+// ------------------------------------------------------------------------
+function loadFourSquare(arr) {
+
+	return arr;
+};
+// initial activation of data feed
+loadFourSquare( social.foursquare );
+
 

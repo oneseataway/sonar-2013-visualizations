@@ -32,7 +32,6 @@
 
 		<!-- LOAD PAPERJS -->
 		<script type="text/javascript" src="js/paper/paper.js"></script>
-		<script type="text/javascript" src="js/delaunay/Triangulate.js"></script>
 		<script>
 			paper.install(window);
 			$(document).ready(function(){
@@ -129,8 +128,11 @@
 			
 		</script>
 
-		<!-- LOAD PAPER SCRIPT -->
+		<!-- LOAD LIBRARIES -->
+		<script type="text/javascript" src="js/delaunay/Triangulate.js"></script>
 		<script type="text/javascript" src="js/frederickk/frederickkPaper.js"></script>
+
+		<!-- LOAD PAPER SCRIPT -->
 		<script type="text/javascript" src="scripts/sonarVisualization.js"></script>
 
 
@@ -142,7 +144,7 @@
 
 		<!-- CANVAS -->
 		<div id="container">
-			<canvas resize="true" id="canvas" style="background-color: rgb( 28, 28, 28 );"></canvas>
+			<canvas resize="true" id="canvas"></canvas>
 		</div>
 
 
