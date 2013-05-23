@@ -1459,7 +1459,7 @@ frederickkPaper.FTime.FStepper = function() {
 
 	// ------------------------------------------------------------------------
 	/**
-	 *	TODO: implement _easing
+	 *	TODO: implement ability to add _easing functions
 	 *
 	 *	required function to keep the timing in sync
 	 *	with the application
@@ -1472,10 +1472,10 @@ frederickkPaper.FTime.FStepper = function() {
 			_bBeginStpper = false;
 			_timeStart = currentTime;
 			if(_bIn) {
-				_timeEnd = frederickkPaper.roundDecimal( (currentTime + ((1.0 - this.delta) * _stepMillis)), 3 );
+				_timeEnd = Calculation.roundDecimal( (currentTime + ((1.0 - this.delta) * _stepMillis)), 3 );
 			}
 			else {
-				_timeEnd = frederickkPaper.roundDecimal( (currentTime + (this.delta*_stepMillis)), 3 );
+				_timeEnd = Calculation.roundDecimal( (currentTime + (this.delta*_stepMillis)), 3 );
 			}
 			if(_timeEnd <= currentTime) {
 				if(_bIn) {
@@ -1489,7 +1489,7 @@ frederickkPaper.FTime.FStepper = function() {
 			}
 		}
 		if(_bIn) {
-			this.delta = frederickkPaper.roundDecimal( (1.0 - ((_timeEnd - currentTime) / _stepMillis)), 3 );
+			this.delta = Calculation.roundDecimal( (1.0 - ((_timeEnd - currentTime) / _stepMillis)), 3 );
 			// if(_bEase) {
 			// }
 
@@ -1501,7 +1501,7 @@ frederickkPaper.FTime.FStepper = function() {
 			}
 		}
 		else if(_bOut) {
-			this.delta = frederickkPaper.roundDecimal( ((_timeEnd - currentTime) / _stepMillis), 3 );
+			this.delta = Calculation.roundDecimal( ((_timeEnd - currentTime) / _stepMillis), 3 );
 			// if(_bEase) {
 			// }
 

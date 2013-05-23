@@ -348,7 +348,7 @@ function Update(event) {
 	// checks every 3 seconds until
 	// all feeds are intiially loaded
 	if( parseInt(event.time) % 3 === 0 ) {
-		init();
+		// init();
 	}
 
 
