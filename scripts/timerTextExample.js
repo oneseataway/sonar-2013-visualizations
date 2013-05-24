@@ -91,9 +91,9 @@ function Setup() {
 		ft,
 		'1.0',
 		view.bounds.center,
+		500,
 		3000
 	);
-	console.log( ttext );
 	ttext.path.fillColor = colors.yellow;
 
 
@@ -109,6 +109,7 @@ function Update(event) {
 	bChangeFlag = false;
 
 
+	// add event to MarkerFade 
 	ttext.update( event );
 
 	// constantly update Draw()
@@ -139,16 +140,28 @@ function Draw() {
  *			the center point of the large text (above)
  *
  *	@example
+ * 	var text = new Marker(
+ *		'Large',
+ *		view.bounds.center
+ *	);
+ *	ttext.fillColor = new Color( 1.0, 0.7, 0.0 );
+ *
  */
-/**
+ /**
  *	@param content
  *			an array of Strings [0] = large text [1] = small text
  *	@param point
  *			the center point of the large text (above)
  *
  *	@example
+ * 	var text = new Marker(
+ *		['Large', 'tiny'],
+ *		view.bounds.center
+ *	);
+ *	ttext.fillColor = new Color( 1.0, 0.7, 0.0 );
+ *
  */
-var Marker = function(content, point) {
+var Marker = function( content, point ) {
 	var _point = point.clone();
 	var _group = new Group();
 
@@ -233,6 +246,19 @@ var Marker = function(content, point) {
  *			milliseconds to before beginning fade (in or out)
  *
  *	@example
+ *	var ft = frederickkPaper.FTime;
+ *
+ * 	var ttext = new MarkerFade(
+ *		ft,
+ *		'Large',
+ *		view.bounds.center,
+ *		500,
+ *		3000
+ *	);
+ *	ttext.path.fillColor = new Color( 1.0, 0.7, 0.0 );
+ *
+ *	// within Update()
+ *	ttext.update(event);
  *
  */
 /**
@@ -249,6 +275,19 @@ var Marker = function(content, point) {
  *			milliseconds to before beginning fade (in or out)
  *
  *	@example
+ *	var ft = frederickkPaper.FTime;
+ *
+ * 	var ttext = new MarkerFade(
+ *		ft,
+ *		['Large', 'tiny'],
+ *		view.bounds.center,
+ *		500,
+ *		3000
+ *	);
+ *	ttext.path.fillColor = new Color( 1.0, 0.7, 0.0 );
+ *
+ *	// within Update()
+ *	ttext.update(event);
  *
  */
  var MarkerFade = function( ft, content, point, fadeMillis, delayMillis ) {
@@ -256,6 +295,7 @@ var Marker = function(content, point) {
 	// Properties
 	//
 	var _marker;
+	var _timerMarker;
 
 	// the delay timer
 	delayMillis = (delayMillis != undefined) ? delayMillis : 1000;
@@ -266,6 +306,7 @@ var Marker = function(content, point) {
 	fadeMillis = (fadeMillis != undefined) ? fadeMillis : 0.5*1000;
 	var _fader = new ft.FStepper();
 	_fader.setMillis( fadeMillis ); // default: 1 second
+	var isDone = false;
 
 
 	//
@@ -274,21 +315,32 @@ var Marker = function(content, point) {
 	function setEvent(event) {
 		// handling the delay timer
 		_timer.update( event.time );
+		// stop the delay timer and reset() it
+		if( _timer.isDone() ) {
+			_timer.stop();
+			_fader.toggle();
+		}
 
 		// handling the fader
 		_fader.update( event.time );
-		if( _fader.delta < 0.0  || _fader.delta > 1.0 ) {
+		// stop the fader and reset() it
+		// if( _fader.delta < 0.0  || _fader.delta > 1.0 ) {
+		if( _fader.isDone() ) {
 			_fader.stop();
 			if( _fader.delta < 0.0 ) _fader.setDelta( 0.0 );
 			if( _fader.delta > 1.0 ) _fader.setDelta( 1.0 );
 		}
+		isDone = _fader.isDone();
 
 		// adjust opacity of text
 		_marker.opacity = _fader.delta;
+		_timerMarker = new TimerClock( _marker.position, 20, _timer.delta );
+		_timerMarker.fillColor = new Color( 0.0, 1.0, 0.7 );
+		// _timerMarker.opacity = _timer.delta;
 	};
 
 	function toggle() {
-		_fader.toggle();
+		_timer.toggle();
 	};
 
 	function init() {
@@ -297,6 +349,7 @@ var Marker = function(content, point) {
 
 		// pass the timers to the data holder of _marker
 		_marker.data = {
+			timer: _timer,
 			fader: _fader
 		};
 
@@ -319,12 +372,54 @@ var Marker = function(content, point) {
 
 		// methods
 		update: setEvent,
-		toggle: toggle
-		// start: start,
-		// stop: stop,
-		// reset: reset
+		toggle: toggle,
+		isDone: isDone
 	}
 
+};
+
+/**
+ *
+ *	A simple 'pie-chart' style timer
+ *
+ *	@param {Point} center
+ *			 the center point of the circle
+ *	@param {Number} radius
+ *			the radius of the timer clock
+ *	@param {Number} time
+ *			normalized time value (0.0 - 1.0)
+ *
+ *	@example
+ *
+ */
+var TimerClock = function( center, radius, time ) {
+	// clean out previous instances
+	// there has to be a better way to animate objects
+	// console.log( project.activeLayer.children.length );
+	if( project.activeLayer.children['__TimerClock'] ) {
+		project.activeLayer.children['__TimerClock'].remove();
+	}
+
+	time = (time != undefined) ? time : 1.0;
+	var angle = (Math.PI*2.001) * time;
+
+	var from = new Point(
+		center.x + radius * Math.cos(Math.PI*0),
+        center.y + radius * Math.sin(Math.PI*0)
+	);
+	var through = new Point(
+		center.x + radius * Math.cos(angle/2),
+        center.y + radius * Math.sin(angle/2)
+	);
+	var to = new Point(
+		center.x + radius * Math.cos(angle),
+        center.y + radius * Math.sin(angle)
+	);
+
+	var path = new Path.Arc(from, through, to);
+	path.add( center );
+	path.name = '__TimerClock';
+	return path;
 };
 
 

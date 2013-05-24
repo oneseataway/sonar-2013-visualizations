@@ -73,9 +73,12 @@ function loadBicing(arr) {
 
 	$.ajax({
 		url: jsonUrl,
+		type: 'get',
 		dataType: 'json',
 		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
-		crossDomain: true
+		crossDomain: true,
+		cache: false,
+		async: true,
 	}).done(function(result) {
 		$.each(result, function(i, field) {
 			// format the data into a way
@@ -92,6 +95,7 @@ function loadBicing(arr) {
 			};
 
 			arr.push({
+				node:		null,  // keeps track of which node this data belongs to
 				// flush out the entries
 				name:		field.cleaname,
 				nearby:	field.nearby_stations.split(','),
@@ -135,9 +139,12 @@ function loadTraffic(arr) {
 	var datTemp = [];
 	$.ajax({
 		url: datUrl,
+		type: 'get',
 		dataType: 'json',
 		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
-		crossDomain: true
+		crossDomain: true,
+		cache: false,
+		async: true,
 	}).done(function(result) {
 		var fields = result.split('\n');
 
@@ -164,9 +171,12 @@ function loadTraffic(arr) {
 	// push to main array
 	$.ajax({
 		url: locUrl,
+		type: 'get',
 		dataType: 'json',
 		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
-		crossDomain: true
+		crossDomain: true,
+		cache: false,
+		async: true,
 	}).done(function(result) {
 		// console.log( result.data.streets );
 
@@ -205,9 +215,12 @@ function loadBus(arr) {
 
 	$.ajax({
 		url: jsonUrl,
+		type: 'get',
 		dataType: 'json',
 		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
-		crossDomain: true
+		crossDomain: true,
+		cache: false,
+		async: true,
 	}).done(function(result) {
 		$.each(result.sonar, function(i, field) {
 
@@ -251,9 +264,12 @@ function loadWeather(arr) {
 
 	$.ajax({
 		url: jsonUrl,
+		type: 'get',
 		dataType: 'json',
 		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
-		crossDomain: true
+		crossDomain: true,
+		cache: false,
+		async: true,
 	}).done(function(result) {
 		arr.temperature	= result.current_observation.feelslike_c;
 		arr.humidty 	= parseInt(result.current_observation.relative_humidity);
@@ -270,6 +286,19 @@ loadWeather( weather );
  *	Social Data
  */
 function loadTwitter(arr) {
+	var jsonUrl = '';
+
+	$.ajax({
+		url: jsonUrl,
+		type: 'get',
+		dataType: 'json',
+		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
+		crossDomain: true,
+		cache: false,
+		async: true,
+	}).done(function(result) {
+
+	});
 
 	return arr;
 };
@@ -278,6 +307,19 @@ loadTwitter( social.twitter );
 
 // ------------------------------------------------------------------------
 function loadInstagram(arr) {
+	var jsonUrl = '';
+
+	$.ajax({
+		url: jsonUrl,
+		type: 'get',
+		dataType: 'json',
+		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
+		crossDomain: true,
+		cache: false,
+		async: true,
+	}).done(function(result) {
+
+	});
 
 	return arr;
 };
@@ -286,10 +328,84 @@ loadInstagram( social.instagram );
 
 // ------------------------------------------------------------------------
 function loadFourSquare(arr) {
+	var jsonUrl = '';
+
+	$.ajax({
+		url: jsonUrl,
+		type: 'get',
+		dataType: 'json',
+		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
+		crossDomain: true,
+		cache: false,
+		async: true,
+	}).done(function(result) {
+
+	});
 
 	return arr;
 };
 // initial activation of data feed
 loadFourSquare( social.foursquare );
 
+
+
+/*
+ *
+ *	Additional Methods
+ *
+ */
+// http://davidwalsh.name/javascript-clone
+function clone(src) {
+	function mixin(dest, source, copyFunc) {
+		var name, s, i, empty = {};
+		for(name in source) {
+			// the (!(name in empty) || empty[name] !== s) condition avoids copying properties in 'source'
+			// inherited from Object.prototype.	 For example, if dest has a custom toString() method,
+			// don't overwrite it with the toString() method that source inherited from Object.prototype
+			s = source[name];
+			if(!(name in dest) || (dest[name] !== s && (!(name in empty) || empty[name] !== s))) {
+				dest[name] = copyFunc ? copyFunc(s) : s;
+			}
+		}
+		return dest;
+	}
+
+	if(!src || typeof src != 'object' || Object.prototype.toString.call(src) === '[object Function]') {
+		// null, undefined, any non-object, or function
+		return src;	// anything
+	}
+	if(src.nodeType && 'cloneNode' in src) {
+		// DOM Node
+		return src.cloneNode(true); // Node
+	}
+	if(src instanceof Date) {
+		// Date
+		return new Date(src.getTime());	// Date
+	}
+	if(src instanceof RegExp) {
+		// RegExp
+		return new RegExp(src);   // RegExp
+	}
+	var r, i, l;
+	if(src instanceof Array) {
+		// array
+		r = [];
+		for(i = 0, l = src.length; i < l; ++i) {
+			if(i in src) {
+				r.push(clone(src[i]));
+			}
+		}
+		// we don't clone functions for performance reasons
+		//		} 
+		//		else if(d.isFunction(src)) {
+		//			// function
+		//			r = function() { return src.apply(this, arguments); };
+	}
+	else{
+		// generic objects
+		r = src.constructor ? new src.constructor() : {};
+	}
+	return mixin(r, src, clone);
+
+};
 

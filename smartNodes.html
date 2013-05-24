@@ -1,5 +1,5 @@
 <!-- 
-  -	Sónar Visualization
+  -	Sónar Smart Nodes
   -
   -	Ken Frederick
   -	ken.frederick@gmx.de
@@ -17,7 +17,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 		
-		<title>S&#243;nar</title>
+		<title>S&#243;nar Smart Nodes</title>
 		
 		
 		<!-- CSS -->
@@ -25,8 +25,21 @@
 		<link href="css/FPaper.css" rel="stylesheet" type="text/css" />
 
 		
-		<!-- JavaScript -->
+		<!-- JAVASCRIPT -->
 		<script type="text/javascript" src="http://kennethfrederick.com/js/jquery/jquery.1.8.3.min.js"></script>
+		<script type="text/javascript" src="js/core.js"></script>
+
+
+		<!-- LOAD PAPERJS -->
+		<script type="text/javascript" src="js/paper/paper.js"></script>
+
+
+		<!-- LOAD PAPERJS LIBRARIES -->
+		<script type="text/javascript" src="js/frederickk/frederickkPaper.js"></script>
+		<script type="text/javascript" src="js/delaunay/Triangulate.js"></script>
+
+		<!-- LOAD PAPER SCRIPT -->
+		<script type="text/javascript" src="scripts/smartNodes.js"></script>
 
 
 		<meta http-equiv="x-dns-prefetch-control" content="off"/>
@@ -34,12 +47,17 @@
 	<body>
 
 
+		<!-- CANVAS -->
+		<div id="container">
+			<canvas resize="true" id="canvas"></canvas>
+		</div>
+
+
 		<!-- TEXT -->
 		<div id="textContainer">
-			<a href="sonarVisualization.html">S&#243;nar Visualization</a><br />
-			<br />
-			<a href="smartNodes.html">smartNodes</a><br />
-			<a href="timerTextExample.html">TimerTextExample</a><br />
+			<div id="Futura-kf" class="white">&nbsp;</div>
+			<div id="Futura-kf-Demi" class="white">&nbsp;</div>
+			<div id="Futura-kf-Bold" class="white">&nbsp;</div>
 		</div>
 
 		<div id="manual" class="black">

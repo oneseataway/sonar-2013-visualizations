@@ -1,7 +1,7 @@
 /*!
  *	
  *	frederickkPaper.js
- *	v0.35a
+ *	v.0.4
  *	https://github.com/frederickk/frederickkPaper
  *
  *	16. February 2013
@@ -34,12 +34,12 @@
  *	
  *	This library is distributed in the hope that it will be useful,
  *	but WITHOUT ANY WARRANTY; without even the implied warranty of
- *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the GNU
  *	Lesser General Public License for more details.
  *	
  *	You should have received a copy of the GNU Lesser General Public
  *	License along with this library; if not, write to the Free Software
- *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA	02110-1301	USA
  *	
  */
 
@@ -51,7 +51,7 @@
  *	REQUIRED LIBRARIES!
  *
  *	PaperJs @ http://paperjs.org/
- *	JQuery @  http://jquery.com/download/
+ *	JQuery @	http://jquery.com/download/
  *
  */
 
@@ -84,15 +84,134 @@ var frederickkPaper = frederickkPaper || {
 };
 
 
-
-(function() {
+/*
+ *
+ *	Initialize Structure
+ *
+ */
+// (function() {
 	// console.log('\nfrederickkPaper.js');
-	// console.log('v.0.35a');
+	// console.log('v.0.4a');
 	// console.log('https://github.com/frederickk/frederickkPaper');
 	// console.log('ken.frederick@gmx.de');
 	// console.log('------------------------------------\n');
-})();
 
+
+	// create methods
+	// drawing
+	var Setup = function(){};
+	var Draw = function(){};
+	var Update = function(event){};
+
+	// events
+	// mouse
+	var onMouseUp = function(event){};
+	var onMouseDown = function(event){};
+	var onMouseMove = function(event){};
+	var onMouseDrag = function(event){};
+
+	// keyboard
+	var onKeyDown = function(event){};
+	var onKeyUp = function(event){};
+
+
+	// install Paper.js into window
+	paper.install(window);
+
+
+	// once the DOM is ready, setup Paper.js
+	$(document).ready(function(){
+ 		paper.setup('canvas');
+		console.log('Paper.js is go!');
+		
+
+
+		// ------------------------------------------------------------------------
+		// Methods
+		// ------------------------------------------------------------------------
+		Setup();
+
+
+		// ------------------------------------------------------------------------
+		Draw();
+
+		
+		
+		// ------------------------------------------------------------------------
+		// Events
+		// ------------------------------------------------------------------------
+		view.onFrame = function(event) {
+			// TODO: 	add a method which clears an "animation group" each frame
+			// ie. clear();
+			Update(event);
+		};
+		
+		view.onResize = function(event) {
+			onResize(event);
+		};
+
+		// ------------------------------------------------------------------------
+		var tool = new Tool();
+		tool.onMouseUp = function(event) {
+			onMouseUp(event);
+		};
+		
+		tool.onMouseDown = function(event) {
+			onMouseDown(event);
+		};
+		
+		tool.onMouseMove = function(event) {
+			onMouseMove(event);
+		};
+		
+		tool.onMouseDrag = function(event) {
+			onMouseDrag(event);
+		};
+
+
+		// ------------------------------------------------------------------------
+		tool.onKeyDown = function(event) {
+			onKeyDown(event);
+		};
+
+		tool.onKeyUp = function(event) {
+			onKeyUp(event);
+		};
+		
+		
+		// ------------------------------------------------------------------------
+		view.draw(); // draw the screen
+
+		/**
+		 *
+		 *	Supporting Methods
+		 *	
+		 */
+		// ------------------------------------------------------------------------
+		function resizeCanvas() {
+			var width = $('#container').width();
+			var height = $('#container').height();
+			
+			// set canvas width and height
+			$('#canvas').attr('width', width);
+			$('#canvas').attr('height', height)
+
+			// necessary for both?
+			// Draw();
+			view.draw(); // draw the screen
+		};
+
+		// ------------------------------------------------------------------------
+		var resizeTimeout;
+		$(window).resize(function() {
+			clearTimeout(resizeTimeout);
+			resizeTimeout = setTimeout(resizeCanvas, 100);
+		});
+		resizeCanvas();
+
+	});
+
+// })();
 /**
  *  
  *	Core.js
@@ -306,6 +425,24 @@ frederickkPaper = {
 		return path;
 	},
 
+	/**
+	 *	
+	 *	@param {Array} items
+	 *			Array of items to go through
+	 *	@param {Number} name
+	 *			name of Item to find
+	 *
+	 *	@return a path with the id that matches
+	 *
+	 */
+	findById: function(items, id) {
+		var path;
+		for(var i=0; i<items.length; i++) {
+			var item = items[i];		
+			if(item.id == id) path = item; // break;
+		}
+		return path;
+	},
 
 
 	/*	------------------------------------------------------------------------
@@ -551,6 +688,19 @@ Array.prototype.shuffle = function() {
 	for (var j, x, i = this.length; i; j = parseInt(Math.random() * i), x = this[--i], this[i] = this[j], this[j] = x);
 };
 
+/**
+ *
+ *	http://stackoverflow.com/questions/9229645/remove-duplicates-from-javascript-array
+ *
+ *	@return original array without duplicates
+ *
+ */
+Array.prototype.removeDuplicates = function() {
+	return this.reduce(function(accum, cur) { 
+		if (accum.indexOf(cur) === -1) accum.push(cur); 
+		return accum; 
+	}, [] );
+};
 
 
 /*
@@ -1560,11 +1710,11 @@ frederickkPaper.FTime.FStepper = function() {
 	 */
 	this.isDone = function() {
 		if(this.delta < 1.0 && this.delta > 0.0) return false;
-		else if(this.delta >= 1.0) {
+		else if(this.delta > 1.0) {
 			this.delta = 1.0;
 			return true;
 		}
-		else if(this.delta <= 0.0) {
+		else if(this.delta < 0.0) {
 			this.delta = 0.0;
 			return true;
 		}
@@ -1784,7 +1934,7 @@ frederickkPaper.FTime.FStopwatch = function() {
  *	http://www.netmagazine.com/tutorials/build-your-own-html5-3d-engine
  *	https://github.com/mrdoob/three.js/
  *
- *	modified/expanded for use in PaperJS by Ken Frederick
+ *	modified/expanded for use in Paper.js by Ken Frederick
  *
  */
 
@@ -1981,7 +2131,7 @@ frederickkPaper.F3D.FPath3 = this.FPath3 = Path.extend({
  *	http://www.netmagazine.com/tutorials/build-your-own-html5-3d-engine
  *	https://github.com/mrdoob/three.js/
  *
- *	modified/expanded for use in PaperJS by Ken Frederick
+ *	modified/expanded for use in Paper.js by Ken Frederick
  *
  */
 
@@ -2403,7 +2553,7 @@ frederickkPaper.F3D.FPoint3 = this.FPoint3 = function(arg0, arg1, arg2) {
  *	http://www.netmagazine.com/tutorials/build-your-own-html5-3d-engine
  *	https://github.com/mrdoob/three.js/
  *
- *	modified/expanded for use in PaperJS by Ken Frederick
+ *	modified/expanded for use in Paper.js by Ken Frederick
  *
  */
 
@@ -2807,7 +2957,7 @@ frederickkPaper.F3D.FScene3D = this.FScene3D = function() {
  *	http://www.netmagazine.com/tutorials/build-your-own-html5-3d-engine
  *	https://github.com/mrdoob/three.js/
  *
- *	modified/expanded for use in PaperJS by Ken Frederick
+ *	modified/expanded for use in Paper.js by Ken Frederick
  *
  */
 
@@ -3295,7 +3445,7 @@ var Matrix3D = function( n11, n12, n13, n14,
 /**
  *	
  *	FShape.js
- *	v0.35a
+ *	v.0.4
  *	
  *	16. February 2013
  *
