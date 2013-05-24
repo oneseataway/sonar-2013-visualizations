@@ -62,6 +62,10 @@ var pulse;
 var bicing;
 var bicingNodeGroup;
 
+// Traffic
+var traffic;
+var trafficNodeGroup;
+
 
 /*
  *	debug
@@ -211,6 +215,32 @@ function Setup() {
 		]
 	 );
 
+	// Traffic
+	trafficNodeGroup = grid.clone();
+	trafficNodeGroup.name = 'Traffic';
+
+	// create the data structures
+	traffic = new DataHandler( 
+		trafficNodeGroup,
+		transportation.traffic, 
+		{
+			id:			[],	// keep track of what ids are represented by this node (array)
+			time:		0,	// what time is the traffic happening
+			current:	0,	// the current traffic situation
+			future:		0,	// the predicted traffic situation
+			radius: 	[]	// two radii for pulsing between (pulsing optional)
+		},
+		[
+			'time',
+			'current',
+			'future',
+			{
+				radius1: ['current'],
+				radius2: ['future']
+			}
+		]
+	 );
+
 
 
 	// draw the grid lines
@@ -303,6 +333,7 @@ function Update(event) {
 	 */
 	// if( parseInt(event.time) % 3 === 1 ) {
 		bicing.draw( event );
+		traffic.draw( event );
 	// }
 };
 
@@ -334,6 +365,33 @@ var UpdateBicing = setInterval(
 			console.log( 'Updated Bicing', bicing.isUpdated() );
 		}
 	},
+	(10*1000)
+);
+
+// Traffic
+// update every 16 minutes (16*60)
+var UpdateTraffic = setInterval(
+	function() {
+		if( !traffic.isUpdated() && traffic.isLoaded() ) {
+			// console.log( 'UpdateTraffic', bTrafficUpdate );
+
+			// temporary feed for
+			// debugging/testing only
+			for( var i=0; i<transportation.traffic.length; i++ ) {
+				var t = transportation.traffic[i];
+				t.current = Calculation.randomInt( 1,7 );
+				t.future = Calculation.randomInt( 1,7 );
+			}			
+			// get the new json feed
+			// loadTraffic( transportation.traffic );
+
+			// push the data into the group
+			traffic.refresh( transportation.traffic );
+			traffic.isUpdated(true);
+
+			console.log( 'Updated Traffic', traffic.isUpdated() );
+		}
+	},
 	(3*1000)
 );
 
@@ -359,6 +417,7 @@ function init() {
 	 *
 	 */
 	bicing.init();
+	traffic.init();
 
 };
 
@@ -404,7 +463,7 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 	 *	@return array of radii values
 	 */
 	function calcRadii( nodeDataArray ) {
-		// this ones a doozy!
+		// this one's a doozy!
 		var arr = [];
 
 		// find the radius object within
