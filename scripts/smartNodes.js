@@ -59,9 +59,8 @@ var pulse;
  *	Transportation
  */
 // Bicing
-var bicingGroup;
-var bBicingLoad = false;
-var bBicingUpdate = false;
+var bicing;
+var bicingNodeGroup;
 
 
 /*
@@ -187,9 +186,30 @@ function Setup() {
 	// of the original grid
 
 	// Bicing
-	bicingGroup = grid.clone();
+	bicingNodeGroup = grid.clone();
+	bicingNodeGroup.name = 'Bicing';
 
-
+	// create the data structures
+	bicing = new DataHandler( 
+		bicingNodeGroup,
+		transportation.bicing, 
+		{
+			id:		[],	// keep track of what ids are represented by this node (array)
+			total:	0,	// the total number of bike represented = (##.free + ##.bikes) + (...)
+			bikes:	0,	// the number of bikes "currently" at the station
+			free:	0,	// the total number of "free" slots
+			radius: []	// two radii for pulsing between (pulsing optional)
+		},
+		[
+			'total',
+			'bikes',
+			'free',
+			{
+				radius1: ['free', 'total'],
+				radius2: ['total', 'free']
+			}
+		]
+	 );
 
 
 
@@ -233,10 +253,6 @@ function Setup() {
 	// move grid layer to be uppermost
 	grid.opacity = 0.2;
 	grid.bringToFront();
-
-
-
-	console.log( '------------------' );
 
 };
 
@@ -282,18 +298,12 @@ function Update(event) {
 
 	/*
 	 *
-	 *	Pulsing
+	 *	Update Visualizations
 	 *
 	 */
-	// + 1.0 + ( (Math.sin(event.time) + {RATE} / {SIZE} );
-	//	{RATE} larger = faster
-	//	{SIZE} smaller = bigger?
-	// pulse = ((Math.sin(event.time*2)) / sizing.max);
-
-	// constantly update Draw()
-	// Draw();
-
-	bBicingUpdate = UpdateGroup( event, bicingGroup, bBicingLoad, bBicingUpdate );
+	// if( parseInt(event.time) % 3 === 1 ) {
+		bicing.draw( event );
+	// }
 };
 
 
@@ -306,151 +316,31 @@ function Update(event) {
 // update every 5 seconds
 var UpdateBicing = setInterval(
 	function() {
-		if( !bBicingUpdate && bBicingLoad ) {
+		if( !bicing.isUpdated() && bicing.isLoaded() ) {
+			// temporary feed for
+			// debugging/testing only
 			for( var i=0; i<transportation.bicing.length; i++ ) {
 				var b = transportation.bicing[i];
-
-				// temporary feed for
-				// debugging/testing only
 				b.bikes	= Calculation.randomInt( b.total );
 				b.free	= b.total - b.bikes;
 			}
 			// get the new json feed
 			// loadBicing( transportation.bicing );
 
-			var dataUpdateKeys = [ 'total', 'bikes', 'free' ]; // , 'radius' ];
-			UpdateGroupData( bicingGroup, transportation.bicing, dataUpdateKeys );
-			bBicingUpdate = true;
+			// push the data into the group
+			bicing.refresh( transportation.bicing );
+			bicing.isUpdated(true);
 
-			console.log( 'Updated Bicing', bBicingUpdate );
+			console.log( 'Updated Bicing', bicing.isUpdated() );
 		}
 	},
-	(5*1000)
+	(3*1000)
 );
 
 
 
 // ------------------------------------------------------------------------
 // Main
-// ------------------------------------------------------------------------
-function UpdateGroupData( group, dataArr, dataUpdateKeys ) {
-	for( var i=0; i<dataArr.length; i++ ) {
-		// var node = group.children[ dataArr[i].node ];
-		var node = f.findByName( group.children, ('__' + dataArr[i].node) );
-		var data = node.data;
-
-		// check if the node actually
-		// contains data
-		if( data.current != null ) {
-			// check the clear flag, this tells
-			// us whether certain values have 
-			// been reset or not
-			if( !data.clear ) {
-				// save current as previous
-				data.previous = clone( data.current );
-
-				// clear current values
-				// based on dataUpdateKeys
-				for( var k=0; k<dataUpdateKeys.length; k++ ) {
-					// reset counts to 0
-					data.current[ dataUpdateKeys[k] ] = 0;
-				}
-				data.clear = true;
-			}
-
-			// update data
-			for( var k=0; k<dataUpdateKeys.length; k++ ) {
-				data.current[ dataUpdateKeys[k] ] += dataArr[i][ dataUpdateKeys[k] ];
-			}
-
-			// determine radius of node
-			data.current.radius = [
-				Calculation.snap(
-					(data.current.free/data.current.total)*sizing.max,	// Number of free slots
-					sizing.snap
-				)*2,
-				Calculation.snap(
-					(data.current.bikes/data.current.total)*sizing.max,	// Number of bikes in the station
-					sizing.snap
-				)*2,
-			];
-
-		} // end if( data.current...
-
-	} // end for
-
-};
-
-var debugAnimator;
-function UpdateGroup( event, group, bLoad, bUpdate ) {
-	if( bLoad ) {
-		for( var i=0; i<group.children.length; i++ ) {
-			var node = group.children[i];
-			var data = node.data;
-			var pos = node.position;
-
-			// check if the node actually
-			// contains data
-			if( data.current != null ) {
-				// keep animator in sync
-				var animator = data.animator;
-				animator.update( event.time );
-
-				// check if an update has been made
-				if( bUpdate ) {
-					// kick off animator stepper
-					// animator.setDelta( 0.0 );
-					// animator.stepIn();
-					animator.toggle();
-				}
-				else {
-					if( animator.delta <= 0.0 || animator.delta >= 1.0 ) {
-						// no update, just pulse
-						// TODO: fix pulse flickering
-						// var start = data.current.radius[0]
-						// var stop = data.current.radius[1]
-						// node.bounds.size = new Size( 
-						// 	Calculation.lerp( start, stop, pulse.delta ),
-						// 	Calculation.lerp( start, stop, pulse.delta )
-						// );
-					}
-				}
-
-				if( !animator.isDone() ) {
-					// the animator stepper is still running
-					// so let's be sure to animate
-					var start = data.previous.radius[0];
-					var stop = data.current.radius[0];
-					node.bounds.size = new Size( 
-						Calculation.lerp( start, stop, animator.delta ),
-						Calculation.lerp( start, stop, animator.delta )
-					);
-				}
-				else {
-					animator.stop();
-				}
-
-			}
-			else {
-				// no data, no show
-				node.fillColor = null;
-				node.strokeColor = null;
-			}
-			node.position = pos;
-
-		}
-
-		// all nodes have been cycled through
-		// if there was an update, everything
-		// is now up-to-date
-		if( bUpdate ) {
-			return false;
-		}
-	}
-};
-
-
-
 // ------------------------------------------------------------------------
 function Draw() {
 
@@ -461,140 +351,397 @@ function Draw() {
 // ------------------------------------------------------------------------
 // Methods
 // ------------------------------------------------------------------------
-/**
- *
- *	Initial loading of Data
- *
- */
 function init() {
+
 	/*
 	 *
 	 *	Transportation
 	 *
 	 */
+	bicing.init();
+
+};
+
+
+/*
+ *	@param {Group} pathGroup
+ *					the group of items to push the data into
+ *	@param {Array} dataArray
+ *					the array of data
+ *	@param {Array} dataArrayStructure
+ *					an object literal Array of the strucutre and
+ *					keys which should be infused within the group
+ *	@param {Array} dataKeys
+ *					the keys of the dataArray within the nodes which should be updated
+ */
+var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys ) {
+	//
+	// Properties
+	//
+	var _group = pathGroup;
+
+	var _dataArr = dataArray;
+	var _dataStruct = dataArrayStructure;
+	var _dataKeys = dataKeys;
+
+	var animationMillis = 500;
+
+	var bLoad = false;
+	var bUpdate = true;
+
+
 
 	//
-	//	Bicing
+	// Methods
 	//
-	// TODO:	make into a function?
+	/**
+	 *
+	 *	Calculate Radius
+	 *
+	 *	@param {Array} nodeDataArray
+	 *					the array of data (local to the node)
+	 *		
+	 *	@return array of radii values
+	 */
+	function calcRadii( nodeDataArray ) {
+		// this ones a doozy!
+		var arr = [];
 
-	if( transportation.bicing.length > 0 && !bBicingLoad ) {
-		for( var i=0; i<transportation.bicing.length; i++ ) {
-			// incoming data
-			var b = transportation.bicing[i];
+		// find the radius object within
+		// the passed data keys 
+		for( var k=0; k<_dataKeys.length; k++ ) {
+			if( typeof _dataKeys[k] === 'object' ) {
 
-			// normalize longitude & latitude values
-			var x = Calculation.norm( b.lon, lonThreshold.min, lonThreshold.max );
-			var y = Calculation.norm( b.lat, latThreshold.min, latThreshold.max );
+				for( var key in _dataKeys[k] ) {
+					// based on the components listed
+					// in the arrays, determin the numerator
+					// and denominator for the radii
+					var num = nodeDataArray[ _dataKeys[k][ key ][0] ];
+					var den = (nodeDataArray[ _dataKeys[k][ key ][1] ] != undefined) ? nodeDataArray[ _dataKeys[k][ key ][1] ] : num;
 
-			// create local point
-			var pt = new Point( x*view.bounds.width, y*view.bounds.height );
+					// calculate the radius, this is a clamped value
+					// between the sizing.min and the sizing.max
+					// and it's snapped to the sizing.snap value
+					// oh... and it's multiplied by two
+					var radius = Calculation.clamp(
+						Calculation.snap(
+							(num/den)*sizing.max,	// Number of free slots
+							sizing.snap
+						),
+						sizing.min,
+						sizing.max
+					)*2;
 
-			// find the node within the grid
-			// that is closest to the data's local point
-			var node = findClosestItem( bicingGroup, pt );
+					// push into the radius data holder
+					arr.push(radius);
+				}
 
-			if( node != undefined ) {
-				// since we now node which represents
-				// the data point, we'll push that back
-				// into the master data array
-				b.node = node.id;
+			}
+		}
 
-				// create data structure
-				// this is where all of the information is stored that we need
-				// data comes in two flavors...
-				// current = the latest data
-				var current, previous;
-				if( node.data.current == undefined ) {
-					current = {
-						ids:	[],	// keep track of what ids are represented by this node (array)
-						total:	0,	// the total number of bike represented = (##.free + ##.bikes) + (...)
-						bikes:	0,	// the number of bikes "currently" at the station
-						free:	0,	// the total number of "free" slots
+		return arr;
+	};
+
+
+	/**
+	 *
+	 *	Initial loading of Data
+	 *
+	 *	@param {Array} dataKeys
+	 *					the keys of the dataArray within the nodes which should be updated
+	 */
+	function dataInit( dataKeys ) {
+		// if data keys are added during init
+		_dataKeys = (dataKeys != undefined) ? dataKeys : _dataKeys;
+
+		if( _dataArr.length > 0 && !bLoad ) {
+			for( var i=0; i<_dataArr.length; i++ ) {
+				// incoming data
+				var data = _dataArr[i];
+
+				// normalize longitude & latitude values
+				var x = Calculation.norm( data.lon, lonThreshold.min, lonThreshold.max );
+				var y = Calculation.norm( data.lat, latThreshold.min, latThreshold.max );
+
+				// create local point
+				var pt = new Point( x*view.bounds.width, y*view.bounds.height );
+
+				// find the node within the grid
+				// that is closest to the data's local point
+				var node = findClosestItem( _group, pt );
+
+				if( node != undefined ) {
+					// since we now node which represents
+					// the data point, we'll push that back
+					// into the master data array
+					data.node = node.id;
+
+					// create data structure
+					// this is where all of the information is stored that we need
+					// data comes in two flavors...
+					// current = the latest data
+					var current, previous;
+					if( node.data.current == undefined ) {
+						current = clone( _dataStruct );
+					}
+					else {
+						current = node.data.current;
+					}
+
+					// if (!$.inArray(data.id, data.ids)) {
+						// this id hasn't been logged yet
+						// so push it's data into the node
+						for (var key in _dataStruct ) {
+							if( typeof current[ key ] === 'Array' ) {
+								current[ key ].push( data[ key ] );
+							}
+							else {
+								current[ key ] += data[ key ];
+							}
+						}
+
+						// determine radius of node
+						current.radius = calcRadii( current );
+					// }
+
+					// ...and previous = the data just "replaced"
+					// with the latest data
+					previous = clone( current );
+
+
+					// create an animation stepper 
+					// this handles the transitioning from 
+					// previous to current (in the case of an update)
+					var animator = new ft.FStepper();
+					animator.setMillis( animationMillis );
+					animator.setDelta( 0.0 );
+
+
+					// push all of our date into one master data source
+					var d = {
+						animator: animator,
+						current: current,
+						previous: previous,
+						clear:	false
 					};
-				}
-				else {
-					current = node.data.current;
-				}
 
-				// if (!$.inArray(b.id, data.ids)) {
-					// this id hasn't been logged yet
-					// so push it's data into the node
-					current.ids.push( b.id );
-					current.total += b.total;
-					current.bikes += b.bikes;
-					current.free += b.free;
-					// determine radius of node
-					current.radius = [
-						Calculation.snap(
-							(current.free/current.total)*sizing.max,	// Number of free slots
-							sizing.snap
-						)*2,
-						Calculation.snap(
-							(current.bikes/current.total)*sizing.max,	// Number of bikes in the station
-							sizing.snap
-						)*2,
-					];
-				// }
+					// add data within node
+					node.data = d;
 
-				// ...and previous = the data just "replaced"
-				// with the latest data
-				previous = current;
-				// previous.radius = node.bounds.height;
-
-
-				// create an animation stepper 
-				// this handles the transitioning from 
-				// previous to current (in the case of an update)
-				var animator = new ft.FStepper();
-				animator.setMillis( 500 );
-				animator.setDelta( 0.0 );
-
-
-				// push all of our date into one master data source
-				var data = {
-					animator: animator,
-					current: current,
-					previous: previous,
-					clear:	false
-				};
-
-				// add data within node
-				node.data = data;
-
-				// if the ids length is 1 then
-				// we give the node some initial properties
-				if( current.ids.length === 1 ) {
+					// name the node so we can find it
 					node.name = '__' + node.id;
-					node.fillColor = colors.bass[0];
-					node.strokeColor = null;
-				}
 
-				// otherwise let's check if a dot exists
-				// and modify it's attributes
-				if( current.ids.length >= 1 ) {
-					var pos = node.position;
-					node.bounds.size = new Size(
-						current.radius[0],
-						current.radius[0]
-					);
-					node.position = pos;
-					node.fillColor = colors.bass[0].lerp( colors.bass[1], 1/current.ids.length );
+					// if the ids length is 1 then
+					// we give the node some initial properties
+					if( current.id.length === 1 ) {
+						node.fillColor = colors.bass[0];
+						node.strokeColor = null;
+					}
 
-					// update node data
-					node.data = data;
-				}
+					// otherwise let's check if a dot exists
+					// and modify it's attributes
+					if( current.id.length >= 1 ) {
+						var pos = node.position;
+						node.bounds.size = new Size(
+							current.radius[0],
+							current.radius[0]
+						);
+						node.position = pos;
+						node.strokeColor = null;
+						node.fillColor = colors.bass[0].lerp( colors.bass[1], 1/current.id.length );
 
-			} // end if( node...
+						// update node data
+						node.data = d;
+					}
+
+				} // end if( node...
+
+			} // end for
+
+			// data loaded successfully
+			bLoad = true;
+			// console.log( _group.name + ' loaded! ' + bLoad );
+		}
+
+	};
+
+	/**
+	 *
+	 *	Update Data
+	 *
+	 *	@param {Array} dataArray
+	 *					the array of data
+	 *	@param {Array} updatedDataKeys
+	 *					the keys of the dataArray within the nodes which should be updated
+	 */
+	function dataRefresh( updatedDataArray, updatedDataKeys ) {
+		// update data array
+		_dataArr = updatedDataArray;
+		// if data keys are added during refresh
+		_dataKeys = (updatedDataKeys != undefined) ? updatedDataKeys : _dataKeys;
+
+		for( var i=0; i<_dataArr.length; i++ ) {
+			var node = _group.children[ _dataArr[i].node ];
+			// var node = f.findByName( _group.children, ('__' + _dataArr[i].node) );
+			var node = _group.children[ ('__' + _dataArr[i].node) ];
+
+			try {
+				var data = node.data;
+
+				// check if the node actually
+				// contains data
+				if( data.current != null ) {
+					// check the clear flag, this tells
+					// us whether certain values have 
+					// been reset or not
+					if( !data.clear ) {
+						// save current as previous
+						data.previous = clone( data.current );
+
+						// clear current values
+						// based on dataKeys
+						for( var k=0; k<_dataKeys.length; k++ ) {
+							// reset counts to 0
+							data.current[ _dataKeys[k] ] = 0;
+						}
+						data.clear = true;
+					}
+
+					// update data
+					for( var k=0; k<_dataKeys.length; k++ ) {
+						data.current[ _dataKeys[k] ] += _dataArr[i][ _dataKeys[k] ];
+					}
+
+					// determine radius of node
+					data.current.radius = calcRadii( data.current );
+
+				} // end if( data.current...
+			} 
+			catch(err) {
+				if( bDebug ) console.log( 'refresh() ERROR: ' + node + ': ' + err );
+			}
 
 		} // end for
 
-		console.log( 'initial bicing load!' );
-		bBicingLoad = true;
+		// console.log( _group.name + ' dataRefresh() ' + bUpdate );
+	};
 
-	} // end if( trans...
+	/**
+	 *
+	 *	Update (re-draw) Nodes
+	 *
+	 *	@param {Event} event
+	 *					an event item to sync the animations
+	 */
+	 function nodeUpdate( event ) {
+		if( bLoad ) {
+			for( var i=0; i<_group.children.length; i++ ) {
+				var node = _group.children[i];
+				var data = node.data;
+				var pos = node.position;
+
+				// check if the node actually
+				// contains data
+				if( data.current != null ) {
+					// keep animator in sync
+					var animator = data.animator;
+					animator.update( event.time );
+
+					// check if an update has been made
+					if( bUpdate ) {
+						// kick off animator stepper
+						animator.setDelta( 0.0 );
+						// animator.stepIn();
+						animator.toggle();
+					}
+					else {
+						if( animator.delta < 0.0 || animator.delta > 1.0 ) {
+							// no update, just pulse
+							// TODO: fix pulse flickering
+							// var start = data.current.radius[0]
+							// var stop = data.current.radius[1]
+							// node.bounds.size = new Size( 
+							// 	Calculation.lerp( start, stop, pulse.delta ),
+							// 	Calculation.lerp( start, stop, pulse.delta )
+							// );
+						}
+					}
+
+					if( !animator.isDone() ) {
+						// the animator stepper is still running
+						// so let's be sure to animate
+						var start = data.previous.radius[0];
+						var stop = data.current.radius[0];
+						node.bounds.size = new Size( 
+							Calculation.lerp( start, stop, animator.delta ),
+							Calculation.lerp( start, stop, animator.delta )
+						);
+					}
+					else {
+						animator.stop();
+						// the updates have been animated
+						// prepare the data to allow new info
+						data.clear = false;
+					}
+
+				}
+				else {
+					// no data, no show
+					node.fillColor = null;
+					node.strokeColor = null;
+				}
+				node.position = pos;
+
+			} // end for
+
+			// all nodes have been cycled through
+			// if there was an update, everything
+			// is now up-to-date
+			if( bUpdate ) {
+				bUpdate = false;
+			}
+		}
+
+		// return _group;
+	};
+
+
+	//
+	// Gets
+	//
+	function getLoad() {
+		return bLoad;
+	};
+
+	function getUpdate(val) {
+		// a bit dirty, but fuck it
+		bUpdate = (val != undefined) ? val : bUpdate;
+		return bUpdate;
+	};
+
+
+	//
+	// Instantiate
+	//
+
+
+
+	//
+	// return public values
+	//
+	return {
+		// properties
+		isLoaded:	getLoad,
+		isUpdated:	getUpdate,
+
+		// methods
+		init:		dataInit,
+		refresh:	dataRefresh,
+		draw:		nodeUpdate
+	}
 
 };
+
 
 // ------------------------------------------------------------------------
 var findClosest = function( searchGroup, searchPoint ) {
@@ -637,9 +784,6 @@ var findClosestItem = function( searchGroup, searchPoint ) {
 
 	return closest;
 };
-
-
-
 
 // ------------------------------------------------------------------------
 /**
@@ -888,16 +1032,6 @@ var Marker = function( content, point ) {
 		isDone: isDone
 	}
 
-};
-
-
-// ------------------------------------------------------------------------
-// TODO:	create a class that can grow
-//			inject.Path?
-var Ring = function(event) {
-	var path;
-
-	return path;
 };
 
 
