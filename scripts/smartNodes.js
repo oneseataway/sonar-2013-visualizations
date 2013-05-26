@@ -1,4 +1,4 @@
-console.log( 'Sónar Visualization' );
+console.log( 'Sónar Visualization - smarNodes.js' );
 /**
  *	Sónar Visualization
  *
@@ -213,7 +213,12 @@ function Setup() {
 				radius2: ['total', 'free']
 			}
 		]
-	 );
+	);
+	bicing.setStyle({
+		fillColor: colors.bass[0],
+		opacity: 0.8
+	});
+
 
 	// Traffic
 	trafficNodeGroup = grid.clone();
@@ -228,18 +233,27 @@ function Setup() {
 			time:		0,	// what time is the traffic happening
 			current:	0,	// the current traffic situation
 			future:		0,	// the predicted traffic situation
-			radius: 	[]	// two radii for pulsing between (pulsing optional)
+			radius: 	[],	// two radii for pulsing between (pulsing optional)
+			max:		7
 		},
 		[
 			'time',
 			'current',
 			'future',
 			{
-				radius1: ['current'],
-				radius2: ['future']
+				radius1: ['current','max'],
+				radius2: ['future','max']
+			},
+			{
+				label: ['current','']
+				// label: 'current'
 			}
 		]
-	 );
+	);
+	traffic.setStyle({
+		fillColor: colors.mid[1],
+		opacity: 0.8
+	});
 
 
 
@@ -262,6 +276,7 @@ function Setup() {
 					nodeCeil.position
 				);
 				line.strokeColor = 'white';
+
 				lines.appendBottom( line );
 			}
 		}
@@ -321,7 +336,7 @@ function Update(event) {
 	// load all of the data in (the first time)
 	// checks every 3 seconds until
 	// all feeds are intiially loaded
-	if( parseInt(event.time) % 3 === 0 ) {
+	if( parseInt(event.time) % 3 === 1 ) {
 		init();
 	}
 
@@ -348,15 +363,18 @@ function Update(event) {
 var UpdateBicing = setInterval(
 	function() {
 		if( !bicing.isUpdated() && bicing.isLoaded() ) {
-			// temporary feed for
-			// debugging/testing only
-			for( var i=0; i<transportation.bicing.length; i++ ) {
-				var b = transportation.bicing[i];
-				b.bikes	= Calculation.randomInt( b.total );
-				b.free	= b.total - b.bikes;
+			if( bOffline ) {
+				// fake values for offline & testing only
+				for( var i=0; i<transportation.bicing.length; i++ ) {
+					var b = transportation.bicing[i];
+					b.bikes	= Calculation.randomInt( b.total );
+					b.free	= b.total - b.bikes;
+				}
 			}
-			// get the new json feed
-			// loadBicing( transportation.bicing );
+			else {
+				// get the new json feed
+				// loadBicing( transportation.bicing );
+			}
 
 			// push the data into the group
 			bicing.refresh( transportation.bicing );
@@ -365,7 +383,7 @@ var UpdateBicing = setInterval(
 			console.log( 'Updated Bicing', bicing.isUpdated() );
 		}
 	},
-	(10*1000)
+	(9*1000)
 );
 
 // Traffic
@@ -375,15 +393,20 @@ var UpdateTraffic = setInterval(
 		if( !traffic.isUpdated() && traffic.isLoaded() ) {
 			// console.log( 'UpdateTraffic', bTrafficUpdate );
 
-			// temporary feed for
-			// debugging/testing only
-			for( var i=0; i<transportation.traffic.length; i++ ) {
-				var t = transportation.traffic[i];
-				t.current = Calculation.randomInt( 1,7 );
-				t.future = Calculation.randomInt( 1,7 );
-			}			
-			// get the new json feed
-			// loadTraffic( transportation.traffic );
+			if( bOffline ) {
+				// fake values for offline & testing only
+				for( var i=0; i<transportation.traffic.length; i++ ) {
+					var t = transportation.traffic[i];
+					if( i % 5 == 0 ) {
+						t.current = Calculation.randomInt( 1,7 );
+						t.future = Calculation.randomInt( 1,7 );
+					}
+				}			
+			}
+			else {
+				// get the new json feed
+				// loadTraffic( transportation.traffic );
+			}
 
 			// push the data into the group
 			traffic.refresh( transportation.traffic );
@@ -392,7 +415,7 @@ var UpdateTraffic = setInterval(
 			console.log( 'Updated Traffic', traffic.isUpdated() );
 		}
 	},
-	(3*1000)
+	(6*1000)
 );
 
 
@@ -438,12 +461,21 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 	// Properties
 	//
 	var _group = pathGroup;
+	var _style = {
+		fillColor:		new Color( 0.0, 1.0, 0.7 ),
+		strokeColor:	null
+	};	// default style
 
 	var _dataArr = dataArray;
 	var _dataStruct = dataArrayStructure;
-	var _dataKeys = dataKeys;
+	var _dataKeys;
 
 	var animationMillis = 500;
+
+	var labelFadeMillis = 600;
+	var labeldelayMillis = 2100;
+	var labelKey;
+	var bLabeled = false;
 
 	var bLoad = false;
 	var bUpdate = true;
@@ -455,55 +487,6 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 	//
 	/**
 	 *
-	 *	Calculate Radius
-	 *
-	 *	@param {Array} nodeDataArray
-	 *					the array of data (local to the node)
-	 *		
-	 *	@return array of radii values
-	 */
-	function calcRadii( nodeDataArray ) {
-		// this one's a doozy!
-		var arr = [];
-
-		// find the radius object within
-		// the passed data keys 
-		for( var k=0; k<_dataKeys.length; k++ ) {
-			if( typeof _dataKeys[k] === 'object' ) {
-
-				for( var key in _dataKeys[k] ) {
-					// based on the components listed
-					// in the arrays, determin the numerator
-					// and denominator for the radii
-					var num = nodeDataArray[ _dataKeys[k][ key ][0] ];
-					var den = (nodeDataArray[ _dataKeys[k][ key ][1] ] != undefined) ? nodeDataArray[ _dataKeys[k][ key ][1] ] : num;
-
-					// calculate the radius, this is a clamped value
-					// between the sizing.min and the sizing.max
-					// and it's snapped to the sizing.snap value
-					// oh... and it's multiplied by two
-					var radius = Calculation.clamp(
-						Calculation.snap(
-							(num/den)*sizing.max,	// Number of free slots
-							sizing.snap
-						),
-						sizing.min,
-						sizing.max
-					)*2;
-
-					// push into the radius data holder
-					arr.push(radius);
-				}
-
-			}
-		}
-
-		return arr;
-	};
-
-
-	/**
-	 *
 	 *	Initial loading of Data
 	 *
 	 *	@param {Array} dataKeys
@@ -511,7 +494,7 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 	 */
 	function dataInit( dataKeys ) {
 		// if data keys are added during init
-		_dataKeys = (dataKeys != undefined) ? dataKeys : _dataKeys;
+		setDataKeys( dataKeys );
 
 		if( _dataArr.length > 0 && !bLoad ) {
 			for( var i=0; i<_dataArr.length; i++ ) {
@@ -567,18 +550,15 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 					// with the latest data
 					previous = clone( current );
 
-
-					// create an animation stepper 
-					// this handles the transitioning from 
-					// previous to current (in the case of an update)
-					var animator = new ft.FStepper();
-					animator.setMillis( animationMillis );
-					animator.setDelta( 0.0 );
-
+					// if the ids length is 1 then
+					// we give the node some initial properties
+					if( current.id.length === 1 ) {
+					}
 
 					// push all of our date into one master data source
 					var d = {
-						animator: animator,
+						animator: null,
+						label: null,
 						current: current,
 						previous: previous,
 						clear:	false
@@ -589,13 +569,8 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 
 					// name the node so we can find it
 					node.name = '__' + node.id;
-
-					// if the ids length is 1 then
-					// we give the node some initial properties
-					if( current.id.length === 1 ) {
-						node.fillColor = colors.bass[0];
-						node.strokeColor = null;
-					}
+					node.style = _style;
+					// node.blendMode = 'screen';
 
 					// otherwise let's check if a dot exists
 					// and modify it's attributes
@@ -606,8 +581,7 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 							current.radius[0]
 						);
 						node.position = pos;
-						node.strokeColor = null;
-						node.fillColor = colors.bass[0].lerp( colors.bass[1], 1/current.id.length );
+						// node.fillColor = colors.bass[0].lerp( colors.bass[1], 1/current.id.length );
 
 						// update node data
 						node.data = d;
@@ -617,9 +591,49 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 
 			} // end for
 
+
+			for( var i=0; i<_group.children.length; i++ ) {
+				var node = _group.children[i];
+
+				if( node.data.current != undefined ) {
+					// create an animation stepper 
+					// this handles the transitioning from 
+					// previous to current (in the case of an update)
+					var animator = new ft.FStepper();
+					animator.setMillis( animationMillis );
+					animator.setDelta( 0.0 );
+
+					// add animator to internal data
+					node.data.animator = animator;
+
+
+					// create type
+					if( bLabeled ) {
+						// is the label key an array?
+						var content = (typeof labelKey === 'object')
+							? [ node.data.current[ labelKey[0] ], labelKey[1] ]
+							: node.data.current[ labelKey ];
+ 
+						// create type
+						var label = new MarkerFade(
+							ft,
+							content,
+							new Point( node.position.x, node.position.y + 72 ),
+							labelFadeMillis,
+							labeldelayMillis
+						);
+						label.path.fillColor = 'white';
+						label.toggle();
+
+						// add label to internal data
+						node.data.label = label;
+					}
+				}
+			}
+
 			// data loaded successfully
 			bLoad = true;
-			// console.log( _group.name + ' loaded! ' + bLoad );
+			console.log( _group.name + ' loaded! ' + bLoad );
 		}
 
 	};
@@ -706,12 +720,46 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 					var animator = data.animator;
 					animator.update( event.time );
 
+					// keep label in sync
+					var label;
+					if( data.label != undefined ) {
+						label = data.label;
+						label.update( event );
+					}
+
 					// check if an update has been made
 					if( bUpdate ) {
 						// kick off animator stepper
 						animator.setDelta( 0.0 );
 						// animator.stepIn();
 						animator.toggle();
+
+						if( data.label != null ) {
+							var content;
+							var bLabelChange = false;
+							if( typeof labelKey === 'object' ) {
+								bLabelChange = (data.current[ labelKey[0] ] != data.previous[ labelKey[0] ])
+									? true
+									: false;
+								content = [ data.current[ labelKey[0] ], labelKey[1] ];
+							}
+							else {
+								bLabelChange = (data.current[ labelKey ] != data.previous[ labelKey ])
+									? true
+									: false;
+								content = data.current[ labelKey ];
+							}
+
+							// did the data change?
+							// show the label
+							if( bLabelChange ) {
+								// update label content
+								label.setContent( content );
+	
+								// kick off label stepper
+								label.toggle();
+							}
+						}
 					}
 					else {
 						if( animator.delta < 0.0 || animator.delta > 1.0 ) {
@@ -740,8 +788,17 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 						animator.stop();
 						// the updates have been animated
 						// prepare the data to allow new info
-						data.clear = false;
+						// data.clear = false;
 					}
+
+					// console.log( 'label', label.isDone() );
+					if( data.label != null ) {
+						if( label.isDone() && data.clear ) {
+							label.toggle()
+							data.clear = false;
+						}
+					}
+
 
 				}
 				else {
@@ -766,6 +823,104 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 
 
 	//
+	// Sets
+	//
+	/**
+	 *
+	 *	Calculate Radius
+	 *
+	 *	@param {Array} nodeDataArray
+	 *					the array of data (local to the node)
+	 *		
+	 *	@return array of radii values
+	 */
+	function calcRadii( nodeDataArray ) {
+		// this one's a doozy!
+		var arr = [];
+
+		// find the radius object within
+		// the passed data keys 
+		for( var k=0; k<_dataKeys.length; k++ ) {
+
+			if( typeof _dataKeys[k] === 'object' && 
+				Object.keys( _dataKeys[k] )[0].indexOf('radius') !=-1 ) {
+				for( var key in _dataKeys[k] ) {
+					// based on the components listed
+					// in the arrays, determin the numerator
+					// and denominator for the radii
+					var num = nodeDataArray[ _dataKeys[k][ key ][0] ];
+					var den = nodeDataArray[ _dataKeys[k][ key ][1] ];
+
+					// calculate the radius, this is a clamped value
+					// between the sizing.min and the sizing.max
+					// and it's snapped to the sizing.snap value
+					// oh... and it's multiplied by two
+					var radius = Calculation.clamp(
+						Calculation.snap(
+							(num/den)*sizing.max,	// Number of free slots
+							sizing.snap
+						),
+						sizing.min,
+						sizing.max
+					)*2;
+
+					// push into the radius data holder
+					arr.push(radius);
+				}
+			}
+
+		}
+
+		return arr;
+	};
+
+	/**
+	 *	set the style attributes for each node
+	 *
+	 *	@param style
+	 *			object literal Array of various style attributes
+	 *
+	 *	@example
+	 *		var style = {
+	 *			strokeColor: 'black',
+ 	 *			dashArray: [4, 10],
+ 	 *			strokeWidth: 4,
+	 *			strokeCap: 'round'
+	 *		};
+	 */
+	function setNodeStyle( style ) {
+		_style = style;
+	};
+
+	/**
+	 *
+	 *	set the data keys
+	 *
+	 *	@param {Array} dataKeys
+	 *					the keys of the dataArray within the nodes which should be updated
+	 */
+	function setDataKeys( dataKeys ) {
+		// if data keys are added during init
+		_dataKeys = (dataKeys != undefined) ? dataKeys : _dataKeys;
+
+		// determine if there's a label flag
+		for( var k=0; k<_dataKeys.length; k++ ) {
+
+			if( typeof _dataKeys[k] === 'object' && 
+				Object.keys( _dataKeys[k] )[0].indexOf('label') !=-1 ) {
+				// there is a label key
+				bLabeled = true;
+
+				for( var key in _dataKeys[k] ) {
+					labelKey = _dataKeys[k][ key ];
+				}
+			}
+
+		}
+	;}
+
+
+	//
 	// Gets
 	//
 	function getLoad() {
@@ -782,6 +937,7 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 	//
 	// Instantiate
 	//
+	setDataKeys( dataKeys );
 
 
 
@@ -796,7 +952,10 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 		// methods
 		init:		dataInit,
 		refresh:	dataRefresh,
-		draw:		nodeUpdate
+		draw:		nodeUpdate,
+
+		// sets
+		setStyle:	setNodeStyle
 	}
 
 };
@@ -877,25 +1036,60 @@ var findClosestItem = function( searchGroup, searchPoint ) {
  *
  */
 var Marker = function( content, point ) {
-	var _point = point.clone();
+	//
+	// Properties
+	//
 	var _group = new Group();
 
+	var main = new PointText( point );
+	var desc = new PointText( point );
+	var underline = new Path.Rectangle( new Point(0,0), new Size(1, 3) );
+	
+
+	//
+	// Methods
+	//
 	function init() {	
 		// strip out 0 and replace with O
 		// content = replaceZero(content);
 		// content.replace('0', 'O');
 
 		// the main text
-		main = new PointText( _point );
 		main.justification = 'center';
 		main.fontSize = 72;
 		main.font = 'Futura-kf';
 
 		// the side descriptor
-		desc = new PointText( _point );
 		desc.justification = 'center';
 		desc.fontSize = 15;
 		desc.font = 'Futura-kf-Bold';
+
+		// set content
+		setContent( content );
+
+		// add to group
+		_group.appendTop( main );
+		_group.appendTop( desc );
+		_group.appendTop( underline );
+
+		return _group;
+	};
+
+	function replaceZero(str) {
+		for(var i=0; i<str.length; i++) {
+			if( str.charAt(i) == '0') {
+				str = str.substr(0, i) + 'O' + str.substr(i+1);
+			}
+		}
+		return str;
+	};
+
+
+	//
+	// Sets
+	//
+	function setContent( content ) {
+		_point = point.clone();
 
 		if( typeof content == 'object' ) {
 			content[0] = replaceZero(content[0]);
@@ -918,31 +1112,31 @@ var Marker = function( content, point ) {
 
 		// the underline
 		_point.y += 9;
-		var underline = new Path.Rectangle(
-			new Point(0,0),
-			new Size(desc.bounds.size.width*1.1, 3)
-		);
 		underline.position = _point;
+		underline.bounds.size = new Size(
+			desc.bounds.size.width*1.1,
+			3
+		);
 
-		// add to group
-		_group.appendTop( main );
-		_group.appendTop( desc );
-		_group.appendTop( underline );
-
-		return _group;
-	};
-
-	function replaceZero(str) {
-		for(var i=0; i<str.length; i++) {
-			if( str.charAt(i) == '0') {
-				str = str.substr(0, i) + 'O' + str.substr(i+1);
-			}
-		}
-		return str;
 	};
 
 
-	return init();
+	//
+	// Instantiate
+	//
+	init();
+
+
+	//
+	// return public values
+	//
+	return {
+		// properties
+		path: _group,
+
+		// sets
+		setContent: setContent,
+	}
 };
 
 /**
@@ -1021,12 +1215,36 @@ var Marker = function( content, point ) {
 	fadeMillis = (fadeMillis != undefined) ? fadeMillis : 0.5*1000;
 	var _fader = new ft.FStepper();
 	_fader.setMillis( fadeMillis ); // default: 1 second
-	var isDone = false;
-
+	var bFaderDone = false;
 
 	//
 	// Methods
 	//
+	function init() {
+		// create the text
+		_marker = new Marker(content, point);
+
+		// pass the timers to the data holder of _marker
+		_marker.path.data = {
+			timer: _timer,
+			fader: _fader
+		};
+
+		return _marker;
+	};
+
+	function toggle() {
+		_timer.toggle();
+	};
+
+
+	//
+	// Sets
+	//
+	function setContent( content ) {
+		_marker.setContent( content );
+	};
+
 	function setEvent(event) {
 		// handling the delay timer
 		_timer.update( event.time );
@@ -1044,31 +1262,25 @@ var Marker = function( content, point ) {
 			_fader.stop();
 			if( _fader.delta < 0.0 ) _fader.setDelta( 0.0 );
 			if( _fader.delta > 1.0 ) _fader.setDelta( 1.0 );
+			bFaderDone = true;
 		}
-		isDone = _fader.isDone();
+		else {
+			bFaderDone = false;
+		}
 
 		// adjust opacity of text
-		_marker.opacity = _fader.delta;
-		_timerMarker = new TimerClock( _marker.position, 20, _timer.delta );
-		_timerMarker.fillColor = new Color( 0.0, 1.0, 0.7 );
+		_marker.path.opacity = _fader.delta;
+		// _timerMarker = new TimerClock( _marker.path.position, 20, _timer.delta );
+		// _timerMarker.fillColor = new Color( 0.0, 1.0, 0.7 );
 		// _timerMarker.opacity = _timer.delta;
 	};
 
-	function toggle() {
-		_timer.toggle();
-	};
 
-	function init() {
-		// create the text
-		_marker = new Marker(content, point);
-
-		// pass the timers to the data holder of _marker
-		_marker.data = {
-			timer: _timer,
-			fader: _fader
-		};
-
-		return _marker;
+	//
+	// Gets
+	//
+	function isDone() {
+		return bFaderDone;
 	};
 
 
@@ -1083,11 +1295,16 @@ var Marker = function( content, point ) {
 	//
 	return {
 		// properties
-		path: _marker,
+		path: _marker.path,
 
 		// methods
 		update: setEvent,
 		toggle: toggle,
+
+		// sets
+		setContent: setContent,
+
+		// gets
 		isDone: isDone
 	}
 

@@ -95,6 +95,7 @@ function Setup() {
 		3000
 	);
 	ttext.path.fillColor = colors.yellow;
+	ttext.toggle();
 
 
 };
@@ -130,6 +131,7 @@ function Draw() {
 // ------------------------------------------------------------------------
 // Methods
 // ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
 /**
  *
  *	Marker text
@@ -162,25 +164,60 @@ function Draw() {
  *
  */
 var Marker = function( content, point ) {
-	var _point = point.clone();
+	//
+	// Properties
+	//
 	var _group = new Group();
 
+	var main = new PointText( point );
+	var desc = new PointText( point );
+	var underline = new Path.Rectangle( new Point(0,0), new Size(1, 3) );
+	
+
+	//
+	// Methods
+	//
 	function init() {	
 		// strip out 0 and replace with O
 		// content = replaceZero(content);
 		// content.replace('0', 'O');
 
 		// the main text
-		main = new PointText( _point );
 		main.justification = 'center';
 		main.fontSize = 72;
 		main.font = 'Futura-kf';
 
 		// the side descriptor
-		desc = new PointText( _point );
 		desc.justification = 'center';
 		desc.fontSize = 15;
 		desc.font = 'Futura-kf-Bold';
+
+		// set content
+		setContent( content );
+
+		// add to group
+		_group.appendTop( main );
+		_group.appendTop( desc );
+		_group.appendTop( underline );
+
+		return _group;
+	};
+
+	function replaceZero(str) {
+		for(var i=0; i<str.length; i++) {
+			if( str.charAt(i) == '0') {
+				str = str.substr(0, i) + 'O' + str.substr(i+1);
+			}
+		}
+		return str;
+	};
+
+
+	//
+	// Sets
+	//
+	function setContent( content ) {
+		_point = point.clone();
 
 		if( typeof content == 'object' ) {
 			content[0] = replaceZero(content[0]);
@@ -203,31 +240,31 @@ var Marker = function( content, point ) {
 
 		// the underline
 		_point.y += 9;
-		var underline = new Path.Rectangle(
-			new Point(0,0),
-			new Size(desc.bounds.size.width*1.1, 3)
-		);
 		underline.position = _point;
+		underline.bounds.size = new Size(
+			desc.bounds.size.width*1.1,
+			3
+		);
 
-		// add to group
-		_group.appendTop( main );
-		_group.appendTop( desc );
-		_group.appendTop( underline );
-
-		return _group;
-	};
-
-	function replaceZero(str) {
-		for(var i=0; i<str.length; i++) {
-			if( str.charAt(i) == '0') {
-				str = str.substr(0, i) + 'O' + str.substr(i+1);
-			}
-		}
-		return str;
 	};
 
 
-	return init();
+	//
+	// Instantiate
+	//
+	init();
+
+
+	//
+	// return public values
+	//
+	return {
+		// properties
+		path: _group,
+
+		// sets
+		setContent: setContent,
+	}
 };
 
 /**
@@ -306,12 +343,36 @@ var Marker = function( content, point ) {
 	fadeMillis = (fadeMillis != undefined) ? fadeMillis : 0.5*1000;
 	var _fader = new ft.FStepper();
 	_fader.setMillis( fadeMillis ); // default: 1 second
-	var isDone = false;
-
+	var bFaderDone = false;
 
 	//
 	// Methods
 	//
+	function init() {
+		// create the text
+		_marker = new Marker(content, point);
+
+		// pass the timers to the data holder of _marker
+		_marker.path.data = {
+			timer: _timer,
+			fader: _fader
+		};
+
+		return _marker;
+	};
+
+	function toggle() {
+		_timer.toggle();
+	};
+
+
+	//
+	// Sets
+	//
+	function setContent( content ) {
+		_marker.setContent( content );
+	};
+
 	function setEvent(event) {
 		// handling the delay timer
 		_timer.update( event.time );
@@ -329,31 +390,25 @@ var Marker = function( content, point ) {
 			_fader.stop();
 			if( _fader.delta < 0.0 ) _fader.setDelta( 0.0 );
 			if( _fader.delta > 1.0 ) _fader.setDelta( 1.0 );
+			bFaderDone = true;
 		}
-		isDone = _fader.isDone();
+		else {
+			bFaderDone = false;
+		}
 
 		// adjust opacity of text
-		_marker.opacity = _fader.delta;
-		_timerMarker = new TimerClock( _marker.position, 20, _timer.delta );
-		_timerMarker.fillColor = new Color( 0.0, 1.0, 0.7 );
+		_marker.path.opacity = _fader.delta;
+		// _timerMarker = new TimerClock( _marker.path.position, 20, _timer.delta );
+		// _timerMarker.fillColor = new Color( 0.0, 1.0, 0.7 );
 		// _timerMarker.opacity = _timer.delta;
 	};
 
-	function toggle() {
-		_timer.toggle();
-	};
 
-	function init() {
-		// create the text
-		_marker = new Marker(content, point);
-
-		// pass the timers to the data holder of _marker
-		_marker.data = {
-			timer: _timer,
-			fader: _fader
-		};
-
-		return _marker;
+	//
+	// Gets
+	//
+	function isDone() {
+		return bFaderDone;
 	};
 
 
@@ -368,11 +423,16 @@ var Marker = function( content, point ) {
 	//
 	return {
 		// properties
-		path: _marker,
+		path: _marker.path,
 
 		// methods
 		update: setEvent,
 		toggle: toggle,
+
+		// sets
+		setContent: setContent,
+
+		// gets
 		isDone: isDone
 	}
 

@@ -1,6 +1,7 @@
-console.log( 'Sónar Visualization' );
+console.log( 'Sónar Visualization - core.js' );
 /**
  *	Sónar Visualization
+ *	core.js
  *
  *	Ken Frederick
  *	ken.frederick@gmx.de
@@ -47,6 +48,30 @@ var social = {
 	foursquare:	null
 };
 
+/*
+ *	Misc.
+ */
+var bOffline = true; // assume we have no internet connections
+
+
+// ------------------------------------------------------------------------
+// loaded
+// ------------------------------------------------------------------------
+/*
+ *	DOM is loaded
+ */
+$(function() {
+
+	/*
+	 *	Check Connection status
+	 */
+	console.log( 'online', navigator.onLine );
+	if(!(navigator.onLine) && bOffline ) {
+		// window.location = "./oops.html";
+		// bOffline = false;
+	}
+
+});
 
 
 // ------------------------------------------------------------------------
@@ -74,8 +99,8 @@ function loadBicing(arr) {
 	$.ajax({
 		url: jsonUrl,
 		type: 'get',
-		dataType: 'json',
-		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
+		// dataType: 'json',
+		dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
 		crossDomain: true,
 		cache: false,
 		async: true,
@@ -137,14 +162,40 @@ function loadTraffic(arr) {
 
 	// load actual traffic data
 	var datTemp = [];
+
+	// create fake traffic data
+	for( var i=0; i<2004; i++ ) {
+		datTemp.push({
+			id:			i,
+			time:		'20130525221054',
+			current:	parseInt( Math.random()*6 ) + 1,
+			future:		parseInt( Math.random()*6 ) + 1
+		});
+	}
+
+	/*
 	$.ajax({
 		url: datUrl,
 		type: 'get',
-		dataType: 'json',
+		// dataType: 'json',
 		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
 		crossDomain: true,
 		cache: false,
 		async: true,
+
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			console.log( 'loadTraffic() error: ', errorThrown );
+			// generate fake data
+			for( var i=0; i<100; i++ ) {
+				datTemp.push({
+					id:			i,
+					time:		'20130525221054',
+					current:	parseInt( Math.random()*6 ) + 1,
+					future:		parseInt( Math.random()*6 ) + 1
+				});
+			}
+		}
+
 	}).done(function(result) {
 		var fields = result.split('\n');
 
@@ -158,6 +209,7 @@ function loadTraffic(arr) {
 			});
 		}
 	});
+	*/
 
 	function findIndex(id) {
 		var idx = -1;
@@ -178,8 +230,6 @@ function loadTraffic(arr) {
 		cache: false,
 		async: true,
 	}).done(function(result) {
-		// console.log( result.data.streets );
-
 		var index = -1;
 		$.each(result.data.streets, function(i, field) {
 			var f = field;
@@ -193,6 +243,7 @@ function loadTraffic(arr) {
 					id:			field.id,
 					current:	parseInt(datTemp[index].current)+1,	// add 1, to avoid a 0 value
 					future:		parseInt(datTemp[index].future)+1,	// add 1, to avoid a 0 value
+					max: 		7,
 					lat:		coords[1], // /1000000,
 					lon:		coords[0], // /1000000,
 					time:		datTemp[index].time
@@ -348,12 +399,7 @@ function loadFourSquare(arr) {
 loadFourSquare( social.foursquare );
 
 
-
-/*
- *
- *	Additional Methods
- *
- */
+// ------------------------------------------------------------------------
 // http://davidwalsh.name/javascript-clone
 function clone(src) {
 	function mixin(dest, source, copyFunc) {
