@@ -16,6 +16,8 @@ console.log( 'Sónar Visualization - core.js' );
 // ------------------------------------------------------------------------
 // Properties
 // ------------------------------------------------------------------------
+var yqlBase = 'https://query.yahooapis.com/v1/public/yql';  
+
 /*
  *	Transportation Data
  */
@@ -99,66 +101,81 @@ function loadBicing(arr) {
 	$.ajax({
 		url: jsonUrl,
 		type: 'get',
-		// dataType: 'json',
-		dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
-		crossDomain: true,
-		cache: false,
-		async: true,
-	}).done(function(result) {
-		$.each(result, function(i, field) {
-			// format the data into a way
-			// that i can handle
-			var _t = Date.parse(field.timestamp);
-			var _d = new Date(_t);
-			var time = {
-				year:		_d.getFullYear(),
-				month:		_d.getMonth(),
-				day:		_d.getDate(),
-				hours:		_d.getHours(),
-				minutes:	_d.getMinutes(),
-				seconds:	_d.getSeconds()
-			};
+		dataType: 'jsonp'
 
-			arr.push({
-				node:		null,  // keeps track of which node this data belongs to
-				// flush out the entries
-				name:		field.cleaname,
-				nearby:	field.nearby_stations.split(','),
-				id:			field.id,
-				bikes:		field.bikes,	// Number of bikes in the station
-				free:		field.free,		// Number of free slots
-				total:		(field.free + field.bikes),
-				lat:		field.lat/1000000,
-				lon:		field.lng/1000000,
-				time:		time
+	}).done( function(output) {
+		var result = output;
+
+		try {
+			$.each( result, function(i, field) {
+				// format the data into a way
+				// that i can handle
+				var _t = Date.parse(field.timestamp);
+				var _d = new Date(_t);
+				var time = {
+					year:		_d.getFullYear(),
+					month:		_d.getMonth(),
+					day:		_d.getDate(),
+					hours:		_d.getHours(),
+					minutes:	_d.getMinutes(),
+					seconds:	_d.getSeconds()
+				};
+
+				arr.push({
+					node:		null,  // keeps track of which node this data belongs to
+					// flush out the entries
+					name:		field.cleaname,
+					nearby:	field.nearby_stations.split(','),
+					id:			field.id,
+					bikes:		field.bikes,	// Number of bikes in the station
+					free:		field.free,		// Number of free slots
+					total:		(field.free + field.bikes),
+					lat:		field.lat/1000000,
+					lon:		field.lng/1000000,
+					time:		time
+				});
+
+				/*
+				 * debug
+				 */
+				// bicingLon.push( field.lng/1000000 );
+				// bicingLat.push( field.lat/1000000 );
 			});
 
-			// bicingLon.push( field.lng/1000000 );
-			// bicingLat.push( field.lat/1000000 );
-		});
+			/*
+			 * debug
+			 */
+			// bicingLon.sort();
+			// console.log( bicingLon[0] );
+			// console.log( bicingLon[bicingLon.length-1] );
 
-		/*
-		 * debug
-		 */
-		// bicingLon.sort();
-		// console.log( bicingLon[0] );
-		// console.log( bicingLon[bicingLon.length-1] );
+			// bicingLat.sort();
+			// console.log( bicingLat[0] );
+			// console.log( bicingLat[bicingLon.length-1] );
+		}
+		catch(err) {
 
-		// bicingLat.sort();
-		// console.log( bicingLat[0] );
-		// console.log( bicingLat[bicingLon.length-1] );
+		}
+
+		return arr;
+
+	}).fail( function() {
+		console.log( 'Loading Bicing error');
+	}).always( function() {
 
 	});
 
-	return arr;
 };
 // initial activation of data feed
 loadBicing( transportation.bicing );
 
 // ------------------------------------------------------------------------
 function loadTraffic(arr) {
+	// grabs data via YQL to avoid
+	// cross-origin errors
 	var datUrl = 'http://www.bcn.cat/transit/dades/dadestrams.dat';
-	var locUrl = 'http://barcelonaapi.marcpous.com/traffic/streets.json';
+	var yqlQuery = 'SELECT * FROM json WHERE url=\"' + datUrl + '\"';
+	var yqlQueryUrl = yqlBase + '?q=' + encodeURI(yqlQuery) + '&format=json';
 
 	// load actual traffic data
 	var datTemp = [];
@@ -173,43 +190,38 @@ function loadTraffic(arr) {
 		});
 	}
 
-	/*
-	$.ajax({
-		url: datUrl,
-		type: 'get',
-		// dataType: 'json',
-		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
-		crossDomain: true,
-		cache: false,
-		async: true,
+	// $.ajax({
+	// 	url: yqlQueryUrl,
+	// 	type: 'get',
+	// 	dataType: 'jsonp',
+	// 	error: function(XMLHttpRequest, textStatus, errorThrown) {
+	// 		console.log( 'loadTraffic() error: ', errorThrown );
+	// 		// generate fake data
+	// 		for( var i=0; i<100; i++ ) {
+	// 			datTemp.push({
+	// 				id:			i,
+	// 				time:		'20130525221054',
+	// 				current:	parseInt( Math.random()*6 ) + 1,
+	// 				future:		parseInt( Math.random()*6 ) + 1
+	// 			});
+	// 		}
+	// 	}
 
-		error: function(XMLHttpRequest, textStatus, errorThrown) {
-			console.log( 'loadTraffic() error: ', errorThrown );
-			// generate fake data
-			for( var i=0; i<100; i++ ) {
-				datTemp.push({
-					id:			i,
-					time:		'20130525221054',
-					current:	parseInt( Math.random()*6 ) + 1,
-					future:		parseInt( Math.random()*6 ) + 1
-				});
-			}
-		}
+	// }).done(function(output) {
+	// 	var result = output.query.results.json.json;
 
-	}).done(function(result) {
-		var fields = result.split('\n');
+	// 	var fields = result.split('\n');
 
-		for( var i=0; i<fields.length; i++ ) {
-			var field = fields[i].split('#');
-			datTemp.push({
-				id:			field[0],
-				time:		field[1],
-				current:	field[2],
-				future:		field[3]
-			});
-		}
-	});
-	*/
+	// 	for( var i=0; i<fields.length; i++ ) {
+	// 		var field = fields[i].split('#');
+	// 		datTemp.push({
+	// 			id:			field[0],
+	// 			time:		field[1],
+	// 			current:	field[2],
+	// 			future:		field[3]
+	// 		});
+	// 	}
+	// });
 
 	function findIndex(id) {
 		var idx = -1;
@@ -219,19 +231,26 @@ function loadTraffic(arr) {
 		return idx;
 	};
 
+
+	// grabs data via YQL to avoid
+	// cross-origin errors
+	var locUrl = 'http://barcelonaapi.marcpous.com/traffic/streets.json';
+	var yqlQuery = 'SELECT * FROM json WHERE url=\"' + locUrl + '\"';
+	var yqlQueryUrl = yqlBase + '?q=' + encodeURI(yqlQuery) + '&format=json';
+
+
 	// load street data
 	// push to main array
 	$.ajax({
-		url: locUrl,
+		url: yqlQueryUrl,
 		type: 'get',
-		dataType: 'json',
-		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
-		crossDomain: true,
-		cache: false,
-		async: true,
-	}).done(function(result) {
+		dataType: 'jsonp',
+
+	}).done( function(output) {
+		var result = output.query.results.json.data.streets;
+
 		var index = -1;
-		$.each(result.data.streets, function(i, field) {
+		$.each(result, function(i, field) {
 			var f = field;
 			index = findIndex( field.id );
 
@@ -252,34 +271,73 @@ function loadTraffic(arr) {
 
 		});
 
+		return arr;
+
+	}).fail( function() {
+		// console.log( 'Loading Traffic error');
+	}).always( function() {
+
 	});
 
-	return arr;
 };
 // initial activation of data feed
 loadTraffic( transportation.traffic );
 
 // ------------------------------------------------------------------------
 function loadBus(arr) {
+	// grabs data via YQL to avoid
+	// cross-origin errors
 	// var jsonUrl = 'http://marcpous.com/oneseataway/sonarBus.php';
-	var jsonUrl = 'json/sonarBus.json';
+	var jsonUrl = 'http://kennethfrederick.com/sandbox/sonar-2013/json/sonarBus.json';
+	var yqlQuery = 'SELECT * FROM json WHERE url=\"' + jsonUrl + '\"';
+	var yqlQueryUrl = yqlBase + '?q=' + encodeURI(yqlQuery) + '&format=json';
 
 	$.ajax({
-		url: jsonUrl,
+		url: yqlQueryUrl,
 		type: 'get',
-		dataType: 'json',
-		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
-		crossDomain: true,
-		cache: false,
-		async: true,
-	}).done(function(result) {
-		$.each(result.sonar, function(i, field) {
+		dataType: 'jsonp',
 
+	}).done( function(output) {
+		var result = output.query.results.json.sonar
+
+		$.each(result, function(i, field) {
 			try {
 				// sometimes field.data.tmb is undefined
 				// format the data into a way
 				// that i can handle
 				var busses = field.data.tmb.buses.split(' - ');
+
+				// parse and sort times
+				var times = [];
+				var current;
+				for( var j=0; j<field.data.tmb.times.length; j++ ) {
+					var t = field.data.tmb.times[j];
+
+					// parse time from a string '1 min' -> Integer 1
+					var time = ( t.time != 'imminent' ) 
+						? parseInt( t.time.split(' min')[0] )
+						: 0;
+
+					// get current bus number
+					current = ( time === 0 ) 
+						? t.bus
+						: null;
+
+					// get all times of all busses
+					times.push({
+						bus: t.bus,
+						time: time
+					});
+				}
+
+				// sort busses by time
+				// TODO: make sure this is actually working
+				times.sortBy('time');
+
+				// get size of bus station
+				// Pal = (Palo) = a pole
+				// Marquesina = a shelter
+				var size = ( field.data.tmb.furniture === 'Pal') ? 2 : 1;
 
 				arr.push({
 					// flush out the entries
@@ -289,7 +347,11 @@ function loadBus(arr) {
 					total:		busses.length,
 					lat:		field.data.tmb.lat,
 					lon:		field.data.tmb.lon,
-					time:		field.data.tmb.times // list of times for busses [].bus = number [].time = when 
+					time:		times, // array of times for busses [].bus = number [].time = when 
+					current:	current, // the current bus arriving
+
+					size:		size,
+					sizeMax:	2
 				});
 			}
 			catch( err ) {
@@ -297,10 +359,15 @@ function loadBus(arr) {
 			}
 
 		});
+
+		return arr;
+
+	}).fail( function() {
+		// console.log( 'Loading Bus error');
+	}).always( function() {
+
 	});
 
-
-	return arr;
 };
 // initial activation of data feed
 loadBus( transportation.bus );
@@ -455,3 +522,44 @@ function clone(src) {
 
 };
 
+// ------------------------------------------------------------------------
+// http://stackoverflow.com/questions/1129216/sorting-objects-in-an-array-by-a-field-value-in-javascript
+function dynamicSortMultiple(attr) {
+	/*
+	 * save the arguments object as it will be overwritten
+	 * note that arguments object is an array-like object
+	 * consisting of the names of the properties to sort by
+	 */
+	var props = arguments;
+	return function (obj1, obj2) {
+		var i = 0, result = 0, numberOfProperties = props.length;
+		/* try getting a different result from 0 (equal)
+		 * as long as we have extra properties to compare
+		 */
+		while(result === 0 && i < numberOfProperties) {
+			result = dynamicSort(props[i])(obj1, obj2);
+			i++;
+		}
+		return result;
+	}
+};
+function dynamicSort(property) {
+    var sortOrder = 1;
+    if(property[0] === '-') {
+        sortOrder = -1;
+        property = property.substr(1, property.length - 1);
+    }
+    return function (a,b) {
+        var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+        return result * sortOrder;
+    }
+};
+Object.defineProperty(Array.prototype, 'sortBy', {
+	enumerable: false,
+	writable: true,
+	value: function() {
+		return this.sort(
+			dynamicSortMultiple.apply( null, arguments )
+		);
+	}
+});

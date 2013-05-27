@@ -1,4 +1,4 @@
-console.log( 'Sónar Visualization - smarNodes.js' );
+console.log( 'Sónar Visualization - smartNodes.js' );
 /**
  *	Sónar Visualization
  *
@@ -215,7 +215,7 @@ function Setup() {
 		]
 	);
 	bicing.setStyle({
-		fillColor: colors.bass[0],
+		fillColor: colors.bass[1],
 		opacity: 0.8
 	});
 
@@ -243,16 +243,51 @@ function Setup() {
 			{
 				radius1: ['current','max'],
 				radius2: ['future','max']
-			},
-			{
-				label: ['current','']
-				// label: 'current'
 			}
+			// {
+			// 	label: ['current','']
+			// 	// label: 'current'
+			// }
 		]
 	);
 	traffic.setStyle({
 		fillColor: colors.mid[1],
-		opacity: 0.8
+		opacity: 0.9
+	});
+
+
+	// Bus
+	busNodeGroup = grid.clone();
+	busNodeGroup.name = 'Bus';
+
+	// create the data structures
+	bus = new DataHandler( 
+		busNodeGroup,
+		transportation.bus, 
+		{
+			id:			[],	// keep track of what ids are represented by this node (array)
+			current:	0,	// the current bus arriving
+			radius: 	[],	// two radii for pulsing between (pulsing optional)
+			size:		0,
+			sizeMax:	2
+		},
+		[
+			'time',
+			'current',
+			'size',
+			'sizeMax',
+			{
+				radius1: ['size','sizeMax'],
+				radius2: ['size','sizeMax'],
+			},
+			{
+				label: 'current'
+			}
+		]
+	);
+	bus.setStyle({
+		fillColor: colors.treble[1],
+		opacity: 0.9
 	});
 
 
@@ -349,6 +384,7 @@ function Update(event) {
 	// if( parseInt(event.time) % 3 === 1 ) {
 		bicing.draw( event );
 		traffic.draw( event );
+		bus.draw( event );
 	// }
 };
 
@@ -418,6 +454,34 @@ var UpdateTraffic = setInterval(
 	(6*1000)
 );
 
+// Bus
+// update every 16 minutes (16*60)
+var UpdateBus = setInterval(
+	function() {
+		if( !bus.isUpdated() && bus.isLoaded() ) {
+			// console.log( 'UpdateTraffic', bTrafficUpdate );
+
+			if( bOffline ) {
+				// fake values for offline & testing only
+				for( var i=0; i<transportation.bus.length; i++ ) {
+					var b = transportation.bus[i];
+					b.current = Calculation.randomInt( 1,7 );
+				}			
+			}
+			else {
+				// get the new json feed
+				// loadBus( transportation.bus );
+			}
+
+			// push the data into the group
+			bus.refresh( transportation.bus );
+			bus.isUpdated(true);
+
+			console.log( 'Updated Bus', bus.isUpdated() );
+		}
+	},
+	(12*1000)
+);
 
 
 // ------------------------------------------------------------------------
@@ -441,6 +505,7 @@ function init() {
 	 */
 	bicing.init();
 	traffic.init();
+	bus.init();
 
 };
 
@@ -585,6 +650,7 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 
 						// update node data
 						node.data = d;
+
 					}
 
 				} // end if( node...
@@ -629,11 +695,12 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 						node.data.label = label;
 					}
 				}
+			
 			}
 
 			// data loaded successfully
 			bLoad = true;
-			console.log( _group.name + ' loaded! ' + bLoad );
+			// console.log( _group.name + ' loaded! ' + bLoad );
 		}
 
 	};
@@ -818,7 +885,7 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 			}
 		}
 
-		// return _group;
+		return _group;
 	};
 
 
