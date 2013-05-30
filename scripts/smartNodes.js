@@ -31,7 +31,6 @@ var ft = f.FTime;
 var margins;
 var colors;
 var sizing;
-var lonThreshold, latThreshold;
 
 var bChangeFlag = false;
 
@@ -44,6 +43,14 @@ var bChangeFlag = false;
 var grid;
 var gridSize;
 var nodePoints = [];
+
+
+/*
+ *
+ *	Triangulation
+ *
+ */
+var triangles;
 
 
 /*
@@ -66,11 +73,106 @@ var bicingNodeGroup;
 var traffic;
 var trafficNodeGroup;
 
+// Bus
+var bus;
+var busNodeGroup;
+
 
 /*
- *	debug
+ *	Social
  */
-var bDebug = false;
+
+// Twitter
+var twitter;
+var twitterNodeGroup;
+
+// Foursquare
+var foursquare;
+var foursquareNodeGroup;
+
+
+/*
+ *	Interface
+ */
+var InterfaceValues = function() {
+	//
+	// datapoints
+	//
+
+	// transportation
+	this.bBicing		= true;
+	this.bTraffic		= true;
+	this.bBus			= false;
+
+	// weather
+	this.bTemperature	= false;
+	this.bHumidity		= false;
+
+	// social
+	this.bTwitter		= true;
+	this.bFoursquare	= false;
+	this.bInstagram		= false;
+
+
+	//
+	// colors
+	//
+	this.color_black 	= [  28,  28,  28, 1.0 ];
+
+	this.color_red 		= [ 226,   2,  45, 1.0 ];
+	this.color_blue 	= [   0, 158, 226, 1.0 ];
+	this.color_yellow	= [ 247, 199,   0, 1.0 ];
+	this.color_green	= [   0, 255, 178, 1.0 ];
+
+	this.color_bass0	= [  89,   0, 255, 0.2 ];
+	this.color_bass1	= [ 178,   0,  89, 0.2 ];
+	this.color_bass2	= [ 225,   0,  46, 0.2 ];
+
+	this.color_mid0		= [ 255, 178,   0, 0.2 ];
+	this.color_mid1		= [ 178,  89,   0, 0.2 ];
+	this.color_mid2		= [ 178, 255,   0, 0.2 ];
+
+	this.color_treble0	= [   0, 255, 178, 0.2 ];
+	this.color_treble1	= [   0, 255, 255, 0.2 ];
+	this.color_treble2	= [   0, 178, 255, 0.2 ];
+
+	this.colors = {
+		// convert to Paper.js compatible colors
+		black: new Color( this.color_black[0]/255, this.color_black[1]/255, this.color_black[2]/255, this.color_black[3] ),
+
+		red: new Color( this.color_red[0]/255, this.color_red[1]/255, this.color_red[2]/255, this.color_red[3] ),
+		blue: new Color( this.color_blue[0]/255, this.color_blue[1]/255, this.color_blue[2]/255, this.color_blue[3] ),
+		yellow: new Color( this.color_yellow[0]/255, this.color_yellow[1]/255, this.color_yellow[2]/255, this.color_yellow[3] ),
+		green: new Color( this.color_green[0]/255, this.color_green[1]/255, this.color_green[2]/255, this.color_green[3] ),
+
+		bass: [
+			new Color( this.color_bass0[0]/255, this.color_bass0[1]/255, this.color_bass0[2]/255, this.color_bass0[3] ),
+			new Color( this.color_bass1[0]/255, this.color_bass1[1]/255, this.color_bass1[2]/255, this.color_bass1[3] ),
+			new Color( this.color_bass2[0]/255, this.color_bass2[1]/255, this.color_bass2[2]/255, this.color_bass2[3] ),
+		],
+		mid: [
+			new Color( this.color_mid0[0]/255, this.color_mid0[1]/255, this.color_mid0[2]/255, this.color_mid0[3] ),
+			new Color( this.color_mid1[0]/255, this.color_mid1[1]/255, this.color_mid1[2]/255, this.color_mid1[3] ),
+			new Color( this.color_mid2[0]/255, this.color_mid2[1]/255, this.color_mid2[2]/255, this.color_mid2[3] ),
+		],
+		treble: [
+			new Color( this.color_treble0[0]/255, this.color_treble0[1]/255, this.color_treble0[2]/255, this.color_treble0[3] ),
+			new Color( this.color_treble1[0]/255, this.color_treble1[1]/255, this.color_treble1[2]/255, this.color_treble1[3] ),
+			new Color( this.color_treble2[0]/255, this.color_treble2[1]/255, this.color_treble2[2]/255, this.color_treble2[3] ),
+		],
+	};
+
+
+	//
+	// debug
+	//
+	this.bVerbose = true;
+	this.bDebug = false;
+};
+// instantiate values
+var values = new InterfaceValues();
+
+
 var debugPath;
 
 
@@ -93,29 +195,7 @@ function Setup() {
 	};
 
 	// colors
-	colors = {
-		black:	new Color( 0.11, 0.11, 0.11 ),
-
-		red:	new Color( 0.89, 0.01, 0.18 ),
-		blue:	new Color( 0,	 0.62, 0.89 ),
-		yellow:	new Color( 0.97, 0.78, 0 ),
-
-		bass: [
-			new Color(  89/255,   0/255, 255/255, 0.2 ),
-			new Color( 178/255,   0/255,  89/255, 0.2 ),
-			new Color( 225/255,   0/255,  46/255, 0.2 )
-		],
-		mid: [
-			new Color( 255/255, 178/255,   0/255, 0.2 ),
-			new Color( 178/255,  89/255,   0/255, 0.2 ),
-			new Color( 178/255, 255/255,   0/255, 0.2 )
-		],
-		treble: [
-			new Color(   0/255, 255/255, 178/255, 0.2 ),
-			new Color(   0/255, 255/255, 255/255, 0.2 ),
-			new Color(   0/255, 178/255, 255/255, 0.2 )
-		]
-	};
+	colors = values.colors;
 
 	// sizes
 	// in order for the grid to work
@@ -135,16 +215,6 @@ function Setup() {
 		max: gridSize.height,
 		snap: gridSize.height/3
 	}
-
-	// set the min and max longitude & latitude values 
-	lonThreshold = {
-		min: 2.111615,
-		max: 2.219377
-	};
-	latThreshold = {
-		min: 41.357067,
-		max: 41.450882
-	};
 
 	// pulsing stepper
 	pulse = new ft.FStepper();
@@ -171,7 +241,7 @@ function Setup() {
 				nodePoints.push( pt );
 
 				var node = new Path.Circle( pt, sizing.min*0.5 );
-				node.fillColor = colors.black;
+				node.fillColor = values.colors.black;
 				node.strokeColor = 'white';
 
 				// add to grid
@@ -180,6 +250,33 @@ function Setup() {
 			index++;
 		}
 	}
+
+
+	/*
+	 *
+	 *	create triangulation
+	 *
+	 */
+	var triangulate = new Triangulate( nodePoints )	;
+	triangles = new Group();
+
+	// draw faces
+	for( var i=0; i<triangulate.length; i++ ) {
+		var triangle = triangulate[i];
+
+		// draw triangle
+		face = new Path();
+		face.name = 'triangle';
+		face.add( triangle.p1 );
+		face.add( triangle.p2 );
+		face.add( triangle.p3 );
+		face.closed = true;
+
+		face.fillColor = new Color( 1.0, 0.0, 0.0 );
+
+		triangles.appendTop( face );
+	}
+
 
 
 	//
@@ -215,7 +312,7 @@ function Setup() {
 		]
 	);
 	bicing.setStyle({
-		fillColor: colors.bass[1],
+		fillColor: values.colors.bass[1],
 		opacity: 0.8
 	});
 
@@ -233,7 +330,7 @@ function Setup() {
 			time:		0,	// what time is the traffic happening
 			current:	0,	// the current traffic situation
 			future:		0,	// the predicted traffic situation
-			radius: 	[],	// two radii for pulsing between (pulsing optional)
+			radius:	[],	// two radii for pulsing between (pulsing optional)
 			max:		7
 		},
 		[
@@ -245,14 +342,14 @@ function Setup() {
 				radius2: ['future','max']
 			}
 			// {
-			// 	label: ['current','']
-			// 	// label: 'current'
-			// }
+			//	label: ['current','']
+			//	// label: 'current'
+			//}
 		]
 	);
 	traffic.setStyle({
-		fillColor: colors.mid[1],
-		opacity: 0.9
+		fillColor: values.colors.mid[1],
+		opacity: 0.8
 	});
 
 
@@ -267,7 +364,7 @@ function Setup() {
 		{
 			id:			[],	// keep track of what ids are represented by this node (array)
 			current:	0,	// the current bus arriving
-			radius: 	[],	// two radii for pulsing between (pulsing optional)
+			radius:	[],	// two radii for pulsing between (pulsing optional)
 			size:		0,
 			sizeMax:	2
 		},
@@ -286,10 +383,71 @@ function Setup() {
 		]
 	);
 	bus.setStyle({
-		fillColor: colors.treble[1],
-		opacity: 0.9
+		fillColor: values.colors.treble[1],
+		opacity: 0.8
 	});
 
+
+	//
+	//	Social
+	//
+
+	// Twitter
+	twitterNodeGroup = triangles.clone();
+	twitterNodeGroup.name = 'Twitter';
+
+	// create the data structures
+	twitter = new DataHandler(
+		twitterNodeGroup,
+		social.twitter,
+		{
+			name:		'',
+			id:			'',
+			location:	'',
+			text:		'',
+		},
+		[
+		]
+	);
+	twitter.setStyle({
+		fillColor: values.colors.treble[0],
+		opacity: 0.8
+	});
+
+
+	// Foursquare
+	// foursquareNodeGroup = grid.clone();
+	// foursquareNodeGroup.name = 'Foursquare';
+
+	// // create the data structures
+	// foursquare = new DataHandler( 
+	//	foursquareNodeGroup,
+	//	social.foursquare,
+	//	{
+	//		id:			[],	// keep track of what ids are represented by this node (array)
+	//		name:		'',	// keep track of the name of the user
+	//		location:	'', // keep track of the location of the user
+	//		img:		'', // keep track of the user's avatar
+	//		raster:		null,
+	//		text:		'', // keep track of the text the user enters
+
+	//		size:		1,
+	//		sizeMax:	8
+
+	//	},
+	//	[
+	//		{
+	//			radius1: ['size','sizeMax'],
+	//		}
+	//		// {
+	//		//	label: ['name', 'text']
+	//		//}
+	//	]
+	// );
+	// foursquare.setStyle({
+	//	fillColor: new Color( 0.0, 1.0, 0.7 ),
+	//	opacity: 0.9
+	//});
 
 
 	// draw the grid lines
@@ -334,6 +492,18 @@ function Setup() {
 	grid.opacity = 0.2;
 	grid.bringToFront();
 
+
+
+	/*
+	 *
+	 *	Cleanup
+	 *
+	 */
+	// we've cloned triangles where 
+	// it needs to be, so let's 
+	// clean out the group
+	triangles.remove();
+
 };
 
 
@@ -349,6 +519,14 @@ function Update(event) {
 
 	/*
 	 *
+	 *	Values
+	 *
+	 */
+	colors = values.colors;
+
+
+	/*
+	 *
 	 *	Stepper Syncing
 	 *
 	 */
@@ -356,12 +534,14 @@ function Update(event) {
 	if( pulse.isDone() ) {
 		pulse.toggle();
 	}
-	if( bDebug ) {
+	if( values.bDebug ) {
 		debugPath = new TimerClock( view.bounds.center, 100, pulse.delta );
 		debugPath.fillColor = new Color( 0.0, 1.0, 0.7 );
 		debugPath.opacity = 0.618;
 	}
-
+	else {
+		if( debugPath != undefined ) debugPath.remove();
+	}
 
 	/*
 	 *
@@ -381,11 +561,86 @@ function Update(event) {
 	 *	Update Visualizations
 	 *
 	 */
+
+	//
+	// Transportation
+	//
+
 	// if( parseInt(event.time) % 3 === 1 ) {
-		bicing.draw( event );
-		traffic.draw( event );
-		bus.draw( event );
-	// }
+		bicing.draw( event, values.bBicing );
+		traffic.draw( event, values.bTraffic );
+		// bus.draw( event, values.bBus );
+
+		//
+		// Social
+		//
+		twitter.draw( event, values.bTwitter,
+			function( event, node, bUpdate ) {
+				// if( values.bVerbose ) console.log( 'TwITTER', node.name );
+				// if( values.bVerbose ) console.log( 'TwITTER', node.position );
+
+				var data = node.data;
+
+
+				// var t = new PointText( node.position );
+				// t.content = node.data.current.text;
+				// t.fillColor = new Color( 0.0, 1.0, 0.7 );
+
+				// var t = new Path.Circle(
+				// 	node.position,
+				// 	10
+				// );
+				// t.fillColor = new Color( Math.random(), Math.random(), Math.random() );
+
+				node.fillColor = values.colors.treble[0];
+				// node.opacity = 0.2;
+
+			}
+		);
+
+//		foursquare.draw( event, values.bFoursquare, 
+//			function( event, node, bUpdate  ) {
+//				var data = node.data;
+//				var animator = data.animator;
+//				var pos = node.position;
+
+//				// check if an update has been made
+//				if( bUpdate ) {
+//					// kick off animator stepper
+//					animator.setDelta( 0.0 );
+//					// animator.stepIn();
+//					animator.toggle();
+//				}
+//				else {
+//					if( animator.delta < 0.0 || animator.delta > 1.0 ) {
+//						// no update, just pulse
+//						// TODO: fix pulse flickering
+//						// TODO: make a generic function
+//					}
+//				} // end if( bUpdate...
+
+
+//				if( !animator.isDone() ) {
+//					// the animator stepper is still running
+//					// so let's be sure to animate
+//					// var start = data.previous.radius[0];
+//					// var stop = data.current.radius[0];
+//					// node.bounds.size = new Size( 
+//					//	Calculation.lerp( start, stop, animator.delta ),
+//					//	Calculation.lerp( start, stop, animator.delta )
+//					// );
+//				}
+//				else {
+//					animator.stop();
+//					// the updates have been animated
+//					// prepare the data to allow new info
+//					// data.clear = false;
+//				} // end if( !animator...
+
+//			}
+//		);
+
+	//} // end if( parseInt(event.time...
 };
 
 
@@ -394,6 +649,11 @@ function Update(event) {
  *	Intervals to refresh data
  *
  */
+
+//
+// Transportation
+//
+
 // Bicing
 // update every 5 seconds
 var UpdateBicing = setInterval(
@@ -416,7 +676,7 @@ var UpdateBicing = setInterval(
 			bicing.refresh( transportation.bicing );
 			bicing.isUpdated(true);
 
-			console.log( 'Updated Bicing', bicing.isUpdated() );
+			if( values.bVerbose ) console.log( 'Updated Bicing', bicing.isUpdated() );
 		}
 	},
 	(9*1000)
@@ -427,7 +687,7 @@ var UpdateBicing = setInterval(
 var UpdateTraffic = setInterval(
 	function() {
 		if( !traffic.isUpdated() && traffic.isLoaded() ) {
-			// console.log( 'UpdateTraffic', bTrafficUpdate );
+			// if( values.bVerbose ) console.log( 'UpdateTraffic', bTrafficUpdate );
 
 			if( bOffline ) {
 				// fake values for offline & testing only
@@ -448,7 +708,7 @@ var UpdateTraffic = setInterval(
 			traffic.refresh( transportation.traffic );
 			traffic.isUpdated(true);
 
-			console.log( 'Updated Traffic', traffic.isUpdated() );
+			if( values.bVerbose ) console.log( 'Updated Traffic', traffic.isUpdated() );
 		}
 	},
 	(6*1000)
@@ -456,32 +716,86 @@ var UpdateTraffic = setInterval(
 
 // Bus
 // update every 16 minutes (16*60)
-var UpdateBus = setInterval(
-	function() {
-		if( !bus.isUpdated() && bus.isLoaded() ) {
-			// console.log( 'UpdateTraffic', bTrafficUpdate );
+// var UpdateBus = setInterval(
+//	function() {
+//		if( !bus.isUpdated() && bus.isLoaded() ) {
+//			// if( values.bVerbose ) console.log( 'UpdateTraffic', bTrafficUpdate );
 
-			if( bOffline ) {
-				// fake values for offline & testing only
-				for( var i=0; i<transportation.bus.length; i++ ) {
-					var b = transportation.bus[i];
-					b.current = Calculation.randomInt( 1,7 );
-				}			
-			}
-			else {
-				// get the new json feed
-				// loadBus( transportation.bus );
-			}
+//			if( bOffline ) {
+//				// fake values for offline & testing only
+//				for( var i=0; i<transportation.bus.length; i++ ) {
+//					var b = transportation.bus[i];
+//					b.current = Calculation.randomInt( 1,7 );
+//				}			
+//			}
+//			else {
+//				// get the new json feed
+//				// loadBus( transportation.bus );
+//			}
+
+//			// push the data into the group
+//			bus.refresh( transportation.bus );
+//			bus.isUpdated(true);
+
+//			if( values.bVerbose ) console.log( 'Updated Bus', bus.isUpdated() );
+//		}
+//	},
+//	(12*1000)
+// );
+
+
+//
+// Social
+//
+var UpdateTwitter = setInterval(
+	function() {
+		if( !twitter.isUpdated() && twitter.isLoaded() ) {
+			// if( values.bVerbose ) console.log( 'UpdateTraffic', bTrafficUpdate );
+
+			loadTwitter( social.twitter );
 
 			// push the data into the group
-			bus.refresh( transportation.bus );
-			bus.isUpdated(true);
+			twitter.refresh( social.twitter );
+			twitter.isUpdated(true);
 
-			console.log( 'Updated Bus', bus.isUpdated() );
+			if( values.bVerbose ) console.log( 'Updated Twitter', twitter.isUpdated() );
 		}
 	},
-	(12*1000)
+	(60*1000)
 );
+
+// var UpdateFoursquare = setInterval(
+//	function() {
+//		if( !foursquare.isUpdated() && foursquare.isLoaded() ) {
+//			// if( values.bVerbose ) console.log( 'UpdateTraffic', bTrafficUpdate );
+
+//			if( bOffline ) {
+//				// fake values for offline & testing only
+//				for( var i=0; i<social.foursquare.length; i++ ) {
+//					var f = social.foursquare[i];
+					
+//					f.name = 'Testy McTesterson';
+//					f.location = 'Am Arsch der Welt';
+//					f.lat = Calculation.random( latThreshold.min, latThreshold.max );
+//					f.lon = Calculation.random( lonThreshold.min, lonThreshold.max );
+//					f.img = 'http://a0.twimg.com/profile_images/3056041095/2bf137201d095af9feff271a168ca7a1_normal.png';
+//				}			
+//			}
+//			else {
+//				// get the new json feed
+//				// loadFoursquare( social.foursquare );
+//			}
+
+//			// push the data into the group
+//			foursquare.refresh( social.foursquare );
+//			foursquare.isUpdated(true);
+
+//			if( values.bVerbose ) console.log( 'Updated FourSquare', foursquare.isUpdated() );
+//		}
+//	},
+//	(12*1000)
+// );
+
 
 
 // ------------------------------------------------------------------------
@@ -505,7 +819,16 @@ function init() {
 	 */
 	bicing.init();
 	traffic.init();
-	bus.init();
+	// bus.init();
+
+
+	/*
+	 *
+	 *	Social
+	 *
+	 */
+	twitter.init();
+	// foursquare.init();
 
 };
 
@@ -556,8 +879,12 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 	 *
 	 *	@param {Array} dataKeys
 	 *					the keys of the dataArray within the nodes which should be updated
+	 *	@param {Function} func
+	 *					a function/callback which can be defined
+	 *					for "custom" node updating operations
+	 *					passed variables include: event, node, bLoad
 	 */
-	function dataInit( dataKeys ) {
+	function dataInit( dataKeys, func ) {
 		// if data keys are added during init
 		setDataKeys( dataKeys );
 
@@ -566,16 +893,9 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 				// incoming data
 				var data = _dataArr[i];
 
-				// normalize longitude & latitude values
-				var x = Calculation.norm( data.lon, lonThreshold.min, lonThreshold.max );
-				var y = Calculation.norm( data.lat, latThreshold.min, latThreshold.max );
-
-				// create local point
-				var pt = new Point( x*view.bounds.width, y*view.bounds.height );
-
-				// find the node within the grid
-				// that is closest to the data's local point
-				var node = findClosestItem( _group, pt );
+				// get the node that corresponds
+				// to the given data
+				var node = getNode( data );
 
 				if( node != undefined ) {
 					// since we now node which represents
@@ -599,8 +919,12 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 						// this id hasn't been logged yet
 						// so push it's data into the node
 						for (var key in _dataStruct ) {
-							if( typeof current[ key ] === 'Array' ) {
+							if( typeof current[ key ] === 'array' || 
+								typeof current[ key ] === 'object' ) {
 								current[ key ].push( data[ key ] );
+							}
+							else if( typeof current[ key ] === 'string' ) {
+								current[ key ] = data[ key ];
 							}
 							else {
 								current[ key ] += data[ key ];
@@ -609,7 +933,7 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 
 						// determine radius of node
 						current.radius = calcRadii( current );
-					// }
+					//}
 
 					// ...and previous = the data just "replaced"
 					// with the latest data
@@ -618,6 +942,7 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 					// if the ids length is 1 then
 					// we give the node some initial properties
 					if( current.id.length === 1 ) {
+						// is this necessary?
 					}
 
 					// push all of our date into one master data source
@@ -632,12 +957,12 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 					// add data within node
 					node.data = d;
 
-					// name the node so we can find it
+					// name the node so we can find it later
 					node.name = '__' + node.id;
 					node.style = _style;
 					// node.blendMode = 'screen';
 
-					// otherwise let's check if a dot exists
+					// ...otherwise let's check if a dot exists
 					// and modify it's attributes
 					if( current.id.length >= 1 ) {
 						var pos = node.position;
@@ -646,11 +971,10 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 							current.radius[0]
 						);
 						node.position = pos;
-						// node.fillColor = colors.bass[0].lerp( colors.bass[1], 1/current.id.length );
+						// node.fillColor = values.colors.bass[0].lerp( values.colors.bass[1], 1/current.id.length );
 
 						// update node data
 						node.data = d;
-
 					}
 
 				} // end if( node...
@@ -658,6 +982,9 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 			} // end for
 
 
+			// iterate through the entire group
+			// as a group, and add animator (FStepper)
+			// and labels (MarkerFade) as necessary
 			for( var i=0; i<_group.children.length; i++ ) {
 				var node = _group.children[i];
 
@@ -671,7 +998,6 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 
 					// add animator to internal data
 					node.data.animator = animator;
-
 
 					// create type
 					if( bLabeled ) {
@@ -693,14 +1019,21 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 
 						// add label to internal data
 						node.data.label = label;
+
 					}
-				}
+
+					// execute callback function (if defined)
+					if( func != undefined ) {
+						func( event, node, bLoad );
+					}
+					
+				} // end if( node.data.current...
 			
 			}
 
 			// data loaded successfully
 			bLoad = true;
-			// console.log( _group.name + ' loaded! ' + bLoad );
+			// if( values.bVerbose ) console.log( _group.name + ' loaded! ' + bLoad );
 		}
 
 	};
@@ -721,9 +1054,13 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 		_dataKeys = (updatedDataKeys != undefined) ? updatedDataKeys : _dataKeys;
 
 		for( var i=0; i<_dataArr.length; i++ ) {
-			var node = _group.children[ _dataArr[i].node ];
+			// var node = _group.children[ _dataArr[i].node ];
 			// var node = f.findByName( _group.children, ('__' + _dataArr[i].node) );
-			var node = _group.children[ ('__' + _dataArr[i].node) ];
+			// var node = _group.children[ ('__' + _dataArr[i].node) ];
+
+			// get the node that corresponds
+			// to the given data
+			var node = getNode( _dataArr[i] );
 
 			try {
 				var data = node.data;
@@ -758,12 +1095,12 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 				} // end if( data.current...
 			} 
 			catch(err) {
-				if( bDebug ) console.log( 'refresh() ERROR: ' + node + ': ' + err );
+				if( values.bVerbose ) console.log( _group.name + '.refresh() ERROR: ' + node + ': ' + err );
 			}
 
 		} // end for
 
-		// console.log( _group.name + ' dataRefresh() ' + bUpdate );
+		// if( values.bVerbose ) console.log( _group.name + ' dataRefresh() ' + bUpdate );
 	};
 
 	/**
@@ -772,107 +1109,46 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 	 *
 	 *	@param {Event} event
 	 *					an event item to sync the animations
+	 *	@param {boolean} bDraw
+	 *					toggles the display/drawing of the nodes
+	 *	@param {Function} func
+	 *					a function/callback which can be defined
+	 *					for "custom" node updating operations
+	 *					passed variables include: event, node, bUpdate
 	 */
-	 function nodeUpdate( event ) {
+	 function nodeUpdate( event, bDraw, func ) {
 		if( bLoad ) {
+
 			for( var i=0; i<_group.children.length; i++ ) {
+				// properties
 				var node = _group.children[i];
-				var data = node.data;
 				var pos = node.position;
 
 				// check if the node actually
-				// contains data
-				if( data.current != null ) {
+				// contains data, they're the only
+				// ones we actually care about
+				if( node.data.current != null && bDraw ) {
 					// keep animator in sync
-					var animator = data.animator;
+					var animator = node.data.animator;
 					animator.update( event.time );
 
-					// keep label in sync
-					var label;
-					if( data.label != undefined ) {
-						label = data.label;
-						label.update( event );
-					}
-
-					// check if an update has been made
-					if( bUpdate ) {
-						// kick off animator stepper
-						animator.setDelta( 0.0 );
-						// animator.stepIn();
-						animator.toggle();
-
-						if( data.label != null ) {
-							var content;
-							var bLabelChange = false;
-							if( typeof labelKey === 'object' ) {
-								bLabelChange = (data.current[ labelKey[0] ] != data.previous[ labelKey[0] ])
-									? true
-									: false;
-								content = [ data.current[ labelKey[0] ], labelKey[1] ];
-							}
-							else {
-								bLabelChange = (data.current[ labelKey ] != data.previous[ labelKey ])
-									? true
-									: false;
-								content = data.current[ labelKey ];
-							}
-
-							// did the data change?
-							// show the label
-							if( bLabelChange ) {
-								// update label content
-								label.setContent( content );
-	
-								// kick off label stepper
-								label.toggle();
-							}
-						}
+					// call the passed function with 
+					// "pre-" passed variables
+					if( func != undefined ) {
+						func( event, node, bUpdate );
 					}
 					else {
-						if( animator.delta < 0.0 || animator.delta > 1.0 ) {
-							// no update, just pulse
-							// TODO: fix pulse flickering
-							// var start = data.current.radius[0]
-							// var stop = data.current.radius[1]
-							// node.bounds.size = new Size( 
-							// 	Calculation.lerp( start, stop, pulse.delta ),
-							// 	Calculation.lerp( start, stop, pulse.delta )
-							// );
-						}
+						nodeUpdateDefault( event, node );
 					}
-
-					if( !animator.isDone() ) {
-						// the animator stepper is still running
-						// so let's be sure to animate
-						var start = data.previous.radius[0];
-						var stop = data.current.radius[0];
-						node.bounds.size = new Size( 
-							Calculation.lerp( start, stop, animator.delta ),
-							Calculation.lerp( start, stop, animator.delta )
-						);
-					}
-					else {
-						animator.stop();
-						// the updates have been animated
-						// prepare the data to allow new info
-						// data.clear = false;
-					}
-
-					// console.log( 'label', label.isDone() );
-					if( data.label != null ) {
-						if( label.isDone() && data.clear ) {
-							label.toggle()
-							data.clear = false;
-						}
-					}
-
 
 				}
 				else {
 					// no data, no show
 					node.fillColor = null;
 					node.strokeColor = null;
-				}
+				}  // end if( node.data.current...
+
+				// always put the node back where it should be
 				node.position = pos;
 
 			} // end for
@@ -886,6 +1162,111 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 		}
 
 		return _group;
+	};
+
+
+	/**
+	 *
+	 *	Default method for updating Nodes
+	 *
+	 *	@param {Event} event
+	 *					an event item to sync the animations
+	 */
+	 function nodeUpdateDefault( event, node ) {
+		var data = node.data;
+		var animator = data.animator;
+		var pos = node.position;
+
+		// apply given style to node
+		node.style = _style;
+
+		// keep label in sync
+		var label;
+		if( data.label != undefined ) {
+			label = data.label;
+			label.update( event );
+		}
+
+		// check if an update has been made
+		if( bUpdate ) {
+			// kick off animator stepper
+			animator.setDelta( 0.0 );
+			// animator.stepIn();
+			animator.toggle();
+
+			if( data.label != null ) {
+				var content;
+				var bLabelChange = false;
+				if( typeof labelKey === 'object' ) {
+					bLabelChange = (data.current[ labelKey[0] ] != data.previous[ labelKey[0] ])
+						? true
+						: false;
+					content = [ data.current[ labelKey[0] ], labelKey[1] ];
+				}
+				else {
+					bLabelChange = (data.current[ labelKey ] != data.previous[ labelKey ])
+						? true
+						: false;
+					content = data.current[ labelKey ];
+				}
+
+				// did the data change?
+				// show the label
+				if( bLabelChange ) {
+					// update label content
+					label.setContent( content );
+
+					// kick off label stepper
+					label.toggle();
+				}
+			}
+		}
+		else {
+			if( animator.delta < 0.0 || animator.delta > 1.0 ) {
+				// no update, just pulse
+				// TODO: fix pulse flickering
+				// pulse();
+			}
+		} // end if( bUpdate...
+
+
+		if( !animator.isDone() ) {
+			// the animator stepper is still running
+			// so let's be sure to animate
+			var start = data.previous.radius[0];
+			var stop = data.current.radius[0];
+			node.bounds.size = new Size( 
+				Calculation.lerp( start, stop, animator.delta ),
+				Calculation.lerp( start, stop, animator.delta )
+			);
+		}
+		else {
+			animator.stop();
+			// the updates have been animated
+			// prepare the data to allow new info
+			// data.clear = false;
+		} // end if( !animator...
+
+
+		// if( values.bVerbose ) console.log( 'label', label.isDone() );
+		if( data.label != null ) {
+			if( label.isDone() && data.clear ) {
+				label.toggle()
+				data.clear = false;
+			}
+		} // end if( data.label...
+
+		return node;
+	};
+
+
+	function pulse( node ) {
+		// var start = data.current.radius[0]
+		// var stop = data.current.radius[1]
+		// node.bounds.size = new Size( 
+		//	Calculation.lerp( start, stop, pulse.delta ),
+		//	Calculation.lerp( start, stop, pulse.delta )
+		// );
 	};
 
 
@@ -912,11 +1293,41 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 			if( typeof _dataKeys[k] === 'object' && 
 				Object.keys( _dataKeys[k] )[0].indexOf('radius') !=-1 ) {
 				for( var key in _dataKeys[k] ) {
+
 					// based on the components listed
 					// in the arrays, determin the numerator
 					// and denominator for the radii
-					var num = nodeDataArray[ _dataKeys[k][ key ][0] ];
-					var den = nodeDataArray[ _dataKeys[k][ key ][1] ];
+					var num, den;
+
+					// if the value passed is a number
+					// i.e { radius: [1,8]} OR
+					// { radius: 0.5}
+					if( typeof _dataKeys[k][ key ] === 'number' ) {
+						// a conditional for handling an
+						// array versus single value
+						if( _dataKeys[k][ key ].length == undefined ) {
+							num = _dataKeys[k][ key ];
+							den = 1;
+						}
+						else {
+							num = _dataKeys[k][ key ][0];
+							den = _dataKeys[k][ key ][1];
+						}
+					}
+					// if the value passed is a string
+					// it MUST match one of the data points
+					// i.e. { radius: ['value','maxValue']}
+					else if( typeof _dataKeys[k][ key ] === 'string' ) {
+						num = nodeDataArray[ _dataKeys[k][ key ][0] ];
+						den = nodeDataArray[ _dataKeys[k][ key ][1] ];
+					}
+					// if nothing is passed
+					// then the size will be 100%
+					else {
+						num = 1;
+						den = 1;
+					}
+
 
 					// calculate the radius, this is a clamped value
 					// between the sizing.min and the sizing.max
@@ -932,8 +1343,10 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 					)*2;
 
 					// push into the radius data holder
-					arr.push(radius);
+					arr.push(radius);	
 				}
+
+
 			}
 
 		}
@@ -950,8 +1363,8 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 	 *	@example
 	 *		var style = {
 	 *			strokeColor: 'black',
- 	 *			dashArray: [4, 10],
- 	 *			strokeWidth: 4,
+	 *			dashArray: [4, 10],
+	 *			strokeWidth: 4,
 	 *			strokeCap: 'round'
 	 *		};
 	 */
@@ -990,6 +1403,26 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 	//
 	// Gets
 	//
+	/**
+	 *
+	 *	find the node based on the data properties
+	 *
+	 *	@param {Array} data
+	 *					the array of data
+	 */
+	function getNode( data ) {
+		// normalize longitude & latitude values
+		var x = Calculation.norm( data.lon, lonThreshold.min, lonThreshold.max );
+		var y = Calculation.norm( data.lat, latThreshold.min, latThreshold.max );
+
+		// create local point
+		var pt = new Point( x*view.bounds.width, y*view.bounds.height );
+
+		// find the node within the grid
+		// that is closest to the data's local point
+		return findClosestItem( _group, pt );
+	};
+
 	function getLoad() {
 		return bLoad;
 	};
@@ -1081,7 +1514,7 @@ var findClosestItem = function( searchGroup, searchPoint ) {
  *			the center point of the large text (above)
  *
  *	@example
- * 	var text = new Marker(
+ *	var text = new Marker(
  *		'Large',
  *		view.bounds.center
  *	);
@@ -1095,7 +1528,7 @@ var findClosestItem = function( searchGroup, searchPoint ) {
  *			the center point of the large text (above)
  *
  *	@example
- * 	var text = new Marker(
+ *	var text = new Marker(
  *		['Large', 'tiny'],
  *		view.bounds.center
  *	);
@@ -1224,7 +1657,7 @@ var Marker = function( content, point ) {
  *	@example
  *	var ft = frederickkPaper.FTime;
  *
- * 	var ttext = new MarkerFade(
+ *	var ttext = new MarkerFade(
  *		ft,
  *		'Large',
  *		view.bounds.center,
@@ -1253,7 +1686,7 @@ var Marker = function( content, point ) {
  *	@example
  *	var ft = frederickkPaper.FTime;
  *
- * 	var ttext = new MarkerFade(
+ *	var ttext = new MarkerFade(
  *		ft,
  *		['Large', 'tiny'],
  *		view.bounds.center,
@@ -1266,7 +1699,7 @@ var Marker = function( content, point ) {
  *	ttext.update(event);
  *
  */
- var MarkerFade = function( ft, content, point, fadeMillis, delayMillis ) {
+  var MarkerFade = function( ft, content, point, fadeMillis, delayMillis ) {
 	//
 	// Properties
 	//
@@ -1278,7 +1711,7 @@ var Marker = function( content, point ) {
 	var _timer = new ft.FStepper();
 	_timer.setMillis( delayMillis );
 
-	// the fade out time
+	// the fade in/out time
 	fadeMillis = (fadeMillis != undefined) ? fadeMillis : 0.5*1000;
 	var _fader = new ft.FStepper();
 	_fader.setMillis( fadeMillis ); // default: 1 second
@@ -1291,6 +1724,14 @@ var Marker = function( content, point ) {
 		// create the text
 		_marker = new Marker(content, point);
 
+		// start with the text faded out
+		_fader.stop();
+		_fader.setDelta( 0.01 );
+
+		// also start with timer at 0.0
+		_timer.stop();
+		_timer.setDelta( 0.01 );
+
 		// pass the timers to the data holder of _marker
 		_marker.path.data = {
 			timer: _timer,
@@ -1301,7 +1742,8 @@ var Marker = function( content, point ) {
 	};
 
 	function toggle() {
-		_timer.toggle();
+		_fader.toggle();
+		bFaderDone = false;
 	};
 
 
@@ -1313,26 +1755,38 @@ var Marker = function( content, point ) {
 	};
 
 	function setEvent(event) {
-		// handling the delay timer
+		// keep the timer and fader in sync
 		_timer.update( event.time );
-		// stop the delay timer and reset() it
-		if( _timer.isDone() ) {
-			_timer.stop();
-			_fader.toggle();
+		_fader.update( event.time );
+
+		// the text is faded in
+		// start the timer to keep 
+		// it on screen...
+		if( _fader.delta > 1.01 && !bFaderDone ) {
+			_fader.stop();
+			_fader.setDelta( 1.09 );
+
+			_timer.stepIn();
 		}
 
 		// handling the fader
-		_fader.update( event.time );
-		// stop the fader and reset() it
-		// if( _fader.delta < 0.0  || _fader.delta > 1.0 ) {
-		if( _fader.isDone() ) {
+		if( _fader.delta <= -0.01 ) {
 			_fader.stop();
-			if( _fader.delta < 0.0 ) _fader.setDelta( 0.0 );
-			if( _fader.delta > 1.0 ) _fader.setDelta( 1.0 );
+			_fader.setDelta( 0.0 );
+
 			bFaderDone = true;
 		}
-		else {
-			bFaderDone = false;
+		// else {
+		//	bFaderDone = false;
+		//}
+
+		// if the timer is done
+		// toggle the fader to begin fading out
+		if( _timer.delta > 1.01 ) {
+			_timer.stop();
+			_timer.setDelta( 0.0 );
+
+			_fader.toggle();
 		}
 
 		// adjust opacity of text
@@ -1396,7 +1850,7 @@ var Marker = function( content, point ) {
 var TimerClock = function( center, radius, time ) {
 	// clean out previous instances
 	// there has to be a better way to animate objects
-	// console.log( project.activeLayer.children.length );
+	// if( values.bVerbose ) console.log( project.activeLayer.children.length );
 	if( project.activeLayer.children['__TimerClock'] ) {
 		project.activeLayer.children['__TimerClock'].remove();
 	}

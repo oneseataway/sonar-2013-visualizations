@@ -92,7 +92,7 @@ function Setup() {
 		'1.0',
 		view.bounds.center,
 		500,
-		3000
+		1000
 	);
 	ttext.path.fillColor = colors.yellow;
 	ttext.toggle();
@@ -339,7 +339,7 @@ var Marker = function( content, point ) {
 	var _timer = new ft.FStepper();
 	_timer.setMillis( delayMillis );
 
-	// the fade out time
+	// the fade in/out time
 	fadeMillis = (fadeMillis != undefined) ? fadeMillis : 0.5*1000;
 	var _fader = new ft.FStepper();
 	_fader.setMillis( fadeMillis ); // default: 1 second
@@ -352,6 +352,14 @@ var Marker = function( content, point ) {
 		// create the text
 		_marker = new Marker(content, point);
 
+		// start with the text faded out
+		_fader.stop();
+		_fader.setDelta( 0.01 );
+
+		// also start with timer at 0.0
+		_timer.stop();
+		_timer.setDelta( 0.01 );
+
 		// pass the timers to the data holder of _marker
 		_marker.path.data = {
 			timer: _timer,
@@ -362,7 +370,8 @@ var Marker = function( content, point ) {
 	};
 
 	function toggle() {
-		_timer.toggle();
+		_fader.toggle();
+		bFaderDone = false;
 	};
 
 
@@ -374,26 +383,39 @@ var Marker = function( content, point ) {
 	};
 
 	function setEvent(event) {
-		// handling the delay timer
+		// keep the timer and fader in sync
 		_timer.update( event.time );
-		// stop the delay timer and reset() it
-		if( _timer.isDone() ) {
-			_timer.stop();
-			_fader.toggle();
+		_fader.update( event.time );
+
+		// the text is faded in
+		// start the timer to keep 
+		// it on screen...
+		if( _fader.delta > 1.0 && !bFaderDone ) {
+			_fader.stop();
+			_fader.setDelta( 0.99 );
+
+			_timer.stepIn();
 		}
 
 		// handling the fader
-		_fader.update( event.time );
-		// stop the fader and reset() it
-		// if( _fader.delta < 0.0  || _fader.delta > 1.0 ) {
-		if( _fader.isDone() ) {
+		if( _fader.delta <= 0.0 ) {
 			_fader.stop();
-			if( _fader.delta < 0.0 ) _fader.setDelta( 0.0 );
-			if( _fader.delta > 1.0 ) _fader.setDelta( 1.0 );
+			_fader.setDelta( 0.01 );
+
 			bFaderDone = true;
 		}
 		else {
 			bFaderDone = false;
+		}
+
+		// if the timer is done
+		// toggle the fader to begin fading out
+		if( _timer.delta > 1.0 ) {
+			_timer.stop();
+			_timer.setDelta( 0.01 );
+
+			console.log( 'timer done... fade out')
+			_fader.toggle();
 		}
 
 		// adjust opacity of text

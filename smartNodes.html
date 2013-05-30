@@ -26,20 +26,89 @@
 
 		
 		<!-- JAVASCRIPT -->
-		<script type="text/javascript" src="http://kennethfrederick.com/js/jquery/jquery.1.8.3.min.js"></script>
-		<script type="text/javascript" src="js/core.js"></script>
+		<script type="text/javascript" charset="UTF-8" src="http://kennethfrederick.com/js/jquery/jquery.1.8.3.min.js"></script>
+		<script type="text/javascript" charset="UTF-8" src="js/core.js" ></script>
 
 
 		<!-- LOAD PAPERJS -->
-		<script type="text/javascript" src="js/paper/paper.js"></script>
-
+		<script type="text/javascript" charset="UTF-8" src="js/paper/paper.js"></script>
 
 		<!-- LOAD PAPERJS LIBRARIES -->
-		<script type="text/javascript" src="js/frederickk/frederickkPaper.js"></script>
-		<script type="text/javascript" src="js/delaunay/Triangulate.js"></script>
+		<script type="text/javascript" charset="UTF-8" src="js/frederickk/frederickkPaper.js"></script>
+		<script type="text/javascript" charset="UTF-8" src="js/delaunay/Triangulate.js"></script>
 
 		<!-- LOAD PAPER SCRIPT -->
-		<script type="text/javascript" src="scripts/smartNodes.js"></script>
+		<script type="text/javascript" charset="UTF-8" src="scripts/smartNodes.js"></script>
+
+
+		<!-- ADDITIONAL JAVASCRIPT -->
+		<script type="text/javascript" charset="UTF-8" src="js/dat/dat.gui.min.js"></script>
+		<script type="text/javascript">
+			window.onload = function() {
+				// http://workshop.chromeexperiments.com/examples/gui/#1--Basic-Usage
+				var gui = new dat.GUI();
+
+				//
+				// data points
+				//
+
+				// transportation
+				var transportationF = gui.addFolder('Transportation');
+				transportationF.add(values, 'bBicing');
+				transportationF.add(values, 'bTraffic');
+				transportationF.add(values, 'bBus');
+
+				// weather
+				var weatherF = gui.addFolder('Weather');
+				weatherF.add(values, 'bTemperature');
+				weatherF.add(values, 'bHumidity');
+
+				// social
+				var socialF = gui.addFolder('Social');
+				socialF.add(values, 'bTwitter');
+				socialF.add(values, 'bFoursquare');
+				socialF.add(values, 'bInstagram');
+
+
+				//
+				// colors
+				//
+				var colorsF = gui.addFolder('Colors');
+				colorsF.addColor(values, 'color_black');
+
+				var primaryF = colorsF.addFolder('Primary');
+				primaryF.addColor(values, 'color_red');
+				primaryF.addColor(values, 'color_blue');
+				primaryF.addColor(values, 'color_yellow');
+				primaryF.addColor(values, 'color_green');
+
+				// bass
+				var bassF = colorsF.addFolder('Bass');
+				bassF.addColor(values, 'color_bass0');
+				bassF.addColor(values, 'color_bass1');
+				bassF.addColor(values, 'color_bass2');
+
+				// mid
+				var midF = colorsF.addFolder('Mid');
+				midF.addColor(values, 'color_mid0');
+				midF.addColor(values, 'color_mid1');
+				midF.addColor(values, 'color_mid2');
+
+				// treble
+				var trebleF = colorsF.addFolder('Treble');
+				trebleF.addColor(values, 'color_treble0');
+				trebleF.addColor(values, 'color_treble1');
+				trebleF.addColor(values, 'color_treble2');
+
+
+				//
+				// debug
+				//
+				gui.add(values, 'bVerbose');
+				gui.add(values, 'bDebug');
+
+			};
+		</script>
 
 
 		<meta http-equiv="x-dns-prefetch-control" content="off"/>

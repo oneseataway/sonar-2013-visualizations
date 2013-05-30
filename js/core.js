@@ -16,6 +16,30 @@ console.log( 'Sónar Visualization - core.js' );
 // ------------------------------------------------------------------------
 // Properties
 // ------------------------------------------------------------------------
+// set the min and max longitude & latitude values 
+
+// bicing edges
+var lonThreshold = {
+	min: 2.111615,
+	max: 2.219377
+};
+var latThreshold = {
+	min: 41.357067,
+	max: 41.450882
+};
+
+// barcelona edges
+var lonBarcelona = {
+	min: 1.7083740234375,
+	max: 2.515869140625
+};
+var latBarcelona = {
+	min: 41.08763212467915,
+	max: 41.83273506215261
+};
+
+
+
 var yqlBase = 'https://query.yahooapis.com/v1/public/yql';  
 
 /*
@@ -45,9 +69,9 @@ var transportation = {
  *	Social Data
  */
 var social = {
-	twitter:	null,
+	twitter:	[],
 	instagram:	null,
-	foursquare:	null
+	foursquare:	[]
 };
 
 /*
@@ -404,21 +428,85 @@ loadWeather( weather );
  *	Social Data
  */
 function loadTwitter(arr) {
-	var jsonUrl = '';
+	var jsonUrl = 'http://thethings.io/getJSON/TWITTER';
 
 	$.ajax({
 		url: jsonUrl,
 		type: 'get',
 		dataType: 'json',
-		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
-		crossDomain: true,
-		cache: false,
-		async: true,
-	}).done(function(result) {
+	}).done(function(output) {
+		var result = output.Sonar2013.tweets;
+
+		// fake 
+		$.each(result, function(i, field) {
+			var lat, lon;
+
+			if( field.geo == null ) {
+				// this tweet has no geographic location
+				lat = Math.random() * (latThreshold.min - latThreshold.max) + latThreshold.max;
+				lon = Math.random() * (lonThreshold.min - lonThreshold.max) + lonThreshold.max;
+			}
+			else {
+				// bootleg way of confining the coordinates of
+				// tweets to stay within our defined (ie. bicing)
+				// geographic area
+				// TODO: maybe marc can/will define
+				lat = Calculation.map(
+					field.geo.coordinates[0],
+					latBarcelona.min, latBarcelona.max,
+					latThreshold.min, latThreshold.max
+				);
+
+				lon = Calculation.map(
+					field.geo.coordinates[1],
+					lonBarcelona.min, lonBarcelona.max,
+					lonThreshold.min, lonThreshold.max
+				);
+
+				// lat = ( field.geo.coordinates[0] < latThreshold.min )
+				// 	? latThreshold.min
+				// 	: ( field.geo.coordinates[0] > latThreshold.min )
+				// 		? latThreshold.max
+				// 		: field.geo.coordinates[0];
+				// lon = ( field.geo.coordinates[1] < lonThreshold.min )
+				// 	? lonThreshold.min
+				// 	: ( field.geo.coordinates[1] > lonThreshold.min )
+				// 		? lonThreshold.max
+				// 		: field.geo.coordinates[1];
+			}
+
+			arr.push({
+				// flush out the entries
+				bpm: 		output.Sonar2013.bpm,
+
+				// general
+				id:			field.user.id,
+				// location:	'Barcelona',
+				lat: 		lat,
+				lon: 		lon,
+				time: 		field.created_at,
+
+				// user
+				name:		field.user.screen_name,
+				img: 		field.user.profile_image_url,
+				media: 		field.entities.media,
+
+				// tweet
+				text: 		result.text,
+				favorite: 	field.entities.favorite_count,
+				hashtags: 	field.entities.hashtags,
+			});
+
+		});
+
+		return arr;
+
+	}).fail( function() {
+		// console.log( 'Loading Bus error');
+	}).always( function() {
 
 	});
 
-	return arr;
 };
 // initial activation of data feed
 loadTwitter( social.twitter );
@@ -445,25 +533,42 @@ function loadInstagram(arr) {
 loadInstagram( social.instagram );
 
 // ------------------------------------------------------------------------
-function loadFourSquare(arr) {
-	var jsonUrl = '';
+function loadFoursquare(arr) {
+	var jsonUrl = 'http://oneseataway.thethings.io/getFoursquare.php';
 
 	$.ajax({
 		url: jsonUrl,
 		type: 'get',
 		dataType: 'json',
-		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
-		crossDomain: true,
-		cache: false,
-		async: true,
-	}).done(function(result) {
+	}).done(function(output) {
+		var result = output.Sonar2013[0].results;
+
+		$.each(result, function(i, field) {
+			if( field.geo != null ) {
+				arr.push({
+					// flush out the entries
+					name:		field.from_user_name,
+					id:			field.from_user_id,
+					location:	field.location, //place.full_name, // the full name of the check-in
+					text:		field.text, // the text entered at check-in
+					lat:		field.geo.coordinates[0],
+					lon:		field.geo.coordinates[1],
+					time:		field.created_at, // the time the check-in was logged
+					img:		field.profile_image_url // profile image of the user
+				});
+			}
+
+		});
+
+	}).fail( function() {
+		// console.log( 'Loading Bus error');
+	}).always( function() {
 
 	});
 
-	return arr;
 };
 // initial activation of data feed
-loadFourSquare( social.foursquare );
+loadFoursquare( social.foursquare );
 
 
 // ------------------------------------------------------------------------

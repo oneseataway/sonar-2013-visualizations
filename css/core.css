@@ -1533,26 +1533,6 @@ h6 {
   line-height: 1;
   margin-top: 0;
 }
-a {
-  text-decoration: none;
-  color: #1c1c1c;
-  line-height: 13px;
-  border-bottom: 1px dotted #1c1c1c;
-  display: inline-block;
-}
-p a {
-  display: inline;
-}
-a:hover {
-  text-decoration: none;
-  color: #1c1c1c;
-  line-height: 13px;
-  border-bottom: 1px solid #1c1c1c;
-  display: inline-block;
-}
-p a:hover {
-  display: inline;
-}
 img,
 object {
   z-index: 0;
