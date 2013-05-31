@@ -100,7 +100,7 @@ var frederickkPaper = frederickkPaper || {
 	// create methods
 	// drawing
 	var Setup = function(){};
-	var Draw = function(){};
+	var Draw = function(event){};
 	var Update = function(event){};
 
 	// events
@@ -133,7 +133,7 @@ var frederickkPaper = frederickkPaper || {
 
 
 		// ------------------------------------------------------------------------
-		Draw();
+		Draw(event);
 
 		
 		

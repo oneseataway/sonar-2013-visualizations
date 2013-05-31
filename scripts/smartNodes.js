@@ -68,31 +68,43 @@ var pulse;
 // Bicing
 var bicing;
 var bicingNodeGroup;
+var bicingBpmText;
 
 // Traffic
 var traffic;
 var trafficNodeGroup;
+var trafficBpmText;
 
 // Bus
 var bus;
 var busNodeGroup;
+var busBpmText;
 
 
 /*
  *	Social
  */
-
 // Twitter
 var twitter;
 var twitterNodeGroup;
+var twitterBpmText;
 
 // Foursquare
 var foursquare;
 var foursquareNodeGroup;
+var foursquareBpmText;
+
+// Instagram
+var instagram;
+var instagramNodeGroup;
+var instagramBpmText;
+
 
 
 /*
+ *
  *	Interface
+ *
  */
 var InterfaceValues = function() {
 	//
@@ -117,10 +129,10 @@ var InterfaceValues = function() {
 	//
 	// colors
 	//
-	this.color_black 	= [  28,  28,  28, 1.0 ];
+	this.color_black	= [  28,  28,  28, 1.0 ];
 
-	this.color_red 		= [ 226,   2,  45, 1.0 ];
-	this.color_blue 	= [   0, 158, 226, 1.0 ];
+	this.color_red		= [ 226,   2,  45, 1.0 ];
+	this.color_blue	= [   0, 158, 226, 1.0 ];
 	this.color_yellow	= [ 247, 199,   0, 1.0 ];
 	this.color_green	= [   0, 255, 178, 1.0 ];
 
@@ -222,12 +234,15 @@ function Setup() {
 	pulse.toggle();
 
 
+
 	/*
 	 *
 	 *	create grid
 	 *
 	 */
 	grid = new Group();
+
+	// draw the grid nodes
 	var index = 0;
 	for( var j=0; j<rows; j++ ) {
 		for( var i=0; i<cols; i++ ) {
@@ -250,205 +265,6 @@ function Setup() {
 			index++;
 		}
 	}
-
-
-	/*
-	 *
-	 *	create triangulation
-	 *
-	 */
-	var triangulate = new Triangulate( nodePoints )	;
-	triangles = new Group();
-
-	// draw faces
-	for( var i=0; i<triangulate.length; i++ ) {
-		var triangle = triangulate[i];
-
-		// draw triangle
-		face = new Path();
-		face.name = 'triangle';
-		face.add( triangle.p1 );
-		face.add( triangle.p2 );
-		face.add( triangle.p3 );
-		face.closed = true;
-
-		face.fillColor = new Color( 1.0, 0.0, 0.0 );
-
-		triangles.appendTop( face );
-	}
-
-
-
-	//
-	//	Transportation
-	//
-
-	// each data point is simply a clone
-	// of the original grid
-
-	// Bicing
-	bicingNodeGroup = grid.clone();
-	bicingNodeGroup.name = 'Bicing';
-
-	// create the data structures
-	bicing = new DataHandler( 
-		bicingNodeGroup,
-		transportation.bicing, 
-		{
-			id:		[],	// keep track of what ids are represented by this node (array)
-			total:	0,	// the total number of bike represented = (##.free + ##.bikes) + (...)
-			bikes:	0,	// the number of bikes "currently" at the station
-			free:	0,	// the total number of "free" slots
-			radius: []	// two radii for pulsing between (pulsing optional)
-		},
-		[
-			'total',
-			'bikes',
-			'free',
-			{
-				radius1: ['free', 'total'],
-				radius2: ['total', 'free']
-			}
-		]
-	);
-	bicing.setStyle({
-		fillColor: values.colors.bass[1],
-		opacity: 0.8
-	});
-
-
-	// Traffic
-	trafficNodeGroup = grid.clone();
-	trafficNodeGroup.name = 'Traffic';
-
-	// create the data structures
-	traffic = new DataHandler( 
-		trafficNodeGroup,
-		transportation.traffic, 
-		{
-			id:			[],	// keep track of what ids are represented by this node (array)
-			time:		0,	// what time is the traffic happening
-			current:	0,	// the current traffic situation
-			future:		0,	// the predicted traffic situation
-			radius:	[],	// two radii for pulsing between (pulsing optional)
-			max:		7
-		},
-		[
-			'time',
-			'current',
-			'future',
-			{
-				radius1: ['current','max'],
-				radius2: ['future','max']
-			}
-			// {
-			//	label: ['current','']
-			//	// label: 'current'
-			//}
-		]
-	);
-	traffic.setStyle({
-		fillColor: values.colors.mid[1],
-		opacity: 0.8
-	});
-
-
-	// Bus
-	busNodeGroup = grid.clone();
-	busNodeGroup.name = 'Bus';
-
-	// create the data structures
-	bus = new DataHandler( 
-		busNodeGroup,
-		transportation.bus, 
-		{
-			id:			[],	// keep track of what ids are represented by this node (array)
-			current:	0,	// the current bus arriving
-			radius:	[],	// two radii for pulsing between (pulsing optional)
-			size:		0,
-			sizeMax:	2
-		},
-		[
-			'time',
-			'current',
-			'size',
-			'sizeMax',
-			{
-				radius1: ['size','sizeMax'],
-				radius2: ['size','sizeMax'],
-			},
-			{
-				label: 'current'
-			}
-		]
-	);
-	bus.setStyle({
-		fillColor: values.colors.treble[1],
-		opacity: 0.8
-	});
-
-
-	//
-	//	Social
-	//
-
-	// Twitter
-	twitterNodeGroup = triangles.clone();
-	twitterNodeGroup.name = 'Twitter';
-
-	// create the data structures
-	twitter = new DataHandler(
-		twitterNodeGroup,
-		social.twitter,
-		{
-			name:		'',
-			id:			'',
-			location:	'',
-			text:		'',
-		},
-		[
-		]
-	);
-	twitter.setStyle({
-		fillColor: values.colors.treble[0],
-		opacity: 0.8
-	});
-
-
-	// Foursquare
-	// foursquareNodeGroup = grid.clone();
-	// foursquareNodeGroup.name = 'Foursquare';
-
-	// // create the data structures
-	// foursquare = new DataHandler( 
-	//	foursquareNodeGroup,
-	//	social.foursquare,
-	//	{
-	//		id:			[],	// keep track of what ids are represented by this node (array)
-	//		name:		'',	// keep track of the name of the user
-	//		location:	'', // keep track of the location of the user
-	//		img:		'', // keep track of the user's avatar
-	//		raster:		null,
-	//		text:		'', // keep track of the text the user enters
-
-	//		size:		1,
-	//		sizeMax:	8
-
-	//	},
-	//	[
-	//		{
-	//			radius1: ['size','sizeMax'],
-	//		}
-	//		// {
-	//		//	label: ['name', 'text']
-	//		//}
-	//	]
-	// );
-	// foursquare.setStyle({
-	//	fillColor: new Color( 0.0, 1.0, 0.7 ),
-	//	opacity: 0.9
-	//});
-
 
 	// draw the grid lines
 	var lines = new Group();
@@ -484,13 +300,253 @@ function Setup() {
 			}
 		}
 
-
 	}
-	grid.appendBottom( lines );
 
-	// move grid layer to be uppermost
-	grid.opacity = 0.2;
-	grid.bringToFront();
+
+
+	/*
+	 *
+	 *	create triangulation
+	 *
+	 */
+	var triangulate = new Triangulate( nodePoints )	;
+	triangles = new Group();
+
+	// draw faces
+	// TODO: sort faces left -> right
+	for( var i=0; i<triangulate.length; i++ ) {
+		var triangle = triangulate[i];
+
+		// draw triangle
+		face = new Path();
+		face.name = 'triangle';
+		face.add( triangle.p1 );
+		face.add( triangle.p2 );
+		face.add( triangle.p3 );
+		face.closed = true;
+
+		face.fillColor = new Color( 1.0, 0.0, 0.0 );
+
+		triangles.appendTop( face );
+	}
+
+
+
+	/*
+	 *
+	 *	create data handlers
+	 *
+	 *	this is where all of the magic starts
+	 *
+	 */
+
+	// each data point is simply a clone
+	// of the original grid
+
+	// ------------------------------------
+	//
+	//	Transportation
+	//
+
+	// ------------------------------------
+	//
+	// Bicing
+	//
+	bicingNodeGroup = grid.clone();
+	bicingNodeGroup.name = 'Bicing';
+
+	// create the data structures
+	bicing = new DataHandler( 
+		bicingNodeGroup,
+		transportation.bicing, 
+
+		/* what is this */
+		{
+			id:		[],	// keep track of what ids are represented by this node (array)
+			total:	0,	// the total number of bike represented = (##.free + ##.bikes) + (...)
+			bikes:	0,	// the number of bikes "currently" at the station
+			free:	0,	// the total number of "free" slots
+			radius: []	// two radii for pulsing between (pulsing optional)
+		},
+
+		/* what is this */
+		[
+			'total',
+			'bikes',
+			'free',
+			{
+				radius1: ['free', 'total'],
+				radius2: ['total', 'free']
+			}
+		]
+	);
+
+	// create & set the style
+	var style = {
+		fillColor: values.colors.bass[1],
+		opacity: 0.8
+	};
+	bicing.setStyle(style);
+
+
+
+	// ------------------------------------
+	//
+	// Traffic
+	//
+	trafficNodeGroup = grid.clone();
+	trafficNodeGroup.name = 'Traffic';
+
+	// create the data structures
+	traffic = new DataHandler( 
+		trafficNodeGroup,
+		transportation.traffic, 
+		{
+			id:			[],	// keep track of what ids are represented by this node (array)
+			time:		0,	// what time is the traffic happening
+			current:	0,	// the current traffic situation
+			future:		0,	// the predicted traffic situation
+			radius:	[],	// two radii for pulsing between (pulsing optional)
+			max:		7
+		},
+		[
+			'time',
+			'current',
+			'future',
+			{
+				radius1: ['current','max'],
+				radius2: ['future','max']
+			}
+			// {
+			//	label: ['current','']
+			//	// label: 'current'
+			//}
+		]
+	);
+
+	// create & set the style
+	var style = {
+		fillColor: values.colors.mid[1],
+		opacity: 0.8
+	};
+	traffic.setStyle(style);
+
+
+	// ------------------------------------
+	//
+	// Bus
+	//
+	busNodeGroup = grid.clone();
+	busNodeGroup.name = 'Bus';
+
+	// create the data structures
+	bus = new DataHandler( 
+		busNodeGroup,
+		transportation.bus, 
+		{
+			id:			[],	// keep track of what ids are represented by this node (array)
+			current:	0,	// the current bus arriving
+			radius:	[],	// two radii for pulsing between (pulsing optional)
+			size:		0,
+			sizeMax:	2
+		},
+		[
+			'time',
+			'current',
+			'size',
+			'sizeMax',
+			{
+				radius1: ['size','sizeMax'],
+				radius2: ['size','sizeMax'],
+			},
+			{
+				label: 'current'
+			}
+		]
+	);
+
+	// create & set the style
+	var style = {
+		fillColor: values.colors.treble[1],
+		opacity: 0.8
+	};
+	bus.setStyle(style);
+
+
+
+	// ------------------------------------
+	//
+	//	Social
+	//
+
+	// ------------------------------------
+	//
+	// Twitter
+	//
+	twitterNodeGroup = triangles.clone();
+	twitterNodeGroup.name = 'Twitter';
+
+	// create the data structures
+	twitter = new DataHandler(
+		twitterNodeGroup,
+		social.twitter,
+		{
+			name:		'',
+			id:			'',
+			location:	'',
+			text:		'',
+		},
+		[
+		]
+	);
+
+	// create & set the style
+	var style = {
+		fillColor: values.colors.treble[0],
+		opacity: 0.8
+	};
+	twitter.setStyle(style);
+
+
+	// ------------------------------------
+	//
+	// Foursquare
+	//
+	// foursquareNodeGroup = grid.clone();
+	// foursquareNodeGroup.name = 'Foursquare';
+
+	// // create the data structures
+	// foursquare = new DataHandler( 
+	//	foursquareNodeGroup,
+	//	social.foursquare,
+	//	{
+	//		id:			[],	// keep track of what ids are represented by this node (array)
+	//		name:		'',	// keep track of the name of the user
+	//		location:	'', // keep track of the location of the user
+	//		img:		'', // keep track of the user's avatar
+	//		raster:		null,
+	//		text:		'', // keep track of the text the user enters
+
+	//		size:		1,
+	//		sizeMax:	8
+
+	//	},
+	//	[
+	//		{
+	//			radius1: ['size','sizeMax'],
+	//		}
+	//		// {
+	//		//	label: ['name', 'text']
+	//		//}
+	//	]
+	// );
+
+	// // create & set the style
+	// var style = {
+	//	fillColor: values.colors.treble[2],
+	//	opacity: 0.8
+	// };
+	// foursquare.setStyle(style);
 
 
 
@@ -499,9 +555,16 @@ function Setup() {
 	 *	Cleanup
 	 *
 	 */
+	// add the lines to the main grid
+	grid.appendBottom( lines );
+
+	// move main grid layer to be uppermost
+	grid.opacity = 0.2;
+	grid.bringToFront();
+
+
 	// we've cloned triangles where 
-	// it needs to be, so let's 
-	// clean out the group
+	// it needs to be, let's remove the original
 	triangles.remove();
 
 };
@@ -543,6 +606,47 @@ function Update(event) {
 		if( debugPath != undefined ) debugPath.remove();
 	}
 
+	// transportation
+	// bicing
+	// if( bicing.isLoaded() ) {
+	// 	bicingBpmText.data.pulse.update( event.time );
+	// 	if( bicingBpmText.data.pulse.isDone() ) {
+	// 		bicingBpmText.data.pulse.toggle();
+	// 	}
+	// }
+	// // traffic
+	// if( traffic.isLoaded() ) {
+	// 	trafficBpmText.data.pulse.update( event.time );
+	// 	if( trafficBpmText.data.pulse.isDone() ) {
+	// 		trafficBpmText.data.pulse.toggle();
+	// 	}
+	// }
+	// // bus
+	// if( bus.isLoaded() ) {
+	// 	busBpmText.data.pulse.update( event.time );
+	// 	if( busBpmText.data.pulse.isDone() ) {
+	// 		busBpmText.data.pulse.toggle();
+	// 	}
+	// }
+
+	// // social
+	// // twitter
+	// if( twitter.isLoaded() ) {
+	// 	twitterBpmText.data.pulse.update( event.time );
+	// 	if( twitterBpmText.data.pulse.isDone() ) {
+	// 		twitterBpmText.data.pulse.toggle();
+	// 	}
+	// }
+	// foursquare
+	// if( foursquare.isLoaded() ) {
+	// 	foursquareBpmText.data.pulse.update( event.time );
+	// 	if( foursquareBpmText.data.pulse.isDone() ) {
+	// 		foursquareBpmText.data.pulse.toggle();
+	// 	}
+	// }
+
+
+
 	/*
 	 *
 	 *	Initial Loading of Data
@@ -555,7 +659,178 @@ function Update(event) {
 		init();
 	}
 
+};
 
+
+/*
+ *
+ *	Intervals to refresh data
+ *
+ */
+
+// ------------------------------------------------------------------------
+//
+// Transportation
+//
+
+// Bicing
+// update every 5 seconds
+var UpdateBicing = setInterval(
+	function() {
+		if( !bicing.isUpdated() && bicing.isLoaded() ) {
+			if( bOffline ) {
+				// fake values for offline & testing only
+				for( var i=0; i<transportation.bicing.length; i++ ) {
+					var b = transportation.bicing[i];
+					b.bikes	= Calculation.randomInt( b.total );
+					b.free	= b.total - b.bikes;
+				}
+			}
+			else {
+				// get the new json feed
+				loadBicing( transportation.bicing );
+			}
+
+			// push the data into the group
+			bicing.refresh( transportation.bicing );
+			bicing.isUpdated(true);
+
+			if( values.bVerbose ) console.log( 'Updated Bicing', bicing.isUpdated() );
+		}
+	},
+	(9*1000)
+);
+
+// ------------------------------------------------------------------------
+// Traffic
+// update every 16 minutes (16*60)
+var UpdateTraffic = setInterval(
+	function() {
+		if( !traffic.isUpdated() && traffic.isLoaded() ) {
+			// if( values.bVerbose ) console.log( 'UpdateTraffic', bTrafficUpdate );
+
+			if( bOffline ) {
+				// fake values for offline & testing only
+				for( var i=0; i<transportation.traffic.length; i++ ) {
+					var t = transportation.traffic[i];
+					if( i % 5 == 0 ) {
+						t.current = Calculation.randomInt( 1,7 );
+						t.future = Calculation.randomInt( 1,7 );
+					}
+				}			
+			}
+			else {
+				// get the new json feed
+				loadTraffic( transportation.traffic );
+			}
+
+			// push the data into the group
+			traffic.refresh( transportation.traffic );
+			traffic.isUpdated(true);
+
+			if( values.bVerbose ) console.log( 'Updated Traffic', traffic.isUpdated() );
+		}
+	},
+	(6*1000)
+);
+
+// ------------------------------------------------------------------------
+// Bus
+// update every 16 minutes (16*60)
+// var UpdateBus = setInterval(
+//	function() {
+//		if( !bus.isUpdated() && bus.isLoaded() ) {
+//			// if( values.bVerbose ) console.log( 'UpdateTraffic', bTrafficUpdate );
+
+//			if( bOffline ) {
+//				// fake values for offline & testing only
+//				for( var i=0; i<transportation.bus.length; i++ ) {
+//					var b = transportation.bus[i];
+//					b.current = Calculation.randomInt( 1,7 );
+//				}			
+//			}
+//			else {
+//				// get the new json feed
+//				// loadBus( transportation.bus );
+//			}
+
+//			// push the data into the group
+//			bus.refresh( transportation.bus );
+//			bus.isUpdated(true);
+
+//			if( values.bVerbose ) console.log( 'Updated Bus', bus.isUpdated() );
+//		}
+//	},
+//	(12*1000)
+// );
+
+
+// ------------------------------------------------------------------------
+//
+// Social
+//
+var UpdateTwitter = setInterval(
+	function() {
+		if( !twitter.isUpdated() && twitter.isLoaded() ) {
+			// if( values.bVerbose ) console.log( 'UpdateTraffic', bTrafficUpdate );
+
+			if( bOffline ) {
+
+			}
+			else {
+				// get the new json feed
+				loadTwitter( social.twitter );
+			}
+
+			// push the data into the group
+			twitter.refresh( social.twitter );
+			twitter.isUpdated(true);
+
+			if( values.bVerbose ) console.log( 'Updated Twitter', twitter.isUpdated() );
+		}
+	},
+	(60*1000)
+);
+
+// ------------------------------------------------------------------------
+// var UpdateFoursquare = setInterval(
+//	function() {
+//		if( !foursquare.isUpdated() && foursquare.isLoaded() ) {
+//			// if( values.bVerbose ) console.log( 'UpdateTraffic', bTrafficUpdate );
+
+//			if( bOffline ) {
+//				// fake values for offline & testing only
+//				for( var i=0; i<social.foursquare.length; i++ ) {
+//					var f = social.foursquare[i];
+					
+//					f.name = 'Testy McTesterson';
+//					f.location = 'Am Arsch der Welt';
+//					f.lat = Calculation.random( latThreshold.min, latThreshold.max );
+//					f.lon = Calculation.random( lonThreshold.min, lonThreshold.max );
+//					f.img = 'http://a0.twimg.com/profile_images/3056041095/2bf137201d095af9feff271a168ca7a1_normal.png';
+//				}			
+//			}
+//			else {
+//				// get the new json feed
+//				// loadFoursquare( social.foursquare );
+//			}
+
+//			// push the data into the group
+//			foursquare.refresh( social.foursquare );
+//			foursquare.isUpdated(true);
+
+//			if( values.bVerbose ) console.log( 'Updated FourSquare', foursquare.isUpdated() );
+//		}
+//	},
+//	(12*1000)
+// );
+
+
+
+// ------------------------------------------------------------------------
+// Main
+// ------------------------------------------------------------------------
+function Draw(event) {
 	/*
 	 *
 	 *	Update Visualizations
@@ -569,7 +844,7 @@ function Update(event) {
 	// if( parseInt(event.time) % 3 === 1 ) {
 		bicing.draw( event, values.bBicing );
 		traffic.draw( event, values.bTraffic );
-		// bus.draw( event, values.bBus );
+		bus.draw( event, values.bBus );
 
 		//
 		// Social
@@ -587,8 +862,8 @@ function Update(event) {
 				// t.fillColor = new Color( 0.0, 1.0, 0.7 );
 
 				// var t = new Path.Circle(
-				// 	node.position,
-				// 	10
+				//	node.position,
+				//	10
 				// );
 				// t.fillColor = new Color( Math.random(), Math.random(), Math.random() );
 
@@ -641,167 +916,6 @@ function Update(event) {
 //		);
 
 	//} // end if( parseInt(event.time...
-};
-
-
-/*
- *
- *	Intervals to refresh data
- *
- */
-
-//
-// Transportation
-//
-
-// Bicing
-// update every 5 seconds
-var UpdateBicing = setInterval(
-	function() {
-		if( !bicing.isUpdated() && bicing.isLoaded() ) {
-			if( bOffline ) {
-				// fake values for offline & testing only
-				for( var i=0; i<transportation.bicing.length; i++ ) {
-					var b = transportation.bicing[i];
-					b.bikes	= Calculation.randomInt( b.total );
-					b.free	= b.total - b.bikes;
-				}
-			}
-			else {
-				// get the new json feed
-				// loadBicing( transportation.bicing );
-			}
-
-			// push the data into the group
-			bicing.refresh( transportation.bicing );
-			bicing.isUpdated(true);
-
-			if( values.bVerbose ) console.log( 'Updated Bicing', bicing.isUpdated() );
-		}
-	},
-	(9*1000)
-);
-
-// Traffic
-// update every 16 minutes (16*60)
-var UpdateTraffic = setInterval(
-	function() {
-		if( !traffic.isUpdated() && traffic.isLoaded() ) {
-			// if( values.bVerbose ) console.log( 'UpdateTraffic', bTrafficUpdate );
-
-			if( bOffline ) {
-				// fake values for offline & testing only
-				for( var i=0; i<transportation.traffic.length; i++ ) {
-					var t = transportation.traffic[i];
-					if( i % 5 == 0 ) {
-						t.current = Calculation.randomInt( 1,7 );
-						t.future = Calculation.randomInt( 1,7 );
-					}
-				}			
-			}
-			else {
-				// get the new json feed
-				// loadTraffic( transportation.traffic );
-			}
-
-			// push the data into the group
-			traffic.refresh( transportation.traffic );
-			traffic.isUpdated(true);
-
-			if( values.bVerbose ) console.log( 'Updated Traffic', traffic.isUpdated() );
-		}
-	},
-	(6*1000)
-);
-
-// Bus
-// update every 16 minutes (16*60)
-// var UpdateBus = setInterval(
-//	function() {
-//		if( !bus.isUpdated() && bus.isLoaded() ) {
-//			// if( values.bVerbose ) console.log( 'UpdateTraffic', bTrafficUpdate );
-
-//			if( bOffline ) {
-//				// fake values for offline & testing only
-//				for( var i=0; i<transportation.bus.length; i++ ) {
-//					var b = transportation.bus[i];
-//					b.current = Calculation.randomInt( 1,7 );
-//				}			
-//			}
-//			else {
-//				// get the new json feed
-//				// loadBus( transportation.bus );
-//			}
-
-//			// push the data into the group
-//			bus.refresh( transportation.bus );
-//			bus.isUpdated(true);
-
-//			if( values.bVerbose ) console.log( 'Updated Bus', bus.isUpdated() );
-//		}
-//	},
-//	(12*1000)
-// );
-
-
-//
-// Social
-//
-var UpdateTwitter = setInterval(
-	function() {
-		if( !twitter.isUpdated() && twitter.isLoaded() ) {
-			// if( values.bVerbose ) console.log( 'UpdateTraffic', bTrafficUpdate );
-
-			loadTwitter( social.twitter );
-
-			// push the data into the group
-			twitter.refresh( social.twitter );
-			twitter.isUpdated(true);
-
-			if( values.bVerbose ) console.log( 'Updated Twitter', twitter.isUpdated() );
-		}
-	},
-	(60*1000)
-);
-
-// var UpdateFoursquare = setInterval(
-//	function() {
-//		if( !foursquare.isUpdated() && foursquare.isLoaded() ) {
-//			// if( values.bVerbose ) console.log( 'UpdateTraffic', bTrafficUpdate );
-
-//			if( bOffline ) {
-//				// fake values for offline & testing only
-//				for( var i=0; i<social.foursquare.length; i++ ) {
-//					var f = social.foursquare[i];
-					
-//					f.name = 'Testy McTesterson';
-//					f.location = 'Am Arsch der Welt';
-//					f.lat = Calculation.random( latThreshold.min, latThreshold.max );
-//					f.lon = Calculation.random( lonThreshold.min, lonThreshold.max );
-//					f.img = 'http://a0.twimg.com/profile_images/3056041095/2bf137201d095af9feff271a168ca7a1_normal.png';
-//				}			
-//			}
-//			else {
-//				// get the new json feed
-//				// loadFoursquare( social.foursquare );
-//			}
-
-//			// push the data into the group
-//			foursquare.refresh( social.foursquare );
-//			foursquare.isUpdated(true);
-
-//			if( values.bVerbose ) console.log( 'Updated FourSquare', foursquare.isUpdated() );
-//		}
-//	},
-//	(12*1000)
-// );
-
-
-
-// ------------------------------------------------------------------------
-// Main
-// ------------------------------------------------------------------------
-function Draw() {
 
 };
 
@@ -811,6 +925,7 @@ function Draw() {
 // Methods
 // ------------------------------------------------------------------------
 function init() {
+	// TODO: push creatio of BpmText into DataHandler?
 
 	/*
 	 *
@@ -818,8 +933,19 @@ function init() {
 	 *
 	 */
 	bicing.init();
+	if( bicing.isLoaded() ) {
+		bicingBpmText = new KeyText( bicing, transportation.bicing );
+	}
+
 	traffic.init();
-	// bus.init();
+	if( traffic.isLoaded() ) {
+		trafficBpmText = new KeyText( traffic, transportation.traffic );
+	}
+
+	bus.init();
+	if( bus.isLoaded() ) {
+		busBpmText = new KeyText( bus, transportation.bus );
+	}
 
 
 	/*
@@ -828,7 +954,14 @@ function init() {
 	 *
 	 */
 	twitter.init();
+	if( twitter.isLoaded() ) {
+		twitterBpmText = new KeyText( twitter, social.twitter );
+	}
+
 	// foursquare.init();
+	// if( foursquare.isLoaded() ) {
+	// 	foursquareBpmText = new KeyText( foursquare, social.foursquare );
+	// }
 
 };
 
@@ -1042,7 +1175,7 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 	 *
 	 *	Update Data
 	 *
-	 *	@param {Array} dataArray
+	 *	@param {Array} updatedDataArray
 	 *					the array of data
 	 *	@param {Array} updatedDataKeys
 	 *					the keys of the dataArray within the nodes which should be updated
@@ -1397,7 +1530,7 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 			}
 
 		}
-	;}
+	};
 
 
 	//
@@ -1433,6 +1566,15 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 		return bUpdate;
 	};
 
+	function getNodeStyle() {
+		return _style;
+	};
+
+	function getGroupName() {
+		return _group.name;	
+	};
+
+
 
 	//
 	// Instantiate
@@ -1455,10 +1597,43 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 		draw:		nodeUpdate,
 
 		// sets
-		setStyle:	setNodeStyle
+		setStyle:	setNodeStyle,
+
+		// gets
+		getStyle:	getNodeStyle,
+		getName:	getGroupName
 	}
 
 };
+
+// ------------------------------------------------------------------------
+/*
+ *	@param {DataHandler} dataHandler
+ *					the main data handler
+ *	@param {Array} dataArray
+ *					the array of data
+ */
+var KeyText = function( dataHandler, dataArray ) {
+
+	// create the BPM key text
+	var bpm = dataArray[0].bpm;
+	bpmText = new Marker(
+		[bpm, dataHandler.getName()],
+		new Point( view.bounds.width*(1/8), view.bounds.height - 72 )
+	);
+	bpmText.setSize(15); // default size is 15
+	bpmText.path.style = dataHandler.getStyle();
+
+	// create the BPM pulse which 
+	bpmText.data = {
+		pulse: new ft.FStepper()
+	};
+	bpmText.data.pulse.setSeconds( 3 );
+	bpmText.data.pulse.toggle();
+
+	return bpmText;
+};
+
 
 
 // ------------------------------------------------------------------------
@@ -1503,6 +1678,7 @@ var findClosestItem = function( searchGroup, searchPoint ) {
 	return closest;
 };
 
+
 // ------------------------------------------------------------------------
 /**
  *
@@ -1518,7 +1694,7 @@ var findClosestItem = function( searchGroup, searchPoint ) {
  *		'Large',
  *		view.bounds.center
  *	);
- *	ttext.fillColor = new Color( 1.0, 0.7, 0.0 );
+ *	ttext.path.fillColor = new Color( 1.0, 0.7, 0.0 );
  *
  */
  /**
@@ -1532,7 +1708,7 @@ var findClosestItem = function( searchGroup, searchPoint ) {
  *		['Large', 'tiny'],
  *		view.bounds.center
  *	);
- *	ttext.fillColor = new Color( 1.0, 0.7, 0.0 );
+ *	ttext.path.fillColor = new Color( 1.0, 0.7, 0.0 );
  *
  */
 var Marker = function( content, point ) {
@@ -1540,6 +1716,8 @@ var Marker = function( content, point ) {
 	// Properties
 	//
 	var _group = new Group();
+	var _content = content;
+	var _typeSizes = [72,15];
 
 	var main = new PointText( point );
 	var desc = new PointText( point );
@@ -1551,21 +1729,22 @@ var Marker = function( content, point ) {
 	//
 	function init() {	
 		// strip out 0 and replace with O
-		// content = replaceZero(content);
-		// content.replace('0', 'O');
+		// _content = replaceZero(_content);
+		// _content.replace('0', 'O');
 
 		// the main text
 		main.justification = 'center';
-		main.fontSize = 72;
 		main.font = 'Futura-kf';
 
 		// the side descriptor
 		desc.justification = 'center';
-		desc.fontSize = 15;
 		desc.font = 'Futura-kf-Bold';
 
 		// set content
-		setContent( content );
+		// setContent( _content );
+
+		// set size and content
+		setSize( _typeSizes );
 
 		// add to group
 		_group.appendTop( main );
@@ -1588,23 +1767,36 @@ var Marker = function( content, point ) {
 	//
 	// Sets
 	//
+	function setSize( arg ) {
+		_typeSizes[0] = (arg.length != undefined) ? arg[0] : arg;
+		_typeSizes[1] = (arg.length != undefined) ? arg[1] : arg;
+
+		main.fontSize = _typeSizes[0];
+		desc.fontSize = _typeSizes[1];
+
+		// reset content with new sizes
+		setContent( _content );
+	};
+
+
 	function setContent( content ) {
 		_point = point.clone();
 
-		if( typeof content == 'object' ) {
-			content[0] = replaceZero(content[0]);
-			content[1] = replaceZero(content[1]);
+		if( typeof _content == 'object' ) {
+			_content[0] = replaceZero( content[0] );
+			_content[1] = replaceZero( content[1] );
 
-			main.content = content[0];
-			_point.x -= (content[0].length === 1) ? (main.bounds.size.width*1.2) : (main.bounds.size.width);
-			desc.content = content[1];
+			main.content = _content[0];
+			_point.x -= (_content[0].length === 1) ? (main.bounds.size.width*1.2) : (main.bounds.size.width);
+
+			desc.content = _content[1];
 			desc.position = _point;
 		}
 		else {
-			content = replaceZero(content);
+			_content = replaceZero( content );
 
-			main.content = content;
-			_point.x -= (content.length === 1) ? (main.bounds.size.width*1.2) : (main.bounds.size.width);
+			main.content = _content;
+			_point.x -= (_content.length === 1) ? (main.bounds.size.width*1.2) : (main.bounds.size.width);
 			_point.y -= 18;
 			desc.content = 'No.';
 			desc.position = _point;
@@ -1612,11 +1804,11 @@ var Marker = function( content, point ) {
 
 		// the underline
 		_point.y += 9;
-		underline.position = _point;
 		underline.bounds.size = new Size(
 			desc.bounds.size.width*1.1,
 			3
 		);
+		underline.position = _point;
 
 	};
 
@@ -1635,7 +1827,9 @@ var Marker = function( content, point ) {
 		path: _group,
 
 		// sets
+		setSize: setSize,
 		setContent: setContent,
+
 	}
 };
 
@@ -1717,6 +1911,7 @@ var Marker = function( content, point ) {
 	_fader.setMillis( fadeMillis ); // default: 1 second
 	var bFaderDone = false;
 
+
 	//
 	// Methods
 	//
@@ -1750,6 +1945,10 @@ var Marker = function( content, point ) {
 	//
 	// Sets
 	//
+	function setSize( arg ) {
+		_marker.setSize( arg );	
+	};
+
 	function setContent( content ) {
 		_marker.setContent( content );
 	};
@@ -1823,6 +2022,7 @@ var Marker = function( content, point ) {
 		toggle: toggle,
 
 		// sets
+		setSize: setSize,
 		setContent: setContent,
 
 		// gets

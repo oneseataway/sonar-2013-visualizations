@@ -18,9 +18,27 @@ simply load http://localhost:9000/index.html in your (webkit) browser of choice.
 
 Components
 ---------
-The visualization primarily runs on (a currently unofficial fork of) Paper.js (https://github.com/frederickk/Paper.js)
 
-As well as frederickkPaper (https://github.com/frederickk/frederickPaper) which extends Paper.js functionality.
+### Paper.js
+
+https://github.com/frederickk/Paper.js
+
+The visualization primarily runs on (a currently unofficial fork of) Paper.js 
+
+
+### frederickkPaper
+
+https://github.com/frederickk/frederickPaper
+
+Additional extensions to Paper.js functionality comes from frederickkPaper (
+
+
+### Google DAT Gui
+
+http://workshop.chromeexperiments.com/examples/gui/#1--Basic-Usage
+
+An excellent easy-to-use GUI library from the data visualization team at Google
+
 
 
 Credits
@@ -28,6 +46,9 @@ Credits
 
 Marc Pous
 
+Simone Rebaduengo
+
+Daniel Kluge
+
 Ken Frederick
 
-Simone Rebaduengo

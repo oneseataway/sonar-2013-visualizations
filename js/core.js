@@ -55,9 +55,9 @@ var transportation = {
  *	Weather Data
  */
  var weather = {
- 	// these are the temperature ranges
- 	// we'll use for normalizing the current temperature
- 	// http://de.wikipedia.org/wiki/Barcelona#Klima
+	// these are the temperature ranges
+	// we'll use for normalizing the current temperature
+	// http://de.wikipedia.org/wiki/Barcelona#Klima
 	temperatureMin:	15,
 	temperatureMax:	27,
 	temperature:	null,
@@ -80,6 +80,7 @@ var social = {
 var bOffline = true; // assume we have no internet connections
 
 
+
 // ------------------------------------------------------------------------
 // loaded
 // ------------------------------------------------------------------------
@@ -98,6 +99,7 @@ $(function() {
 	}
 
 });
+
 
 
 // ------------------------------------------------------------------------
@@ -134,29 +136,26 @@ function loadBicing(arr) {
 			$.each( result, function(i, field) {
 				// format the data into a way
 				// that i can handle
-				var _t = Date.parse(field.timestamp);
-				var _d = new Date(_t);
-				var time = {
-					year:		_d.getFullYear(),
-					month:		_d.getMonth(),
-					day:		_d.getDate(),
-					hours:		_d.getHours(),
-					minutes:	_d.getMinutes(),
-					seconds:	_d.getSeconds()
-				};
+				var time = formatTime(field.timestamp);
 
 				arr.push({
 					node:		null,  // keeps track of which node this data belongs to
+
 					// flush out the entries
+					bpm:		32,
+
+					// general
 					name:		field.cleaname,
-					nearby:	field.nearby_stations.split(','),
 					id:			field.id,
-					bikes:		field.bikes,	// Number of bikes in the station
-					free:		field.free,		// Number of free slots
-					total:		(field.free + field.bikes),
 					lat:		field.lat/1000000,
 					lon:		field.lng/1000000,
-					time:		time
+					time:		time,
+
+					// bicing
+					nearby:	field.nearby_stations.split(','),
+					bikes:		field.bikes,	// Number of bikes in the station
+					free:		field.free,		// Number of free slots
+					total:		(field.free + field.bikes)
 				});
 
 				/*
@@ -190,8 +189,6 @@ function loadBicing(arr) {
 	});
 
 };
-// initial activation of data feed
-loadBicing( transportation.bicing );
 
 // ------------------------------------------------------------------------
 function loadTraffic(arr) {
@@ -215,36 +212,36 @@ function loadTraffic(arr) {
 	}
 
 	// $.ajax({
-	// 	url: yqlQueryUrl,
-	// 	type: 'get',
-	// 	dataType: 'jsonp',
-	// 	error: function(XMLHttpRequest, textStatus, errorThrown) {
-	// 		console.log( 'loadTraffic() error: ', errorThrown );
-	// 		// generate fake data
-	// 		for( var i=0; i<100; i++ ) {
-	// 			datTemp.push({
-	// 				id:			i,
-	// 				time:		'20130525221054',
-	// 				current:	parseInt( Math.random()*6 ) + 1,
-	// 				future:		parseInt( Math.random()*6 ) + 1
-	// 			});
-	// 		}
-	// 	}
+	//	url: yqlQueryUrl,
+	//	type: 'get',
+	//	dataType: 'jsonp',
+	//	error: function(XMLHttpRequest, textStatus, errorThrown) {
+	//		console.log( 'loadTraffic() error: ', errorThrown );
+	//		// generate fake data
+	//		for( var i=0; i<100; i++ ) {
+	//			datTemp.push({
+	//				id:			i,
+	//				time:		'20130525221054',
+	//				current:	parseInt( Math.random()*6 ) + 1,
+	//				future:		parseInt( Math.random()*6 ) + 1
+	//			});
+	//		}
+	//	}
 
 	// }).done(function(output) {
-	// 	var result = output.query.results.json.json;
+	//	var result = output.query.results.json.json;
 
-	// 	var fields = result.split('\n');
+	//	var fields = result.split('\n');
 
-	// 	for( var i=0; i<fields.length; i++ ) {
-	// 		var field = fields[i].split('#');
-	// 		datTemp.push({
-	// 			id:			field[0],
-	// 			time:		field[1],
-	// 			current:	field[2],
-	// 			future:		field[3]
-	// 		});
-	// 	}
+	//	for( var i=0; i<fields.length; i++ ) {
+	//		var field = fields[i].split('#');
+	//		datTemp.push({
+	//			id:			field[0],
+	//			time:		field[1],
+	//			current:	field[2],
+	//			future:		field[3]
+	//		});
+	//	}
 	// });
 
 	function findIndex(id) {
@@ -281,15 +278,22 @@ function loadTraffic(arr) {
 			if( index != -1 ) {
 				var coords = field.coordinates.split(',');
 				arr.push({
+					node:		null,  // keeps track of which node this data belongs to
+
 					// flush out the entries
+					bpm:		32,
+
+					// general
 					name:		field.name,
 					id:			field.id,
-					current:	parseInt(datTemp[index].current)+1,	// add 1, to avoid a 0 value
-					future:		parseInt(datTemp[index].future)+1,	// add 1, to avoid a 0 value
-					max: 		7,
 					lat:		coords[1], // /1000000,
 					lon:		coords[0], // /1000000,
-					time:		datTemp[index].time
+					time:		datTemp[index].time,
+
+					// traffic
+					current:	parseInt(datTemp[index].current)+1,	// add 1, to avoid a 0 value
+					future:		parseInt(datTemp[index].future)+1,	// add 1, to avoid a 0 value
+					max:		7
 				});
 			}
 
@@ -304,8 +308,6 @@ function loadTraffic(arr) {
 	});
 
 };
-// initial activation of data feed
-loadTraffic( transportation.traffic );
 
 // ------------------------------------------------------------------------
 function loadBus(arr) {
@@ -364,16 +366,22 @@ function loadBus(arr) {
 				var size = ( field.data.tmb.furniture === 'Pal') ? 2 : 1;
 
 				arr.push({
+					node:		null,  // keeps track of which node this data belongs to
+
 					// flush out the entries
+					bpm:		32,
+
+					// general
 					name:		field.data.tmb.street_name,
 					id:			field.data.tmb.id,
-					busses:		busses,	// Numbers of busses which arrive at this station
-					total:		busses.length,
 					lat:		field.data.tmb.lat,
 					lon:		field.data.tmb.lon,
 					time:		times, // array of times for busses [].bus = number [].time = when 
-					current:	current, // the current bus arriving
 
+					// busses
+					current:	current, // the current bus arriving
+					busses:		busses,	// Numbers of busses which arrive at this station
+					total:		busses.length,
 					size:		size,
 					sizeMax:	2
 				});
@@ -393,9 +401,6 @@ function loadBus(arr) {
 	});
 
 };
-// initial activation of data feed
-loadBus( transportation.bus );
-
 
 
 /*
@@ -414,14 +419,11 @@ function loadWeather(arr) {
 		async: true,
 	}).done(function(result) {
 		arr.temperature	= result.current_observation.feelslike_c;
-		arr.humidty 	= parseInt(result.current_observation.relative_humidity);
+		arr.humidty	= parseInt(result.current_observation.relative_humidity);
 	});
 
 	return arr;
 };
-// initial activation of data feed
-loadWeather( weather );
-
 
 
 /*
@@ -464,37 +466,41 @@ function loadTwitter(arr) {
 				);
 
 				// lat = ( field.geo.coordinates[0] < latThreshold.min )
-				// 	? latThreshold.min
-				// 	: ( field.geo.coordinates[0] > latThreshold.min )
-				// 		? latThreshold.max
-				// 		: field.geo.coordinates[0];
+				//	? latThreshold.min
+				//	: ( field.geo.coordinates[0] > latThreshold.min )
+				//		? latThreshold.max
+				//		: field.geo.coordinates[0];
 				// lon = ( field.geo.coordinates[1] < lonThreshold.min )
-				// 	? lonThreshold.min
-				// 	: ( field.geo.coordinates[1] > lonThreshold.min )
-				// 		? lonThreshold.max
-				// 		: field.geo.coordinates[1];
+				//	? lonThreshold.min
+				//	: ( field.geo.coordinates[1] > lonThreshold.min )
+				//		? lonThreshold.max
+				//		: field.geo.coordinates[1];
 			}
 
+			var time = formatTime(field.created_at);
+
 			arr.push({
+				node:		null,  // keeps track of which node this data belongs to
+
 				// flush out the entries
-				bpm: 		output.Sonar2013.bpm,
+				bpm:		output.Sonar2013.bpm,
 
 				// general
 				id:			field.user.id,
 				// location:	'Barcelona',
-				lat: 		lat,
-				lon: 		lon,
-				time: 		field.created_at,
+				lat:		lat,
+				lon:		lon,
+				time:		time,
 
 				// user
 				name:		field.user.screen_name,
-				img: 		field.user.profile_image_url,
-				media: 		field.entities.media,
+				img:		field.user.profile_image_url,
+				media:		field.entities.media,
 
 				// tweet
-				text: 		result.text,
-				favorite: 	field.entities.favorite_count,
-				hashtags: 	field.entities.hashtags,
+				text:		result.text,
+				favorite:	field.entities.favorite_count,
+				hashtags:	field.entities.hashtags
 			});
 
 		});
@@ -508,8 +514,6 @@ function loadTwitter(arr) {
 	});
 
 };
-// initial activation of data feed
-loadTwitter( social.twitter );
 
 // ------------------------------------------------------------------------
 function loadInstagram(arr) {
@@ -529,8 +533,6 @@ function loadInstagram(arr) {
 
 	return arr;
 };
-// initial activation of data feed
-loadInstagram( social.instagram );
 
 // ------------------------------------------------------------------------
 function loadFoursquare(arr) {
@@ -545,15 +547,26 @@ function loadFoursquare(arr) {
 
 		$.each(result, function(i, field) {
 			if( field.geo != null ) {
+				var time = formatTime(field.created_at);
+
 				arr.push({
+					node:		null,  // keeps track of which node this data belongs to
+
 					// flush out the entries
-					name:		field.from_user_name,
+					bpm:		output.Sonar2013.bpm,
+
+					// general
 					id:			field.from_user_id,
-					location:	field.location, //place.full_name, // the full name of the check-in
-					text:		field.text, // the text entered at check-in
 					lat:		field.geo.coordinates[0],
 					lon:		field.geo.coordinates[1],
-					time:		field.created_at, // the time the check-in was logged
+					time:		time, // the time the check-in was logged
+
+					// user
+					name:		field.from_user_name,
+
+					// check-in
+					location:	field.location, //place.full_name, // the full name of the check-in
+					text:		field.text, // the text entered at check-in
 					img:		field.profile_image_url // profile image of the user
 				});
 			}
@@ -567,8 +580,35 @@ function loadFoursquare(arr) {
 	});
 
 };
-// initial activation of data feed
+
+
+// initial activation of data feeds
+loadBicing( transportation.bicing );
+loadTraffic( transportation.traffic );
+loadBus( transportation.bus );
+
+loadWeather( weather );
+
+loadTwitter( social.twitter );
+loadInstagram( social.instagram );
 loadFoursquare( social.foursquare );
+
+
+
+// ------------------------------------------------------------------------
+function formatTime( timestampStr ) {
+	var _t = Date.parse(timestampStr);
+	var _d = new Date(_t);
+
+	return {
+		year:		_d.getFullYear(),
+		month:		_d.getMonth(),
+		day:		_d.getDate(),
+		hours:		_d.getHours(),
+		minutes:	_d.getMinutes(),
+		seconds:	_d.getSeconds()
+	};
+};
 
 
 // ------------------------------------------------------------------------
@@ -626,6 +666,7 @@ function clone(src) {
 	return mixin(r, src, clone);
 
 };
+
 
 // ------------------------------------------------------------------------
 // http://stackoverflow.com/questions/1129216/sorting-objects-in-an-array-by-a-field-value-in-javascript
