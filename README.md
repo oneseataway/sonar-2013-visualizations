@@ -19,21 +19,21 @@ simply load http://localhost:9000/index.html in your (webkit) browser of choice.
 Components
 ---------
 
-### Paper.js
+## Paper.js
 
 https://github.com/frederickk/Paper.js
 
 The visualization primarily runs on (a currently unofficial fork of) Paper.js 
 
 
-### frederickkPaper
+## frederickkPaper
 
 https://github.com/frederickk/frederickPaper
 
 Additional extensions to Paper.js functionality comes from frederickkPaper (
 
 
-### Google DAT Gui
+## Google DAT Gui
 
 http://workshop.chromeexperiments.com/examples/gui/#1--Basic-Usage
 

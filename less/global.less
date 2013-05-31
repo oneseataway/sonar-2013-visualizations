@@ -1,0 +1,560 @@
+//
+//	Sónar Visualization
+//
+//	Ken Frederick
+//	ken.frederick@gmx.de
+//
+//	http://cargocollective.com/kenfrederick/
+//	http://blog.kennethfrederick.de/
+//
+//
+
+
+/*	------------------------------------------------------------------------
+ *
+ *	Begin Global Properties
+ *
+ *	------------------------------------------------------------------------ */
+
+
+
+//	------------------------------------------------------------------------
+//	Colors
+//	------------------------------------------------------------------------
+@white:				rgb(255, 255, 255);		// #ffffff
+@white-light-gray: 	fade(@white, 45%);
+@white-dark-gray:	fade(@white, 83%);
+
+@black:				rgb( 28,  28,  28);
+@black-light-gray: 	fade(@black, 10%);
+@black-dark-gray:	fade(@black, 45%);
+
+@light-gray:		rgb(233, 232, 231);
+@dark-gray:			rgb(154, 149, 147);
+
+@link:				rgb( 10, 190, 240);		// #0abef0
+
+@red:				rgb(255,  70, 100);		// #ff4664; // red 
+@yellow:			rgb(242, 204,  68);		// #f2cc44; // yellow
+@green:				rgb(  0, 238, 153);		// #00ee99; // green
+@blue:				rgb(  0, 204, 255);		// #00ccff; // blue
+@purple:			rgb(144,  39, 142);		// #90278e; // purple
+
+
+
+//	------------------------------------------------------------------------
+//	Z-Indexes
+//	------------------------------------------------------------------------
+@layer0:	-200;	// more-bottom layer
+
+@layer1:	0;		// bottom layer
+// img
+// canvas
+
+@layer2:	200;
+// .black-trans
+// .white-trans
+
+@layer3:	400;
+// #work-menu-overlay
+
+@layer4:	600;
+// #navigation
+// video
+// .holder
+
+@layer5:	800;
+// #description-container
+// #header-container
+// .caption
+
+@layer6:	1000;	// upper layer
+// #navigation-inner
+// #work-menu
+
+
+
+//	------------------------------------------------------------------------
+//	Typography
+//	------------------------------------------------------------------------
+/*
+ *	import typefaces
+ *
+ */
+@font-face {
+    font-family: 'Futura-kf';
+    src: url('../typefaces/FuturaOTKF/futuraotkf-book-webfont.eot');
+    src: url('../typefaces/FuturaOTKF/futuraotkf-book-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../typefaces/FuturaOTKF/futuraotkf-book-webfont.woff') format('woff'),
+         url('../typefaces/FuturaOTKF/futuraotkf-book-webfont.ttf') format('truetype'),
+         url('../typefaces/FuturaOTKF/futuraotkf-book-webfont.svg#FuturaOTKFRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Futura-kf-Bold';
+    src: url('../typefaces/FuturaOTKF/futuraotkf-bold-webfont.eot');
+    src: url('../typefaces/FuturaOTKF/futuraotkf-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../typefaces/FuturaOTKF/futuraotkf-bold-webfont.woff') format('woff'),
+         url('../typefaces/FuturaOTKF/futuraotkf-bold-webfont.ttf') format('truetype'),
+         url('../typefaces/FuturaOTKF/futuraotkf-bold-webfont.svg#FuturaOTKFBold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Futura-kf-Demi';
+    src: url('../typefaces/FuturaOTKF/futuraotkf-demi-webfont.eot');
+    src: url('../typefaces/FuturaOTKF/futuraotkf-demi-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../typefaces/FuturaOTKF/futuraotkf-demi-webfont.woff') format('woff'),
+         url('../typefaces/FuturaOTKF/futuraotkf-demi-webfont.ttf') format('truetype'),
+         url('../typefaces/FuturaOTKF/futuraotkf-demi-webfont.svg#FuturaOTKFDemi') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+.futura-kf {
+  font-family: 'Futura-kf';
+  display: inline;
+}
+.futura-kf-demi {
+  font-family: 'Futura-kf-Demi';
+  display: inline;
+}
+.futura-kf-bold {
+  font-family: 'Futura-kf-Bold';
+  display: inline;
+}
+
+
+
+
+
+
+/*	------------------------------------------------------------------------
+ *
+ *	Begin Global Classes
+ *
+ *	------------------------------------------------------------------------ */
+
+
+//	------------------------------------------------------------------------
+//	alignments
+//	------------------------------------------------------------------------
+.align-left {
+	text-align: left;
+}
+.align-center {
+	text-align: center;
+}
+.align-right {
+	text-align: right;
+}
+
+.align-top {
+	position: absolute;
+	top: 0px;
+}
+.align-bottom {
+	position: absolute;
+	bottom: 0px;
+}
+
+
+//
+//	centered
+//
+.center {
+	position: relative;
+	.align-center;
+	width: 100%;
+
+	// margin: 0 auto;
+	overflow: hidden;
+}
+
+
+//
+//	http://jsfiddle.net/Sw3Jd/
+//
+.center-middle {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	display: table;
+}
+.center-middle .middle {
+	display: table-cell;
+	vertical-align: middle;
+	width: 100%;
+	margin: 0 auto;
+	.align-center;
+}
+
+
+//
+//	baseine vertical grid
+//
+//	http://blog.thehippo.de/2012/04/programming/do-a-loop-with-less-css/
+//	http://css-tricks.com/sass-vs-less/
+//
+@baseline-grid-iterations: ~`parseInt( 1536 / "@{type-base-line-height}" )`;
+.baseline-gridLoop (@index) when (@index > 0) {
+	@margin-top: @type-base-line-height; //30;
+
+	(~".baseline-grid@{index}") {
+		@baseline-offset: ( (@index*@type-base-line-height) + @margin-top );
+		margin-top: ~"@{baseline-offset}px";
+	}
+	  // Call itself
+	.baseline-gridLoop(@index - 1);
+}
+
+//	stop loop
+.baseline-gridLoop (0) {}
+
+//	output
+.baseline-gridLoop (0 + @baseline-grid-iterations);
+.baseline-grid {
+	margin-top: ~"@{type-base-line-height}px"; //30px;
+}
+
+
+//
+//	proportional vertical grid 
+//
+//	TODO: rename vertical-grid-fluid (?)
+//
+@vertical-grid-iterations: 100;
+.vertical-gridLoop (@index) when (@index > -1) {
+	(~".vertical-grid@{index}") {
+		@vertical-offset: (@index);
+		position: absolute; //relative;
+		top: ~"@{vertical-offset}%";
+		// height: ~"@{difference}%";
+	}
+	.vertical-gridLoop(@index - 5);
+}
+.vertical-gridLoop (-1) {}
+.vertical-gridLoop (@vertical-grid-iterations);
+
+
+//
+//	width variance
+//
+@col-width-iterations: 100;
+.col-widthLoop (@index) when (@index > 0) {
+	(~".col-width@{index}") {
+		@col-width-pct: (@index);
+		width: ~"@{col-width-pct}%";
+	}
+	.col-widthLoop(@index - 5);
+}
+.col-widthLoop (0) {}
+.col-widthLoop (@col-width-iterations);
+
+
+//
+//	fit content width to parent width
+//
+.fit {
+	width: 100%;
+}
+
+//
+//	fit content width to parent width & height
+//
+.fit-all {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+
+
+//	------------------------------------------------------------------------
+//	colors
+//	------------------------------------------------------------------------
+/* white */
+.white {
+	p&, h1&, h2&, h3&, h4&, h5&, h6& {
+		color: @white;
+	}
+	a& {
+		color: @white;
+		border-color: @white;
+	}
+	a:hover& {
+		color: @white;
+		border-color: @white;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @white;
+	}
+}
+.white-light-gray {
+	p&, h1&, h2&, h3&, h4&, h5&, h6& {
+		color: @white-light-gray;
+	}
+	a& {
+		color: @white-light-gray;
+		border-color: @white-light-gray;
+	}
+	a:hover& {
+		color: @light-gray;
+		border-color: @light-gray;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @white-light-gray;
+	}
+}
+.white-dark-gray {
+	p&, h1&, h2&, h3&, h4&, h5&, h6& {
+		color: @white-dark-gray;
+	}
+	a& {
+		color: @white-dark-gray;
+		border-color: @white-dark-gray;
+	}
+	a:hover& {
+		color: @dark-gray;
+		border-color: @dark-gray;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @white-dark-gray;
+	}
+}
+
+
+/* black */
+.black {
+	div&, .page&, .pages&, .article&, canvas& {
+		background-color: @black;
+	}
+}
+.black-light-gray {
+	p&, h1&, h2&, h3&, h4&, h5&, h6& {
+		color: @black-light-gray;
+	}
+	a& {
+		color: @black-light-gray;
+		border-color: @black-light-gray;
+	}
+	a:hover& {
+		color: @light-gray;
+		border-color: @light-gray;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @black-light-gray;
+	}
+}
+.black-dark-gray {
+	p&, h1&, h2&, h3&, h4&, h5&, h6& {
+		color: @black-dark-gray;
+	}
+	a& {
+		color: @black-dark-gray;
+		border-color: @black-dark-gray;
+	}
+	a:hover& {
+		color: @dark-gray;
+		border-color: @dark-gray;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @black-dark-gray;
+	}
+}
+
+
+/* grays */
+.light-gray {
+	p&, h1&, h2&, h3&, h4&, h5&, h6& {
+		color: @light-gray;
+	}
+	&-link {
+		color: @light-gray;
+		border-color: @light-gray;
+	}
+	a:hover& {
+		color: @light-gray;
+		border-color: @light-gray;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @light-gray;
+	}
+}
+.dark-gray {
+	p&, h1&, h2&, h3&, h4&, h5&, h6& {
+		color: @dark-gray;
+	}
+	&-link {
+		color: @dark-gray;
+		border-color: @dark-gray;
+	}
+	a:hover& {
+		color: @dark-gray;
+		border-color: @dark-gray;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @dark-gray;
+	}
+}
+
+
+/* colors */
+.red {
+	p&, h1&, h2&, h3&, h4&, h5&, h6& {
+		color: @red;
+	}
+	&-link {
+		color: @red;
+		border-color: @red;
+	}
+	a:hover& {
+		color: @red;
+		border-color: @red;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @red;
+	}
+}
+.yellow {
+	p&, h1&, h2&, h3&, h4&, h5&, h6& {
+		color: @yellow;
+	}
+	&-link {
+		color: @yellow;
+		border-color: @yellow;
+	}
+	a:hover& {
+		color: @yellow;
+		border-color: @yellow;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @yellow;
+	}
+}
+.green {
+	p&, h1&, h2&, h3&, h4&, h5&, h6& {
+		color: @green;
+	}
+	&-link {
+		color: @green;
+		border-color: @green;
+	}
+	a:hover& {
+		color: @green;
+		border-color: @green;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @green;
+	}
+}
+.blue {
+	p&, h1&, h2&, h3&, h4&, h5&, h6& {
+		color: @blue;
+	}
+	&-link {
+		color: @blue;
+		border-color: @blue;
+	}
+	a:hover& {
+		color: @blue;
+		border-color: @blue;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @blue;
+	}
+}
+.purple {
+	p&, h1&, h2&, h3&, h4&, h5&, h6& {
+		color: @purple;
+	}
+	&-link {
+		color: @purple;
+		border-color: @purple;
+	}
+	a:hover& {
+		color: @purple;
+		border-color: @purple;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @purple;
+	}
+}
+
+
+// make a transparent box
+@trans-iterations: 20;
+.transLoop (@index) when (@index > -1) {
+	(~".trans@{index}") {
+		// p&, h1&, h2&, h3&, h4&, h5&, h6&, div& {
+		div&, .page&, .pages&, .article& {
+			// background-color: @black;
+			opacity: (@index*0.05);
+			z-index: @layer3;
+		}
+	}
+	.transLoop(@index - 1);
+}
+.transLoop (-1) {}
+.transLoop (@trans-iterations);
+
+
+.underline-dotted {
+	border-bottom: 1px dotted @black;
+	// border-bottom-style: dotted;
+	// border-width: 1px;
+	// border-color: @black;
+}
+.underline-solid {
+	border-bottom: 1px solid @black;
+	// border-bottom-style: solid;
+	// border-width: 1px;
+	// border-color: @black;
+}
+
+
+
+
+//	------------------------------------------------------------------------
+//	layers
+//	------------------------------------------------------------------------
+.layer0 {
+	position: relative;
+	z-index: @layer0;
+}
+.layer1 {
+	position: relative;
+	z-index: @layer1;
+}
+.layer2 {
+	position: relative;
+	z-index: @layer2;
+}
+.layer3 {
+	position: relative;
+	z-index: @layer3;
+}
+.layer4 {
+	position: relative;
+	z-index: @layer4;
+}
+.layer5 {
+	position: relative;
+	z-index: @layer5;
+}
+.layer6 {
+	position: relative;
+	z-index: @layer6;
+}
+
+
+
+
+
+

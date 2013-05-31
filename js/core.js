@@ -690,15 +690,15 @@ function dynamicSortMultiple(attr) {
 	}
 };
 function dynamicSort(property) {
-    var sortOrder = 1;
-    if(property[0] === '-') {
-        sortOrder = -1;
-        property = property.substr(1, property.length - 1);
-    }
-    return function (a,b) {
-        var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
-        return result * sortOrder;
-    }
+	var sortOrder = 1;
+	if(property[0] === '-') {
+		sortOrder = -1;
+		property = property.substr(1, property.length - 1);
+	}
+	return function (a,b) {
+		var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+		return result * sortOrder;
+	}
 };
 Object.defineProperty(Array.prototype, 'sortBy', {
 	enumerable: false,
@@ -709,3 +709,47 @@ Object.defineProperty(Array.prototype, 'sortBy', {
 		);
 	}
 });
+
+
+// ------------------------------------------------------------------------
+// http://stackoverflow.com/questions/324486/how-do-you-read-css-rule-values-with-javascript
+var getCSSStyle = function( className ) {
+	var x, sheets,classes;
+	for( sheets=document.styleSheets.length-1; sheets>=0; sheets-- ){
+		classes = document.styleSheets[sheets].rules || document.styleSheets[sheets].cssRules;
+		for(x=0; x<classes.length; x++) {
+			if(classes[x].selectorText === className) {
+				return (classes[x].cssText ? classes[x].cssText : classes[x].style.cssText);
+			}
+		}
+	}
+	return false;
+};
+
+// super super super bootleg
+// don't judge me
+var getCSSColor = function( className, isNormalized ) {
+	isNormalized = ( isNormalized != undefined ) ? isNormalized : false;
+	var raw = getCSSStyle(className);
+	var key;
+	if( raw.indexOf('rgba(') !== -1 ) {
+		key = 'rgba(';
+	}
+	else {
+		key = 'rgb(';
+	}
+
+	var arr = raw.split(' ');
+	var r = parseInt( arr[3].split(key)[1] );
+	var g = parseInt( arr[4] );
+	var b = parseInt( arr[5] );
+	var a = parseFloat( arr[6].split(');')[0] );
+
+	return {
+		red:	( isNormalized ) ? r/255 : r,
+		green:	( isNormalized ) ? g/255 : g,
+		blue:	( isNormalized ) ? b/255 : b,
+		alpha:	( isNaN(a) ) ? 1.0 : a // alpha is always normalized
+	}
+}
+

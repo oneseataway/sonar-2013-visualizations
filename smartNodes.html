@@ -21,6 +21,7 @@
 		
 		
 		<!-- CSS -->
+		<link href="css/bootstrap.css" rel="stylesheet" type="text/css" />
 		<link href="css/core.css" rel="stylesheet" type="text/css" />
 		<link href="css/FPaper.css" rel="stylesheet" type="text/css" />
 
@@ -73,32 +74,32 @@
 				//
 				// colors
 				//
-				var colorsF = gui.addFolder('Colors');
-				colorsF.addColor(values, 'color_black');
+				// var colorsF = gui.addFolder('Colors');
+				// colorsF.addColor(values, 'sonar_black');
 
-				var primaryF = colorsF.addFolder('Primary');
-				primaryF.addColor(values, 'color_red');
-				primaryF.addColor(values, 'color_blue');
-				primaryF.addColor(values, 'color_yellow');
-				primaryF.addColor(values, 'color_green');
+				// var primaryF = colorsF.addFolder('Primary');
+				// primaryF.addColor(values, 'sonar_red');
+				// primaryF.addColor(values, 'sonar_blue');
+				// primaryF.addColor(values, 'sonar_yellow');
+				// primaryF.addColor(values, 'sonar_green');
 
-				// bass
-				var bassF = colorsF.addFolder('Bass');
-				bassF.addColor(values, 'color_bass0');
-				bassF.addColor(values, 'color_bass1');
-				bassF.addColor(values, 'color_bass2');
+				// // bass
+				// var bassF = colorsF.addFolder('Bass');
+				// bassF.addColor(values, 'sonar_bass0');
+				// bassF.addColor(values, 'sonar_bass1');
+				// bassF.addColor(values, 'sonar_bass2');
 
-				// mid
-				var midF = colorsF.addFolder('Mid');
-				midF.addColor(values, 'color_mid0');
-				midF.addColor(values, 'color_mid1');
-				midF.addColor(values, 'color_mid2');
+				// // mid
+				// var midF = colorsF.addFolder('Mid');
+				// midF.addColor(values, 'sonar_mid0');
+				// midF.addColor(values, 'sonar_mid1');
+				// midF.addColor(values, 'sonar_mid2');
 
-				// treble
-				var trebleF = colorsF.addFolder('Treble');
-				trebleF.addColor(values, 'color_treble0');
-				trebleF.addColor(values, 'color_treble1');
-				trebleF.addColor(values, 'color_treble2');
+				// // treble
+				// var trebleF = colorsF.addFolder('Treble');
+				// trebleF.addColor(values, 'sonar_treble0');
+				// trebleF.addColor(values, 'sonar_treble1');
+				// trebleF.addColor(values, 'sonar_treble2');
 
 
 				//
@@ -125,15 +126,53 @@
 		<!-- TEXT -->
 		<div id="textContainer">
 			<h4 class="white">S&#243;nar 2013<br />
-			<span id="Futura-kf">Smart Nodes</span></h4>
-
-			<div id="Futura-kf">&nbsp;</div>
-			<div id="Futura-kf-Demi">&nbsp;</div>
-			<div id="Futura-kf-Bold">&nbsp;</div>
+			<span class="futura-kf">Smart Nodes</span></h4>
 		</div>
 
-		<div id="manual" >
-			<p class="white"><span class="Futura-kf-Bold">booom</span></p>
+		<div id="manual" style="width: 100%;" >
+			<div class="container-fluid">
+				<div class="row-fluid align-center">
+					<!-- Transportation -->
+					<div id="bicingBpm" class="span1 offset1 pulse-fade">
+						<h4 class="futura-kf-bold underline-thick sonar-bass1">Bikes</h4>
+						<h4 id="bicingBpm" class="futura-kf sonar-bass1">32</h4>
+					</div>
+					<div id="TrafficBpm" class="span1 pulse-fade">
+						<h4 class="futura-kf-bold underline-thick sonar-mid1">Traffic</h4>
+						<h4 id="bicingBpm" class="futura-kf sonar-mid1">32</h4>
+					</div>
+					<div id="BusBpm" class="span2 pulse-fade">
+						<h4 class="futura-kf-bold underline-thick sonar-treble1">Bus</h4>
+						<h4 id="bicingBpm" class="futura-kf sonar-treble1">32</h4>
+					</div>
+
+					<!-- Weather -->
+					<div id="TemperatureBpm" class="span1 pulse-fade">
+						<h4 class="futura-kf-bold underline-thick white">Temp.</h4>
+						<h4 id="bicingBpm" class="futura-kf white">32</h4>
+					</div>
+					<div id="HumidtyBpm" class="span2 pulse-fade">
+						<h4 class="futura-kf-bold underline-thick white">Humidty</h4>
+						<h4 id="bicingBpm" class="futura-kf white">32</h4>
+					</div>
+
+					<!-- Social -->
+					<div id="TwitterBpm" class="span1 pulse-fade">
+						<h4 class="futura-kf-bold white underline-thick sonar-treble0">Twitter</h4>
+						<h4 id="bicingBpm" class="futura-kf sonar-treble0">32</h4>
+					</div>
+					<div id="FoursquareBpm" class="span1 pulse-fade">
+						<h4 class="futura-kf-bold white underline-thick sonar-treble1">Foursquare</h4>
+						<h4 id="bicingBpm" class="futura-kf sonar-treble1">32</h4>
+					</div>
+					<!-- <div id="InstagramBpm" class="span1 pulse-fade">
+						<h4 class="futura-kf-bold white underline-thick">Instagram</h4>
+						<h4 id="bicingBpm" class="futura-kf white">32</h4>
+					</div> -->
+
+
+				</div>
+			</div>
 		</div>
 
 

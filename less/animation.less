@@ -1,0 +1,128 @@
+//
+//
+//	Ken Frederick
+//	ken.frederick@gmx.de
+//
+//	http://cargocollective.com/kenfrederick/
+//	http://blog.kennethfrederick.de/
+//
+//
+
+
+//	------------------------------------------------------------------------
+//	Animations
+//	------------------------------------------------------------------------
+
+// pulse
+/*
+ *	http://www.paulund.co.uk/create-pulse-effect-with-css3-animation
+ */
+.pulse-fade {
+	-webkit-animation-name: 'pulse_fade';
+	-webkit-animation-duration: 1000ms;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-timing-function: ease-out;
+}
+
+@-webkit-keyframes pulse_fade {
+	0% { opacity: 0.7; }
+	50% { opacity: 1.0; }
+	100% { opacity: 0.7; }
+}
+
+
+
+
+//	------------------------------------------------------------------------
+//	Transitions
+//	------------------------------------------------------------------------
+// fadeOut
+.fadeOut {
+	-webkit-transition: opacity 0.25s ease-in-out;
+	-moz-transition: opacity 0.25s ease-in-out;
+	-ms-transition: opacity 0.25s ease-in-out;
+	-o-transition: opacity 0.25s ease-in-out;
+	transition: opacity 0.25s ease-in-out;
+
+	// starting value
+	-webkit-opacity: 1.0;
+	-moz-opacity: 1.0;
+	opacity: 1.0;
+}
+.fadeOut:hover {
+	// ending value
+	-webkit-opacity: 0.0;
+	-moz-opacity: 0.0;
+	opacity: 0.0;
+}
+
+// fadeOut
+// from 10% - 90%
+@fade-iterations: 9;
+.fadeOutLoop (@index) when (@index > 0) {
+	(~".fadeOut@{index}") {
+		-webkit-transition: opacity 0.25s ease-in-out;
+		-moz-transition: opacity 0.25s ease-in-out;
+		-ms-transition: opacity 0.25s ease-in-out;
+		-o-transition: opacity 0.25s ease-in-out;
+		transition: opacity 0.25s ease-in-out;
+
+		-webkit-opacity: 1.0;
+		-moz-opacity: 1.0;
+		opacity: 1.0;
+	}
+	(~".fadeOut@{index}:hover") {
+		-webkit-opacity: (@index*0.1);
+		-moz-opacity: (@index*0.1);
+		opacity: (@index*0.1);
+	}
+
+	.fadeOutLoop(@index - 1);
+}
+.fadeOutLoop (0) {}
+.fadeOutLoop (@fade-iterations);
+
+// fadeIn
+.fadeIn {
+	-webkit-transition: opacity 0.25s ease-in-out;
+	-moz-transition: opacity 0.25s ease-in-out;
+	-ms-transition: opacity 0.25s ease-in-out;
+	-o-transition: opacity 0.25s ease-in-out;
+	transition: opacity 0.25s ease-in-out;
+
+	// starting value
+	-webkit-opacity: 0.0;
+	-moz-opacity: 0.0;
+	opacity: 0.0;
+}
+.fadeIn:hover {
+	// ending value
+	-webkit-opacity: 1.0;
+	-moz-opacity: 1.0;
+	opacity: 1.0;
+}
+
+// fadeIn
+// from 10% - 90%
+.fadeInLoop (@index) when (@index > 0) {
+	(~".fadeIn@{index}") {
+		-webkit-transition: opacity 0.25s ease-in-out;
+		-moz-transition: opacity 0.25s ease-in-out;
+		-ms-transition: opacity 0.25s ease-in-out;
+		-o-transition: opacity 0.25s ease-in-out;
+		transition: opacity 0.25s ease-in-out;
+
+		-webkit-opacity: (@index*0.1);
+		-moz-opacity: (@index*0.1);
+		opacity: (@index*0.1);
+	}
+	(~".fadeIn@{index}:hover") {
+		-webkit-opacity: 1.0;
+		-moz-opacity: 1.0;
+		opacity: 1.0;
+	}
+
+	.fadeInLoop(@index - 1);
+}
+.fadeInLoop (0) {}
+.fadeInLoop (@fade-iterations);

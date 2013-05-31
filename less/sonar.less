@@ -1,0 +1,348 @@
+//
+//	Sónar Visualization
+//
+//	Ken Frederick
+//	ken.frederick@gmx.de
+//
+//	http://cargocollective.com/kenfrederick/
+//	http://blog.kennethfrederick.de/
+//
+//
+
+
+//	------------------------------------------------------------------------
+//	colors
+//	------------------------------------------------------------------------
+@sonar-black:	rgba(  28,  28,  28, 1.0 );
+
+@sonar-red:		rgba( 226,   2,  45, 1.0 );
+@sonar-blue:	rgba(   0, 158, 226, 1.0 );
+@sonar-yellow:	rgba( 247, 199,   0, 1.0 );
+@sonar-green:	rgba(   0, 255, 178, 1.0 );
+
+@sonar-bass0:	rgba(  89,   0, 255, 0.4 );
+@sonar-bass1:	rgba( 178,   0,  89, 0.4 );
+@sonar-bass2:	rgba( 225,   0,  46, 0.4 );
+
+@sonar-mid0:	rgba( 255, 178,   0, 0.4 );
+@sonar-mid1:	rgba( 178,  89,   0, 0.4 );
+@sonar-mid2:	rgba( 178, 255,   0, 0.4 );
+
+@sonar-treble0:	rgba(   0, 255, 178, 0.4 );
+@sonar-treble1:	rgba(   0, 255, 255, 0.4 );
+@sonar-treble2:	rgba(   0, 178, 255, 0.4 );
+
+
+/* colors */
+.sonar-black {
+	& {
+		color: @sonar-black;
+	}
+	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
+		color: @sonar-black;
+	}
+	&-link {
+		color: @sonar-black;
+		border-color: @sonar-black;
+	}
+	a:hover& {
+		color: @sonar-black;
+		border-color: @sonar-black;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @sonar-black;
+	}
+}
+
+/* primaries */
+.sonar-red {
+	& {
+		color: @sonar-red;
+	}
+	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
+		color: @sonar-red;
+	}
+	&-link {
+		color: @sonar-red;
+		border-color: @sonar-red;
+	}
+	a:hover& {
+		color: @sonar-red;
+		border-color: @sonar-red;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @sonar-red;
+	}
+}
+.sonar-blue {
+	& {
+		color: @sonar-blue;
+	}
+	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
+		color: @sonar-blue;
+	}
+	&-link {
+		color: @sonar-blue;
+		border-color: @sonar-blue;
+	}
+	a:hover& {
+		color: @sonar-blue;
+		border-color: @sonar-blue;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @sonar-blue;
+	}
+}
+.sonar-yellow {
+	& {
+		color: @sonar-yellow;
+	}
+	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
+		color: @sonar-yellow;
+	}
+	&-link {
+		color: @sonar-yellow;
+		border-color: @sonar-yellow;
+	}
+	a:hover& {
+		color: @sonar-yellow;
+		border-color: @sonar-yellow;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @sonar-yellow;
+	}
+}
+.sonar-green {
+	& {
+		color: @sonar-green;
+	}
+	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
+		color: @sonar-green;
+	}
+	&-link {
+		color: @sonar-green;
+		border-color: @sonar-green;
+	}
+	a:hover& {
+		color: @sonar-green;
+		border-color: @sonar-green;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @sonar-green;
+	}
+}
+
+
+/* tone colors */
+// bass
+// @sonar-tone-iterations: 3;
+// .toneLoop (@index) when (@index > -1) {
+// 	(~".trans@{index}") {
+// 		p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
+// 			color: @sonar-green;
+// 		}
+// 		&-link {
+// 			color: @sonar-green;
+// 			border-color: @sonar-green;
+// 		}
+// 		a:hover& {
+// 			color: @sonar-green;
+// 			border-color: @sonar-green;
+// 		}
+// 		div&, .page&, .pages&, .article& {
+// 			background-color: @sonar-green;
+// 		}
+// 	}
+// 	.toneLoop(@index - 1);
+// }
+// .toneLoop (-1) {}
+// .toneLoop (@trans-iterations);
+.sonar-bass0 {
+	& {
+		color: @sonar-bass0;
+	}
+	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
+		color: @sonar-bass0;
+	}
+	&-link {
+		color: @sonar-bass0;
+		border-color: @sonar-bass0;
+	}
+	a:hover& {
+		color: @sonar-bass0;
+		border-color: @sonar-bass0;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @sonar-bass0;
+	}
+}
+.sonar-bass1 {
+	& {
+		color: @sonar-bass1;
+	}
+	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
+		color: @sonar-bass1;
+	}
+	&-link {
+		color: @sonar-bass1;
+		border-color: @sonar-bass1;
+	}
+	a:hover& {
+		color: @sonar-bass1;
+		border-color: @sonar-bass1;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @sonar-bass1;
+	}
+}
+.sonar-bass2 {
+	& {
+		color: @sonar-bass2;
+	}
+	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
+		color: @sonar-bass2;
+	}
+	&-link {
+		color: @sonar-bass2;
+		border-color: @sonar-bass2;
+	}
+	a:hover& {
+		color: @sonar-bass2;
+		border-color: @sonar-bass2;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @sonar-bass2;
+	}
+}
+
+
+// mid
+.sonar-mid0 {
+	& {
+		color: @sonar-mid0;
+	}
+	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
+		color: @sonar-mid0;
+	}
+	&-link {
+		color: @sonar-mid0;
+		border-color: @sonar-mid0;
+	}
+	a:hover& {
+		color: @sonar-mid0;
+		border-color: @sonar-mid0;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @sonar-mid0;
+	}
+}
+.sonar-mid1 {
+	& {
+		color: @sonar-mid1;
+	}
+	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
+		color: @sonar-mid1;
+	}
+	&-link {
+		color: @sonar-mid1;
+		border-color: @sonar-mid1;
+	}
+	a:hover& {
+		color: @sonar-mid1;
+		border-color: @sonar-mid1;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @sonar-mid1;
+	}
+}
+.sonar-mid2 {
+	& {
+		color: @sonar-mid2;
+	}
+	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
+		color: @sonar-mid2;
+	}
+	&-link {
+		color: @sonar-mid2;
+		border-color: @sonar-mid2;
+	}
+	a:hover& {
+		color: @sonar-mid2;
+		border-color: @sonar-mid2;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @sonar-mid2;
+	}
+}
+
+
+// treble
+.sonar-treble0 {
+	& {
+		color: @sonar-treble0;
+	}
+	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
+		color: @sonar-treble0;
+	}
+	&-link {
+		color: @sonar-treble0;
+		border-color: @sonar-treble0;
+	}
+	a:hover& {
+		color: @sonar-treble0;
+		border-color: @sonar-treble0;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @sonar-treble0;
+	}
+}
+.sonar-treble1 {
+	& {
+		color: @sonar-treble1;
+	}
+	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
+		color: @sonar-treble1;
+	}
+	&-link {
+		color: @sonar-treble1;
+		border-color: @sonar-treble1;
+	}
+	a:hover& {
+		color: @sonar-treble1;
+		border-color: @sonar-treble1;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @sonar-treble1;
+	}
+}
+.sonar-treble2 {
+	& {
+		color: @sonar-treble2;
+	}
+	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
+		color: @sonar-treble2;
+	}
+	&-link {
+		color: @sonar-treble2;
+		border-color: @sonar-treble2;
+	}
+	a:hover& {
+		color: @sonar-treble2;
+		border-color: @sonar-treble2;
+	}
+	div&, .page&, .pages&, .article& {
+		background-color: @sonar-treble2;
+	}
+}
+
+
+.underline-thick {
+	border-top-style: none;
+	border-right-style: none;
+
+	border-bottom-width: 3px;
+	border-bottom-style: solid;
+
+	border-left-style: none;
+}
+

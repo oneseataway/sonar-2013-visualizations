@@ -44,14 +44,17 @@
   font-weight: normal;
   font-style: normal;
 }
-#futura-kf {
+.futura-kf {
   font-family: 'Futura-kf';
+  display: inline;
 }
-#futura-kf-demi {
+.futura-kf-demi {
   font-family: 'Futura-kf-Demi';
+  display: inline;
 }
-#futura-kf-bold {
+.futura-kf-bold {
   font-family: 'Futura-kf-Bold';
+  display: inline;
 }
 /*	------------------------------------------------------------------------
  *
@@ -1024,6 +1027,121 @@ div.trans0,
   position: relative;
   z-index: 1000;
 }
+/*  ------------------------------------------------------------------------
+ *
+ *  Begin Typeplate Definitions
+ *
+ *  ------------------------------------------------------------------------ */
+.ampersand-placeholder {
+  font-family: Futura-kf;
+}
+/*
+ *	<ul class="stats-tabs">
+ *		<li><a href="#">[value]<b>[name]</b></a></li>
+ *	</ul>
+ */
+.stats-tabs {
+  padding: 0;
+}
+.stats-tabs li {
+  display: inline-block;
+  margin: 0 0.625rem 0 0;
+  padding: 0 0.625rem 0 0;
+  border-right: 0.125rem solid rgba(28, 28, 28, 0.45);
+}
+.stats-tabs li:last-child {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+.stats-tabs li a {
+  display: inline-block;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.stats-tabs li a b {
+  display: block;
+  margin: 0.125rem 0 0 0;
+  font-size: 0.875rem;
+  font-weight: normal;
+}
+.no-hyphens {
+  -webkit-hyphens: none;
+  -webkit-hyphenate-character: "\2010";
+  -webkit-hyphenate-limit-after: 3;
+  -webkit-hyphenate-limit-before: 6;
+  -webkit-hyphenate-lines: 3;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+.no-wrap {
+  -webkit-hyphens: none;
+  -webkit-hyphenate-character: "\2010";
+  -webkit-hyphenate-limit-after: 3;
+  -webkit-hyphenate-limit-before: 6;
+  -webkit-hyphenate-lines: 3;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+  white-space: nowrap;
+}
+.ellipsis {
+  /*width: 200px;*/
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /*text-overflow: clip|ellipsis|string;*/
+
+  -o-text-overflow: ellipsis;
+  -ms-text-overflow: ellipsis;
+}
+.inherit-wrap {
+  word-wrap: auto;
+}
+.normal-wrap {
+  word-wrap: normal;
+}
+.breakword {
+  word-wrap: break-word;
+}
+.drop-cap:first-letter {
+  float: left;
+  margin: inherit;
+  padding: inherit;
+  font-size: 4em;
+  font-family: inherit;
+  line-height: 1;
+  text-indent: 0;
+  background: transparent;
+  color: inherit;
+}
+/*  ------------------------------------------------------------------------
+ *
+ *  Begin Animation Definitions
+ *
+ *  ------------------------------------------------------------------------ */
+/*
+ *	http://www.paulund.co.uk/create-pulse-effect-with-css3-animation
+ */
+.pulse-fade {
+  -webkit-animation-name: 'pulse_fade';
+  -webkit-animation-duration: 1000ms;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: ease-out;
+}
+@-webkit-keyframes pulse_fade {
+  0% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1.0;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
 .fadeOut {
   -webkit-transition: opacity 0.25s ease-in-out;
   -moz-transition: opacity 0.25s ease-in-out;
@@ -1326,93 +1444,396 @@ div.trans0,
 }
 /*  ------------------------------------------------------------------------
  *
- *  Begin Typeplate Definitions
+ *  Begin Application Specific 
  *
  *  ------------------------------------------------------------------------ */
-.ampersand-placeholder {
-  font-family: Futura-kf;
+/* colors */
+.sonar-black {
+  color: #1c1c1c;
 }
-/*
- *	<ul class="stats-tabs">
- *		<li><a href="#">[value]<b>[name]</b></a></li>
- *	</ul>
- */
-.stats-tabs {
-  padding: 0;
+p.sonar-black,
+h1.sonar-black,
+h2.sonar-black,
+h3.sonar-black,
+h4.sonar-black,
+h5.sonar-black,
+h6.sonar-black,
+span.sonar-black {
+  color: #1c1c1c;
 }
-.stats-tabs li {
-  display: inline-block;
-  margin: 0 0.625rem 0 0;
-  padding: 0 0.625rem 0 0;
-  border-right: 0.125rem solid rgba(28, 28, 28, 0.45);
+.sonar-black-link {
+  color: #1c1c1c;
+  border-color: #1c1c1c;
 }
-.stats-tabs li:last-child {
-  margin: 0;
-  padding: 0;
-  border: none;
+a:hover.sonar-black {
+  color: #1c1c1c;
+  border-color: #1c1c1c;
 }
-.stats-tabs li a {
-  display: inline-block;
-  font-size: 1.5rem;
-  font-weight: bold;
+div.sonar-black,
+.page.sonar-black,
+.pages.sonar-black,
+.article.sonar-black {
+  background-color: #1c1c1c;
 }
-.stats-tabs li a b {
-  display: block;
-  margin: 0.125rem 0 0 0;
-  font-size: 0.875rem;
-  font-weight: normal;
+/* primaries */
+.sonar-red {
+  color: #e2022d;
 }
-.no-hyphens {
-  -webkit-hyphens: none;
-  -webkit-hyphenate-character: "\2010";
-  -webkit-hyphenate-limit-after: 3;
-  -webkit-hyphenate-limit-before: 6;
-  -webkit-hyphenate-lines: 3;
-  -moz-hyphens: none;
-  -ms-hyphens: none;
-  hyphens: none;
+p.sonar-red,
+h1.sonar-red,
+h2.sonar-red,
+h3.sonar-red,
+h4.sonar-red,
+h5.sonar-red,
+h6.sonar-red,
+span.sonar-red {
+  color: #e2022d;
 }
-.no-wrap {
-  -webkit-hyphens: none;
-  -webkit-hyphenate-character: "\2010";
-  -webkit-hyphenate-limit-after: 3;
-  -webkit-hyphenate-limit-before: 6;
-  -webkit-hyphenate-lines: 3;
-  -moz-hyphens: none;
-  -ms-hyphens: none;
-  hyphens: none;
-  white-space: nowrap;
+.sonar-red-link {
+  color: #e2022d;
+  border-color: #e2022d;
 }
-.ellipsis {
-  /*width: 200px;*/
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  /*text-overflow: clip|ellipsis|string;*/
-
-  -o-text-overflow: ellipsis;
-  -ms-text-overflow: ellipsis;
+a:hover.sonar-red {
+  color: #e2022d;
+  border-color: #e2022d;
 }
-.inherit-wrap {
-  word-wrap: auto;
+div.sonar-red,
+.page.sonar-red,
+.pages.sonar-red,
+.article.sonar-red {
+  background-color: #e2022d;
 }
-.normal-wrap {
-  word-wrap: normal;
+.sonar-blue {
+  color: #009ee2;
 }
-.breakword {
-  word-wrap: break-word;
+p.sonar-blue,
+h1.sonar-blue,
+h2.sonar-blue,
+h3.sonar-blue,
+h4.sonar-blue,
+h5.sonar-blue,
+h6.sonar-blue,
+span.sonar-blue {
+  color: #009ee2;
 }
-.drop-cap:first-letter {
-  float: left;
-  margin: inherit;
-  padding: inherit;
-  font-size: 4em;
-  font-family: inherit;
-  line-height: 1;
-  text-indent: 0;
-  background: transparent;
-  color: inherit;
+.sonar-blue-link {
+  color: #009ee2;
+  border-color: #009ee2;
+}
+a:hover.sonar-blue {
+  color: #009ee2;
+  border-color: #009ee2;
+}
+div.sonar-blue,
+.page.sonar-blue,
+.pages.sonar-blue,
+.article.sonar-blue {
+  background-color: #009ee2;
+}
+.sonar-yellow {
+  color: #f7c700;
+}
+p.sonar-yellow,
+h1.sonar-yellow,
+h2.sonar-yellow,
+h3.sonar-yellow,
+h4.sonar-yellow,
+h5.sonar-yellow,
+h6.sonar-yellow,
+span.sonar-yellow {
+  color: #f7c700;
+}
+.sonar-yellow-link {
+  color: #f7c700;
+  border-color: #f7c700;
+}
+a:hover.sonar-yellow {
+  color: #f7c700;
+  border-color: #f7c700;
+}
+div.sonar-yellow,
+.page.sonar-yellow,
+.pages.sonar-yellow,
+.article.sonar-yellow {
+  background-color: #f7c700;
+}
+.sonar-green {
+  color: #00ffb2;
+}
+p.sonar-green,
+h1.sonar-green,
+h2.sonar-green,
+h3.sonar-green,
+h4.sonar-green,
+h5.sonar-green,
+h6.sonar-green,
+span.sonar-green {
+  color: #00ffb2;
+}
+.sonar-green-link {
+  color: #00ffb2;
+  border-color: #00ffb2;
+}
+a:hover.sonar-green {
+  color: #00ffb2;
+  border-color: #00ffb2;
+}
+div.sonar-green,
+.page.sonar-green,
+.pages.sonar-green,
+.article.sonar-green {
+  background-color: #00ffb2;
+}
+/* tone colors */
+.sonar-bass0 {
+  color: rgba(89, 0, 255, 0.4);
+}
+p.sonar-bass0,
+h1.sonar-bass0,
+h2.sonar-bass0,
+h3.sonar-bass0,
+h4.sonar-bass0,
+h5.sonar-bass0,
+h6.sonar-bass0,
+span.sonar-bass0 {
+  color: rgba(89, 0, 255, 0.4);
+}
+.sonar-bass0-link {
+  color: rgba(89, 0, 255, 0.4);
+  border-color: rgba(89, 0, 255, 0.4);
+}
+a:hover.sonar-bass0 {
+  color: rgba(89, 0, 255, 0.4);
+  border-color: rgba(89, 0, 255, 0.4);
+}
+div.sonar-bass0,
+.page.sonar-bass0,
+.pages.sonar-bass0,
+.article.sonar-bass0 {
+  background-color: rgba(89, 0, 255, 0.4);
+}
+.sonar-bass1 {
+  color: rgba(178, 0, 89, 0.4);
+}
+p.sonar-bass1,
+h1.sonar-bass1,
+h2.sonar-bass1,
+h3.sonar-bass1,
+h4.sonar-bass1,
+h5.sonar-bass1,
+h6.sonar-bass1,
+span.sonar-bass1 {
+  color: rgba(178, 0, 89, 0.4);
+}
+.sonar-bass1-link {
+  color: rgba(178, 0, 89, 0.4);
+  border-color: rgba(178, 0, 89, 0.4);
+}
+a:hover.sonar-bass1 {
+  color: rgba(178, 0, 89, 0.4);
+  border-color: rgba(178, 0, 89, 0.4);
+}
+div.sonar-bass1,
+.page.sonar-bass1,
+.pages.sonar-bass1,
+.article.sonar-bass1 {
+  background-color: rgba(178, 0, 89, 0.4);
+}
+.sonar-bass2 {
+  color: rgba(225, 0, 46, 0.4);
+}
+p.sonar-bass2,
+h1.sonar-bass2,
+h2.sonar-bass2,
+h3.sonar-bass2,
+h4.sonar-bass2,
+h5.sonar-bass2,
+h6.sonar-bass2,
+span.sonar-bass2 {
+  color: rgba(225, 0, 46, 0.4);
+}
+.sonar-bass2-link {
+  color: rgba(225, 0, 46, 0.4);
+  border-color: rgba(225, 0, 46, 0.4);
+}
+a:hover.sonar-bass2 {
+  color: rgba(225, 0, 46, 0.4);
+  border-color: rgba(225, 0, 46, 0.4);
+}
+div.sonar-bass2,
+.page.sonar-bass2,
+.pages.sonar-bass2,
+.article.sonar-bass2 {
+  background-color: rgba(225, 0, 46, 0.4);
+}
+.sonar-mid0 {
+  color: rgba(255, 178, 0, 0.4);
+}
+p.sonar-mid0,
+h1.sonar-mid0,
+h2.sonar-mid0,
+h3.sonar-mid0,
+h4.sonar-mid0,
+h5.sonar-mid0,
+h6.sonar-mid0,
+span.sonar-mid0 {
+  color: rgba(255, 178, 0, 0.4);
+}
+.sonar-mid0-link {
+  color: rgba(255, 178, 0, 0.4);
+  border-color: rgba(255, 178, 0, 0.4);
+}
+a:hover.sonar-mid0 {
+  color: rgba(255, 178, 0, 0.4);
+  border-color: rgba(255, 178, 0, 0.4);
+}
+div.sonar-mid0,
+.page.sonar-mid0,
+.pages.sonar-mid0,
+.article.sonar-mid0 {
+  background-color: rgba(255, 178, 0, 0.4);
+}
+.sonar-mid1 {
+  color: rgba(178, 89, 0, 0.4);
+}
+p.sonar-mid1,
+h1.sonar-mid1,
+h2.sonar-mid1,
+h3.sonar-mid1,
+h4.sonar-mid1,
+h5.sonar-mid1,
+h6.sonar-mid1,
+span.sonar-mid1 {
+  color: rgba(178, 89, 0, 0.4);
+}
+.sonar-mid1-link {
+  color: rgba(178, 89, 0, 0.4);
+  border-color: rgba(178, 89, 0, 0.4);
+}
+a:hover.sonar-mid1 {
+  color: rgba(178, 89, 0, 0.4);
+  border-color: rgba(178, 89, 0, 0.4);
+}
+div.sonar-mid1,
+.page.sonar-mid1,
+.pages.sonar-mid1,
+.article.sonar-mid1 {
+  background-color: rgba(178, 89, 0, 0.4);
+}
+.sonar-mid2 {
+  color: rgba(178, 255, 0, 0.4);
+}
+p.sonar-mid2,
+h1.sonar-mid2,
+h2.sonar-mid2,
+h3.sonar-mid2,
+h4.sonar-mid2,
+h5.sonar-mid2,
+h6.sonar-mid2,
+span.sonar-mid2 {
+  color: rgba(178, 255, 0, 0.4);
+}
+.sonar-mid2-link {
+  color: rgba(178, 255, 0, 0.4);
+  border-color: rgba(178, 255, 0, 0.4);
+}
+a:hover.sonar-mid2 {
+  color: rgba(178, 255, 0, 0.4);
+  border-color: rgba(178, 255, 0, 0.4);
+}
+div.sonar-mid2,
+.page.sonar-mid2,
+.pages.sonar-mid2,
+.article.sonar-mid2 {
+  background-color: rgba(178, 255, 0, 0.4);
+}
+.sonar-treble0 {
+  color: rgba(0, 255, 178, 0.4);
+}
+p.sonar-treble0,
+h1.sonar-treble0,
+h2.sonar-treble0,
+h3.sonar-treble0,
+h4.sonar-treble0,
+h5.sonar-treble0,
+h6.sonar-treble0,
+span.sonar-treble0 {
+  color: rgba(0, 255, 178, 0.4);
+}
+.sonar-treble0-link {
+  color: rgba(0, 255, 178, 0.4);
+  border-color: rgba(0, 255, 178, 0.4);
+}
+a:hover.sonar-treble0 {
+  color: rgba(0, 255, 178, 0.4);
+  border-color: rgba(0, 255, 178, 0.4);
+}
+div.sonar-treble0,
+.page.sonar-treble0,
+.pages.sonar-treble0,
+.article.sonar-treble0 {
+  background-color: rgba(0, 255, 178, 0.4);
+}
+.sonar-treble1 {
+  color: rgba(0, 255, 255, 0.4);
+}
+p.sonar-treble1,
+h1.sonar-treble1,
+h2.sonar-treble1,
+h3.sonar-treble1,
+h4.sonar-treble1,
+h5.sonar-treble1,
+h6.sonar-treble1,
+span.sonar-treble1 {
+  color: rgba(0, 255, 255, 0.4);
+}
+.sonar-treble1-link {
+  color: rgba(0, 255, 255, 0.4);
+  border-color: rgba(0, 255, 255, 0.4);
+}
+a:hover.sonar-treble1 {
+  color: rgba(0, 255, 255, 0.4);
+  border-color: rgba(0, 255, 255, 0.4);
+}
+div.sonar-treble1,
+.page.sonar-treble1,
+.pages.sonar-treble1,
+.article.sonar-treble1 {
+  background-color: rgba(0, 255, 255, 0.4);
+}
+.sonar-treble2 {
+  color: rgba(0, 178, 255, 0.4);
+}
+p.sonar-treble2,
+h1.sonar-treble2,
+h2.sonar-treble2,
+h3.sonar-treble2,
+h4.sonar-treble2,
+h5.sonar-treble2,
+h6.sonar-treble2,
+span.sonar-treble2 {
+  color: rgba(0, 178, 255, 0.4);
+}
+.sonar-treble2-link {
+  color: rgba(0, 178, 255, 0.4);
+  border-color: rgba(0, 178, 255, 0.4);
+}
+a:hover.sonar-treble2 {
+  color: rgba(0, 178, 255, 0.4);
+  border-color: rgba(0, 178, 255, 0.4);
+}
+div.sonar-treble2,
+.page.sonar-treble2,
+.pages.sonar-treble2,
+.article.sonar-treble2 {
+  background-color: rgba(0, 178, 255, 0.4);
+}
+.underline-thick {
+  border-top-style: none;
+  border-right-style: none;
+  border-bottom-width: 3px;
+  border-bottom-style: solid;
+  border-left-style: none;
 }
 /*  ------------------------------------------------------------------------
  *

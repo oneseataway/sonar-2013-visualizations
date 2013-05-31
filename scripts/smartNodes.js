@@ -68,17 +68,14 @@ var pulse;
 // Bicing
 var bicing;
 var bicingNodeGroup;
-var bicingBpmText;
 
 // Traffic
 var traffic;
 var trafficNodeGroup;
-var trafficBpmText;
 
 // Bus
 var bus;
 var busNodeGroup;
-var busBpmText;
 
 
 /*
@@ -87,17 +84,14 @@ var busBpmText;
 // Twitter
 var twitter;
 var twitterNodeGroup;
-var twitterBpmText;
 
 // Foursquare
 var foursquare;
 var foursquareNodeGroup;
-var foursquareBpmText;
 
 // Instagram
 var instagram;
 var instagramNodeGroup;
-var instagramBpmText;
 
 
 
@@ -106,6 +100,7 @@ var instagramBpmText;
  *	Interface
  *
  */
+console.log( window.getComputedStyle );
 var InterfaceValues = function() {
 	//
 	// datapoints
@@ -129,50 +124,36 @@ var InterfaceValues = function() {
 	//
 	// colors
 	//
-	this.color_black	= [  28,  28,  28, 1.0 ];
+	// pull color values in from CSS
+	// then convert to Paper.js compatible colors
+	this.sonar_black = new Color( getCSSColor('.sonar-black', true) ); 
 
-	this.color_red		= [ 226,   2,  45, 1.0 ];
-	this.color_blue	= [   0, 158, 226, 1.0 ];
-	this.color_yellow	= [ 247, 199,   0, 1.0 ];
-	this.color_green	= [   0, 255, 178, 1.0 ];
+	// primaries
+	this.sonar_red = new Color( getCSSColor('.sonar-red', true) ); 
+	this.sonar_yellow = new Color( getCSSColor('.sonar-yellow', true) ); 
+	this.sonar_blue = new Color( getCSSColor('.sonar-blue', true) ); 
+	this.sonar_green = new Color( getCSSColor('.sonar-green', true) ); 
 
-	this.color_bass0	= [  89,   0, 255, 0.2 ];
-	this.color_bass1	= [ 178,   0,  89, 0.2 ];
-	this.color_bass2	= [ 225,   0,  46, 0.2 ];
+	// bass
+	this.sonar_bass = [
+		new Color( getCSSColor('.sonar-bass0', true) ),
+		new Color( getCSSColor('.sonar-bass1', true) ), 
+		new Color( getCSSColor('.sonar-bass2', true) ) 
+	];
 
-	this.color_mid0		= [ 255, 178,   0, 0.2 ];
-	this.color_mid1		= [ 178,  89,   0, 0.2 ];
-	this.color_mid2		= [ 178, 255,   0, 0.2 ];
+	// mid
+	this.sonar_mid = [
+		new Color( getCSSColor('.sonar-mid0', true) ),
+		new Color( getCSSColor('.sonar-mid1', true) ), 
+		new Color( getCSSColor('.sonar-mid2', true) ) 
+	];
 
-	this.color_treble0	= [   0, 255, 178, 0.2 ];
-	this.color_treble1	= [   0, 255, 255, 0.2 ];
-	this.color_treble2	= [   0, 178, 255, 0.2 ];
-
-	this.colors = {
-		// convert to Paper.js compatible colors
-		black: new Color( this.color_black[0]/255, this.color_black[1]/255, this.color_black[2]/255, this.color_black[3] ),
-
-		red: new Color( this.color_red[0]/255, this.color_red[1]/255, this.color_red[2]/255, this.color_red[3] ),
-		blue: new Color( this.color_blue[0]/255, this.color_blue[1]/255, this.color_blue[2]/255, this.color_blue[3] ),
-		yellow: new Color( this.color_yellow[0]/255, this.color_yellow[1]/255, this.color_yellow[2]/255, this.color_yellow[3] ),
-		green: new Color( this.color_green[0]/255, this.color_green[1]/255, this.color_green[2]/255, this.color_green[3] ),
-
-		bass: [
-			new Color( this.color_bass0[0]/255, this.color_bass0[1]/255, this.color_bass0[2]/255, this.color_bass0[3] ),
-			new Color( this.color_bass1[0]/255, this.color_bass1[1]/255, this.color_bass1[2]/255, this.color_bass1[3] ),
-			new Color( this.color_bass2[0]/255, this.color_bass2[1]/255, this.color_bass2[2]/255, this.color_bass2[3] ),
-		],
-		mid: [
-			new Color( this.color_mid0[0]/255, this.color_mid0[1]/255, this.color_mid0[2]/255, this.color_mid0[3] ),
-			new Color( this.color_mid1[0]/255, this.color_mid1[1]/255, this.color_mid1[2]/255, this.color_mid1[3] ),
-			new Color( this.color_mid2[0]/255, this.color_mid2[1]/255, this.color_mid2[2]/255, this.color_mid2[3] ),
-		],
-		treble: [
-			new Color( this.color_treble0[0]/255, this.color_treble0[1]/255, this.color_treble0[2]/255, this.color_treble0[3] ),
-			new Color( this.color_treble1[0]/255, this.color_treble1[1]/255, this.color_treble1[2]/255, this.color_treble1[3] ),
-			new Color( this.color_treble2[0]/255, this.color_treble2[1]/255, this.color_treble2[2]/255, this.color_treble2[3] ),
-		],
-	};
+	// treble	
+	this.sonar_treble = [
+		new Color( getCSSColor('.sonar-treble0', true) ),
+		new Color( getCSSColor('.sonar-treble1', true) ),
+		new Color( getCSSColor('.sonar-treble2', true) )
+	]; 
 
 
 	//
@@ -256,7 +237,7 @@ function Setup() {
 				nodePoints.push( pt );
 
 				var node = new Path.Circle( pt, sizing.min*0.5 );
-				node.fillColor = values.colors.black;
+				node.fillColor = values.sonar_black;
 				node.strokeColor = 'white';
 
 				// add to grid
@@ -325,7 +306,7 @@ function Setup() {
 		face.add( triangle.p3 );
 		face.closed = true;
 
-		face.fillColor = new Color( 1.0, 0.0, 0.0 );
+		face.fillColor = new Color( 0.0, 0.0, 0.0, 0.0 );
 
 		triangles.appendTop( face );
 	}
@@ -383,7 +364,7 @@ function Setup() {
 
 	// create & set the style
 	var style = {
-		fillColor: values.colors.bass[1],
+		fillColor: values.sonar_bass[1],
 		opacity: 0.8
 	};
 	bicing.setStyle(style);
@@ -426,7 +407,7 @@ function Setup() {
 
 	// create & set the style
 	var style = {
-		fillColor: values.colors.mid[1],
+		fillColor: values.sonar_mid[1],
 		opacity: 0.8
 	};
 	traffic.setStyle(style);
@@ -467,7 +448,7 @@ function Setup() {
 
 	// create & set the style
 	var style = {
-		fillColor: values.colors.treble[1],
+		fillColor: values.sonar_treble[1],
 		opacity: 0.8
 	};
 	bus.setStyle(style);
@@ -502,7 +483,7 @@ function Setup() {
 
 	// create & set the style
 	var style = {
-		fillColor: values.colors.treble[0],
+		fillColor: values.sonar_treble[0],
 		opacity: 0.8
 	};
 	twitter.setStyle(style);
@@ -543,7 +524,7 @@ function Setup() {
 
 	// // create & set the style
 	// var style = {
-	//	fillColor: values.colors.treble[2],
+	//	fillColor: values.sonar_treble[2],
 	//	opacity: 0.8
 	// };
 	// foursquare.setStyle(style);
@@ -605,45 +586,6 @@ function Update(event) {
 	else {
 		if( debugPath != undefined ) debugPath.remove();
 	}
-
-	// transportation
-	// bicing
-	// if( bicing.isLoaded() ) {
-	// 	bicingBpmText.data.pulse.update( event.time );
-	// 	if( bicingBpmText.data.pulse.isDone() ) {
-	// 		bicingBpmText.data.pulse.toggle();
-	// 	}
-	// }
-	// // traffic
-	// if( traffic.isLoaded() ) {
-	// 	trafficBpmText.data.pulse.update( event.time );
-	// 	if( trafficBpmText.data.pulse.isDone() ) {
-	// 		trafficBpmText.data.pulse.toggle();
-	// 	}
-	// }
-	// // bus
-	// if( bus.isLoaded() ) {
-	// 	busBpmText.data.pulse.update( event.time );
-	// 	if( busBpmText.data.pulse.isDone() ) {
-	// 		busBpmText.data.pulse.toggle();
-	// 	}
-	// }
-
-	// // social
-	// // twitter
-	// if( twitter.isLoaded() ) {
-	// 	twitterBpmText.data.pulse.update( event.time );
-	// 	if( twitterBpmText.data.pulse.isDone() ) {
-	// 		twitterBpmText.data.pulse.toggle();
-	// 	}
-	// }
-	// foursquare
-	// if( foursquare.isLoaded() ) {
-	// 	foursquareBpmText.data.pulse.update( event.time );
-	// 	if( foursquareBpmText.data.pulse.isDone() ) {
-	// 		foursquareBpmText.data.pulse.toggle();
-	// 	}
-	// }
 
 
 
@@ -867,7 +809,7 @@ function Draw(event) {
 				// );
 				// t.fillColor = new Color( Math.random(), Math.random(), Math.random() );
 
-				node.fillColor = values.colors.treble[0];
+				node.fillColor = values.sonar_treble[0];
 				// node.opacity = 0.2;
 
 			}
@@ -933,19 +875,8 @@ function init() {
 	 *
 	 */
 	bicing.init();
-	if( bicing.isLoaded() ) {
-		bicingBpmText = new KeyText( bicing, transportation.bicing );
-	}
-
 	traffic.init();
-	if( traffic.isLoaded() ) {
-		trafficBpmText = new KeyText( traffic, transportation.traffic );
-	}
-
 	bus.init();
-	if( bus.isLoaded() ) {
-		busBpmText = new KeyText( bus, transportation.bus );
-	}
 
 
 	/*
@@ -954,14 +885,7 @@ function init() {
 	 *
 	 */
 	twitter.init();
-	if( twitter.isLoaded() ) {
-		twitterBpmText = new KeyText( twitter, social.twitter );
-	}
-
 	// foursquare.init();
-	// if( foursquare.isLoaded() ) {
-	// 	foursquareBpmText = new KeyText( foursquare, social.foursquare );
-	// }
 
 };
 
@@ -1104,7 +1028,7 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 							current.radius[0]
 						);
 						node.position = pos;
-						// node.fillColor = values.colors.bass[0].lerp( values.colors.bass[1], 1/current.id.length );
+						// node.fillColor = values.sonar_bass[0].lerp( values.sonar_bass[1], 1/current.id.length );
 
 						// update node data
 						node.data = d;
