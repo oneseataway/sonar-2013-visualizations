@@ -1566,7 +1566,7 @@ div.sonar-green,
 }
 /* tone colors */
 .sonar-bikes {
-  color: rgba(76, 0, 90, 0.8);
+  color: rgba(76, 0, 90, 0.75);
 }
 p.sonar-bikes,
 h1.sonar-bikes,
@@ -1576,24 +1576,24 @@ h4.sonar-bikes,
 h5.sonar-bikes,
 h6.sonar-bikes,
 span.sonar-bikes {
-  color: rgba(76, 0, 90, 0.8);
+  color: rgba(76, 0, 90, 0.75);
 }
 .sonar-bikes-link {
-  color: rgba(76, 0, 90, 0.8);
-  border-color: rgba(76, 0, 90, 0.8);
+  color: rgba(76, 0, 90, 0.75);
+  border-color: rgba(76, 0, 90, 0.75);
 }
 a:hover.sonar-bikes {
-  color: rgba(76, 0, 90, 0.8);
-  border-color: rgba(76, 0, 90, 0.8);
+  color: rgba(76, 0, 90, 0.75);
+  border-color: rgba(76, 0, 90, 0.75);
 }
 div.sonar-bikes,
 .page.sonar-bikes,
 .pages.sonar-bikes,
 .article.sonar-bikes {
-  background-color: rgba(76, 0, 90, 0.8);
+  background-color: rgba(76, 0, 90, 0.75);
 }
 .sonar-traffic {
-  color: rgba(192, 74, 89, 0.8);
+  color: rgba(192, 74, 89, 0.75);
 }
 p.sonar-traffic,
 h1.sonar-traffic,
@@ -1603,24 +1603,24 @@ h4.sonar-traffic,
 h5.sonar-traffic,
 h6.sonar-traffic,
 span.sonar-traffic {
-  color: rgba(192, 74, 89, 0.8);
+  color: rgba(192, 74, 89, 0.75);
 }
 .sonar-traffic-link {
-  color: rgba(192, 74, 89, 0.8);
-  border-color: rgba(192, 74, 89, 0.8);
+  color: rgba(192, 74, 89, 0.75);
+  border-color: rgba(192, 74, 89, 0.75);
 }
 a:hover.sonar-traffic {
-  color: rgba(192, 74, 89, 0.8);
-  border-color: rgba(192, 74, 89, 0.8);
+  color: rgba(192, 74, 89, 0.75);
+  border-color: rgba(192, 74, 89, 0.75);
 }
 div.sonar-traffic,
 .page.sonar-traffic,
 .pages.sonar-traffic,
 .article.sonar-traffic {
-  background-color: rgba(192, 74, 89, 0.8);
+  background-color: rgba(192, 74, 89, 0.75);
 }
 .sonar-bus {
-  color: rgba(243, 76, 62, 0.8);
+  color: rgba(243, 76, 62, 0.75);
 }
 p.sonar-bus,
 h1.sonar-bus,
@@ -1630,24 +1630,24 @@ h4.sonar-bus,
 h5.sonar-bus,
 h6.sonar-bus,
 span.sonar-bus {
-  color: rgba(243, 76, 62, 0.8);
+  color: rgba(243, 76, 62, 0.75);
 }
 .sonar-bus-link {
-  color: rgba(243, 76, 62, 0.8);
-  border-color: rgba(243, 76, 62, 0.8);
+  color: rgba(243, 76, 62, 0.75);
+  border-color: rgba(243, 76, 62, 0.75);
 }
 a:hover.sonar-bus {
-  color: rgba(243, 76, 62, 0.8);
-  border-color: rgba(243, 76, 62, 0.8);
+  color: rgba(243, 76, 62, 0.75);
+  border-color: rgba(243, 76, 62, 0.75);
 }
 div.sonar-bus,
 .page.sonar-bus,
 .pages.sonar-bus,
 .article.sonar-bus {
-  background-color: rgba(243, 76, 62, 0.8);
+  background-color: rgba(243, 76, 62, 0.75);
 }
 .sonar-temperature {
-  color: rgba(255, 235, 138, 0.8);
+  color: rgba(255, 235, 138, 0.75);
 }
 p.sonar-temperature,
 h1.sonar-temperature,
@@ -1657,24 +1657,24 @@ h4.sonar-temperature,
 h5.sonar-temperature,
 h6.sonar-temperature,
 span.sonar-temperature {
-  color: rgba(255, 235, 138, 0.8);
+  color: rgba(255, 235, 138, 0.75);
 }
 .sonar-temperature-link {
-  color: rgba(255, 235, 138, 0.8);
-  border-color: rgba(255, 235, 138, 0.8);
+  color: rgba(255, 235, 138, 0.75);
+  border-color: rgba(255, 235, 138, 0.75);
 }
 a:hover.sonar-temperature {
-  color: rgba(255, 235, 138, 0.8);
-  border-color: rgba(255, 235, 138, 0.8);
+  color: rgba(255, 235, 138, 0.75);
+  border-color: rgba(255, 235, 138, 0.75);
 }
 div.sonar-temperature,
 .page.sonar-temperature,
 .pages.sonar-temperature,
 .article.sonar-temperature {
-  background-color: rgba(255, 235, 138, 0.8);
+  background-color: rgba(255, 235, 138, 0.75);
 }
 .sonar-humidity {
-  color: rgba(102, 235, 200, 0.8);
+  color: rgba(102, 235, 200, 0.75);
 }
 p.sonar-humidity,
 h1.sonar-humidity,
@@ -1684,21 +1684,21 @@ h4.sonar-humidity,
 h5.sonar-humidity,
 h6.sonar-humidity,
 span.sonar-humidity {
-  color: rgba(102, 235, 200, 0.8);
+  color: rgba(102, 235, 200, 0.75);
 }
 .sonar-humidity-link {
-  color: rgba(102, 235, 200, 0.8);
-  border-color: rgba(102, 235, 200, 0.8);
+  color: rgba(102, 235, 200, 0.75);
+  border-color: rgba(102, 235, 200, 0.75);
 }
 a:hover.sonar-humidity {
-  color: rgba(102, 235, 200, 0.8);
-  border-color: rgba(102, 235, 200, 0.8);
+  color: rgba(102, 235, 200, 0.75);
+  border-color: rgba(102, 235, 200, 0.75);
 }
 div.sonar-humidity,
 .page.sonar-humidity,
 .pages.sonar-humidity,
 .article.sonar-humidity {
-  background-color: rgba(102, 235, 200, 0.8);
+  background-color: rgba(102, 235, 200, 0.75);
 }
 .sonar-twitter {
   color: #00acef;

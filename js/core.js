@@ -338,8 +338,8 @@ function loadTraffic(arr) {
 function loadBus(arr) {
 	// grabs data via YQL to avoid
 	// cross-origin errors
-	// var jsonUrl = 'http://marcpous.com/oneseataway/sonarBus.php';
-	var jsonUrl = 'http://kennethfrederick.com/sandbox/sonar-2013/json/sonarBus.json';
+	var jsonUrl = 'http://marcpous.com/oneseataway/sonarBus.php';
+	// var jsonUrl = 'http://kennethfrederick.com/sandbox/sonar-2013/json/sonarBus.json';
 	var yqlQuery = 'SELECT * FROM json WHERE url=\"' + jsonUrl + '\"';
 	var yqlQueryUrl = yqlBase + '?q=' + encodeURI(yqlQuery) + '&format=json';
 

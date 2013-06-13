@@ -762,6 +762,10 @@ var UpdateBicing = setInterval(
 			// update BPM
 			setBpmText( '#bicing', transportation.bicing );
 
+			// push BPM outwards
+			$.post('http://thethings.io/store-city/BICING/' + transportation.bicing.bpm, { } );
+
+
 			if( values.bVerbose ) console.log( 'Updated Bicing', bicing.isUpdated() );
 		}
 	},
@@ -799,6 +803,9 @@ var UpdateTraffic = setInterval(
 			// update BPM
 			setBpmText( '#traffic', transportation.traffic );
 
+			// push BPM outwards
+			$.post('http://thethings.io/store-city/TRAFFIC/' + transportation.traffic.bpm, { } );
+
 			if( values.bVerbose ) console.log( 'Updated Traffic', traffic.isUpdated() );
 		}
 	},
@@ -834,6 +841,9 @@ var UpdateBus = setInterval(
 			// update BPM
 			setBpmText( '#bus', transportation.bus );
 
+			// push BPM outwards
+			$.post('http://thethings.io/store-city/BUS/' + transportation.bus.bpm, { } );
+
 			if( values.bVerbose ) console.log( 'Updated Bus', bus.isUpdated() );
 		}
 	},
@@ -864,11 +874,18 @@ var UpdateWeather = setInterval(
 			// update BPM
 			setBpmText( '#temperature', weather.temperature );
 
+			// push BPM outwards
+			$.post('http://thethings.io/store-city/TEMPERATURE/' + weather.temperature.bpm, { } );
+
+
 			humidity.refresh( weather );
 			humidity.isUpdated(true);
 
 			// update BPM
 			setBpmText( '#humidity', weather.humidity );
+
+			// push BPM outwards
+			$.post('http://thethings.io/store-city/HUMIDITY/' + weather.humidity.bpm, { } );
 
 			if( values.bVerbose ) console.log( 'Updated Weather' );
 		}
@@ -899,6 +916,9 @@ var UpdateTwitter = setInterval(
 
 			// update BPM
 			setBpmText( '#twitter', social.twitter );
+
+			// push BPM outwards
+			$.post('http://thethings.io/store-city/TWITTER/' + social.twitter.bpm, { } );
 
 			if( values.bVerbose ) console.log( 'Updated Twitter', twitter.isUpdated() );
 		}
@@ -2185,7 +2205,18 @@ function onMouseDrag(event) {
 
 
 // ------------------------------------------------------------------------
+var fullscreenToggle = true;
 function onKeyDown(event) {
+
+	if( event.key == 'space' || event.key == 'escape' ) {
+		if( fullscreenToggle && !document.webkitIsFullScreen ) {
+			document.getElementById('canvas').webkitRequestFullScreen();
+		}
+		else {
+			document.webkitCancelFullScreen();
+		}
+	}
+
 };
 
 function onKeyUp(event) {
