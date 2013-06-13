@@ -17,7 +17,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 		
-		<title>TimerText Example</title>
+		<title>BPM Post Example</title>
 		
 		
 		<!-- CSS -->
@@ -27,18 +27,27 @@
 		
 		<!-- JAVASCRIPT -->
 		<script type="text/javascript" src="http://kennethfrederick.com/js/jquery/jquery.1.8.3.min.js"></script>
+		<script>
+			var bpm;
+			var post = self.setInterval(
+				function() {
+					bpm = parseInt( Math.random()*180 );
+					$.post('http://thethings.io/store-city/BUS/' + bpm, { } );
+					console.log( 'Bus', bpm );
 
+					bpm = parseInt( Math.random()*180 );
+					$.post('http://thethings.io/store-city/BICING/' + bpm, { } );
+					console.log( 'Bicing', bpm );
 
-		<!-- LOAD PAPERJS -->
-		<script type="text/javascript" src="js/paper/paper.js"></script>
+					bpm = parseInt( Math.random()*180 );
+					$.post('http://thethings.io/store-city/TRAFFIC/' + bpm, { } );
+					console.log( 'Traffic', bpm );
 
+				},
+				2000
+			);
 
-		<!-- LOAD PAPERJS LIBRARIES -->
-		<script type="text/javascript" src="js/frederickk/frederickkPaper.js"></script>
-		<script type="text/javascript" src="js/delaunay/Triangulate.js"></script>
-
-		<!-- LOAD PAPER SCRIPT -->
-		<script type="text/javascript" src="scripts/timerTextExample.js"></script>
+		</script>
 
 
 		<meta http-equiv="x-dns-prefetch-control" content="off"/>
@@ -46,17 +55,9 @@
 	<body>
 
 
-		<!-- CANVAS -->
-		<div id="container">
-			<canvas resize="true" id="canvas"></canvas>
-		</div>
-
-
 		<!-- TEXT -->
 		<div id="textContainer">
-			<div class="futura-kf white">&nbsp;</div>
-			<div class="futura-kf-demi white">&nbsp;</div>
-			<div class="futura-kf-bold white">&nbsp;</div>
+			<div class="futura-kf">Open the console</div>
 		</div>
 
 		<div id="manual" class="black">

@@ -10,32 +10,97 @@
 
 
 //	------------------------------------------------------------------------
-//	Animations
+//	Transitions
 //	------------------------------------------------------------------------
 
 // pulse
-/*
- *	http://www.paulund.co.uk/create-pulse-effect-with-css3-animation
- */
-.pulse-fade {
-	-webkit-animation-name: 'pulse_fade';
-	-webkit-animation-duration: 1000ms;
-	-webkit-animation-iteration-count: infinite;
-	-webkit-animation-timing-function: ease-out;
-}
+// http://www.paulund.co.uk/create-pulse-effect-with-css3-animation
 
-@-webkit-keyframes pulse_fade {
-	0% { opacity: 0.7; }
-	50% { opacity: 1.0; }
-	100% { opacity: 0.7; }
-}
+// pulse keyframes
+// http://stackoverflow.com/questions/11551313/less-css-pass-mixin-as-a-parameter-to-another-mixin
+// .pulse-keyframes(@selector, @name, @from, @to) {
+// 	@newline: `"\n"`; // Newline
+// 	.setVendor(@pre, @post, @vendor) {
+// 		(~"@{pre}@@{vendor}keyframes @{name} {@{newline}0%") {
+// 			.from(@from); 
+// 		}	
+// 		50%  { 
+// 			.to(@to);
+// 		}
+// 		100% {
+// 			.from(@from);
+// 		}
+// 		.Local(){}
+// 		.Local() when (@post=1) {
+// 			(~"}@{newline}@{selector}") {
+// 				-webkit-animation: @name 1000ms ease-out 0 infinite;
+// 				-moz-animation: @name 1000ms ease-out 0 infinite;
+// 				-o-animation: @name 1000ms ease-out 0 infinite;
+// 				-ms-animation: @name 1000ms ease-out 0 infinite;
+// 				animation: @name 1000ms ease-out 0 infinite;
+// 				// -webkit-animation-name: @name;
+// 				// -webkit-animation-duration: 1000ms;
+// 				// -webkit-animation-iteration-count: infinite;
+// 				// -webkit-animation-timing-function: ease-out;
+
+// 				// -moz-animation: @name;
+// 				// -moz-animation-duration: 1000ms;
+// 				// -moz-animation-iteration-count: infinite;
+// 				// -moz-animation-timing-function: ease-out;
+
+// 				// -o-animation: @name;
+// 				// -o-animation-duration: 1000ms;
+// 				// -o-animation-iteration-count: infinite;
+// 				// -o-animation-timing-function: ease-out;
+
+// 				// -ms-animation: @name;
+// 				// -ms-animation-duration: 1000ms;
+// 				// -ms-animation-iteration-count: infinite;
+// 				// -ms-animation-timing-function: ease-out;
+
+// 				// animation: @name;
+// 				// animation-duration: 1000ms;
+// 				// animation-iteration-count: infinite;
+// 				// animation-timing-function: ease-out;
+// 			} 
+// 		}	
+// 		.Local;
+// 	} 
+// 	.setVendor("",				0,	"-moz-");
+// 	.setVendor(~"}@{newline}",	0,	"-webkit-");
+// 	.setVendor(~"}@{newline}",	0,	"-o-");
+// 	.setVendor(~"}@{newline}",	0,	"-ms-");
+// 	.setVendor(~"}@{newline}",	1,	"");
+// }
+// .from-def(@val) { opacity: @val; }
+// .to-def(@val) { opacity: @val; }
+
+// // pulse
+// // from 10% - 90%
+// @pulse-iterations: 100;
+// .pulseLoop (@index) when (@index > 0) {
+
+// 	.from(from-def){ 
+// 		.from-def( (@index*0.01) )
+// 	}
+// 	.to(to-def) {
+// 		.to-def(1.0)
+// 	}
+
+// 	.pulse-keyframes(
+// 		'.pulse-fade@{index}',
+// 		'pulse-fade@{index}',
+// 		from-def,
+// 		to-def
+// 	);
+
+// 	.pulseLoop(@index - 10);
+// }
+// .pulseLoop (0) {}
+// .pulseLoop (@pulse-iterations);
 
 
 
-
-//	------------------------------------------------------------------------
-//	Transitions
-//	------------------------------------------------------------------------
 // fadeOut
 .fadeOut {
 	-webkit-transition: opacity 0.25s ease-in-out;
@@ -126,3 +191,5 @@
 }
 .fadeInLoop (0) {}
 .fadeInLoop (@fade-iterations);
+
+

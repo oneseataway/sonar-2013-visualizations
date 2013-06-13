@@ -1,5 +1,5 @@
 <!-- 
-  -	Sónar Visualization
+  -	One Seat Away
   -
   -	Ken Frederick
   -	ken.frederick@gmx.de
@@ -17,124 +17,115 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 		
-		<title>S&#243;nar</title>
+		<title>One Seat Away</title>
 		
 		
 		<!-- CSS -->
+		<link href="css/bootstrap.css" rel="stylesheet" type="text/css" />
 		<link href="css/core.css" rel="stylesheet" type="text/css" />
 		<link href="css/FPaper.css" rel="stylesheet" type="text/css" />
 
 		
-		<!-- JavaScript -->
-		<script type="text/javascript" src="http://kennethfrederick.com/js/jquery/jquery.1.8.3.min.js"></script>
-		<script type="text/javascript" src="js/core.js"></script>
+		<!-- JAVASCRIPT -->
+		<script type="text/javascript" charset="UTF-8" src="http://kennethfrederick.com/js/jquery/jquery.1.8.3.min.js"></script>
+		<script type="text/javascript" charset="UTF-8" src="js/core.js" ></script>
 
 
 		<!-- LOAD PAPERJS -->
-		<script type="text/javascript" src="js/paper/paper.js"></script>
-		<script>
-			paper.install(window);
-			$(document).ready(function(){
-				paper.setup('canvas');
-				console.log('PaperJS is go!');
-				
-
-
-				// ------------------------------------------------------------------------
-				// PaperJS Methods
-				// ------------------------------------------------------------------------
-				Setup();
-
-
-				// ------------------------------------------------------------------------
-				Draw();
-
-				
-				
-				// ------------------------------------------------------------------------
-				// PaperJS Events
-				// ------------------------------------------------------------------------
-				view.onFrame = function(event) {
-					Update(event);
-				};
-				
-				view.onResize = function(event) {
-					onResize(event);
-				};
-
-				// ------------------------------------------------------------------------
-				var tool = new Tool();
-				tool.onMouseUp = function(event) {
-					onMouseUp(event);
-				};
-				
-				tool.onMouseDown = function(event) {
-					onMouseDown(event);
-				};
-				
-				tool.onMouseMove = function(event) {
-					onMouseMove(event);
-				};
-				
-				tool.onMouseDrag = function(event) {
-					onMouseDrag(event);
-				};
-
-
-				// ------------------------------------------------------------------------
-				tool.onKeyDown = function(event) {
-					onKeyDown(event);
-				};
-
-				tool.onKeyUp = function(event) {
-					onKeyUp(event);
-				};
-				
-				
-				// ------------------------------------------------------------------------
-				view.draw(); // draw the screen
-
-			});
-
-			/**
-			 *
-			 *	Supporting Methods
-			 *	
-			 */
-			$(function() {
-				// ------------------------------------------------------------------------
-				function resizeCanvas() {
-					var width = $('#container').width();
-					var height = $('#container').height();
-					
-					// set canvas width and height
-					$('#canvas').attr('width', width);
-					$('#canvas').attr('height', height)
-
-					Draw();
-					view.draw(); // draw the screen
-
-				};
-
-				// ------------------------------------------------------------------------
-				var resizeTimeout;
-				$(window).resize(function() {
-					clearTimeout(resizeTimeout);
-					resizeTimeout = setTimeout(resizeCanvas, 100);
-				});
-				resizeCanvas();
-			});
-
-			
-		</script>
+		<script type="text/javascript" charset="UTF-8" src="js/paper/paper.js"></script>
 
 		<!-- LOAD PAPERJS LIBRARIES -->
-		<script type="text/javascript" src="js/delaunay/Triangulate.js"></script>
-		<script type="text/javascript" src="js/frederickk/frederickkPaper.js"></script>
+		<script type="text/javascript" charset="UTF-8" src="js/frederickk/frederickkPaper.js"></script>
+		<script type="text/javascript" charset="UTF-8" src="js/delaunay/Triangulate.js"></script>
 
 		<!-- LOAD PAPER SCRIPT -->
-		<script type="text/javascript" src="scripts/sonarVisualization.js"></script>
+		<script type="text/javascript" charset="UTF-8" src="scripts/sonarVisualization.js"></script>
 
+
+		<!-- ADDITIONAL JAVASCRIPT -->
+		<script type="text/javascript" charset="UTF-8" src="js/dat/dat.gui.min.js"></script>
+		<script type="text/javascript">
+			window.onload = function() {
+				// http://workshop.chromeexperiments.com/examples/gui/#1--Basic-Usage
+				var gui = new dat.GUI();
+
+				//
+				// general
+				//
+				// http://www.sitepoint.com/html5-full-screen-api/
+				var fullscreenToggle = gui.add(values, 'bFullscreen');
+				fullscreenToggle.onChange(function(value) {
+					if( value && !document.webkitIsFullScreen ) {
+						document.getElementById('canvas').webkitRequestFullScreen();
+					}
+					else {
+						document.webkitCancelFullScreen();
+					}
+				});
+
+
+				//
+				// data points
+				//
+
+				// transportation
+				var transportationF = gui.addFolder('Transportation');
+				transportationF.add(values, 'bBicing');
+				transportationF.add(values, 'bTraffic');
+				transportationF.add(values, 'bBus');
+
+				// weather
+				var weatherF = gui.addFolder('Weather');
+				weatherF.add(values, 'bTemperature');
+				weatherF.add(values, 'bHumidity');
+
+				// social
+				var socialF = gui.addFolder('Social');
+				socialF.add(values, 'bTwitter');
+				socialF.add(values, 'bFoursquare');
+				socialF.add(values, 'bInstagram');
+
+
+				//
+				// colors
+				//
+				// var colorsF = gui.addFolder('Colors');
+				// colorsF.addColor(values, 'sonar_black');
+
+				// var primaryF = colorsF.addFolder('Primary');
+				// primaryF.addColor(values, 'sonar_red');
+				// primaryF.addColor(values, 'sonar_blue');
+				// primaryF.addColor(values, 'sonar_yellow');
+				// primaryF.addColor(values, 'sonar_green');
+
+				// // bass
+				// var bassF = colorsF.addFolder('Bass');
+				// bassF.addColor(values, 'sonar_bikes');
+				// bassF.addColor(values, 'sonar_traffic');
+				// bassF.addColor(values, 'sonar_bus');
+
+				// // mid
+				// var midF = colorsF.addFolder('Mid');
+				// midF.addColor(values, 'sonar_temperature');
+				// midF.addColor(values, 'sonar_humidity');
+				// midF.addColor(values, 'sonar_mid2');
+
+				// // treble
+				// var trebleF = colorsF.addFolder('Treble');
+				// trebleF.addColor(values, 'sonar_twitter');
+				// trebleF.addColor(values, 'sonar_foursquare');
+				// trebleF.addColor(values, 'sonar_instagram');
+
+
+				//
+				// debug
+				//
+				gui.add(values, 'bVerbose');
+				gui.add(values, 'bDebug');
+
+			};
+
+		</script>
 
 
 		<meta http-equiv="x-dns-prefetch-control" content="off"/>
@@ -149,18 +140,55 @@
 
 
 		<!-- TEXT -->
-		<div id="textContainer">
-			<div id="Futura-kf">&nbsp;</div>
-			<div id="Futura-kf-Demi">&nbsp;</div>
-			<div id="Futura-kf-Bold">&nbsp;</div>
+		<div id="sonar-top-text layer1">
+			<div class="container-fluid">
+				<div class="row-fluid align-center">
+					<img src="images/oneseataway_logo_animated.gif" />
+				</div>
+			</div>
 		</div>
 
-		<div id="manual" class="black">
-		</div>
+		<div id="sonar-bottom-text">
+			<div class="container-fluid">
+				<div class="row-fluid align-center">
+
+					<!-- Transportation -->
+					<!-- Bass -->
+					<div id="bicing" class="span1 offset2">
+						<h4 class="futura-kf-bold underline-thick sonar-bikes">Bikes</h4>
+						<h3 id="bicingBpm" class="futura-kf sonar-bikes">32</h3>
+					</div>
+					<div id="traffic" class="span1">
+						<h4 class="futura-kf-bold underline-thick sonar-traffic">Traffic</h4>
+						<h3 id="trafficBpm" class="futura-kf sonar-traffic">32</h3>
+					</div>
+					<div id="bus" class="span2">
+						<h4 class="futura-kf-bold underline-thick sonar-bus">Bus</h4>
+						<h3 id="busBpm" class="futura-kf sonar-bus">32</h3>
+					</div>
 
 
-		<!-- INPUTS -->
-		<div id="inputContainer">
+					<!-- Weather -->
+					<!-- Mid -->
+					<div id="temperature" class="span1">
+						<h4 class="futura-kf-bold underline-thick sonar-temperature">Temp.</h4>
+						<h3 id="temperatureBpm" class="futura-kf sonar-temperature">32</h3>
+					</div>
+					<div id="humidity" class="span2">
+						<h4 class="futura-kf-bold underline-thick sonar-humidity">Humidty</h4>
+						<h3 id="humidityBpm" class="futura-kf sonar-humidity">32</h3>
+					</div>
+
+
+					<!-- Social -->
+					<!-- Treble -->
+					<div id="twitter" class="span1">
+						<h4 class="futura-kf-bold underline-thick sonar-twitter">Twitter</h4>
+						<h3 id="twitterBpm" class="futura-kf sonar-twitter">32</h3>
+					</div>
+
+				</div>
+			</div>
 		</div>
 
 

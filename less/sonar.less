@@ -13,24 +13,28 @@
 //	------------------------------------------------------------------------
 //	colors
 //	------------------------------------------------------------------------
-@sonar-black:	rgba(  28,  28,  28, 1.0 );
+@sonar-black:		rgba(  28,  28,  28, 1.0 );
 
-@sonar-red:		rgba( 226,   2,  45, 1.0 );
-@sonar-blue:	rgba(   0, 158, 226, 1.0 );
-@sonar-yellow:	rgba( 247, 199,   0, 1.0 );
-@sonar-green:	rgba(   0, 255, 178, 1.0 );
+// primaries
+@sonar-red:			rgba( 226,   2,  45, 1.0 );
+@sonar-blue:		rgba(   0, 158, 226, 1.0 );
+@sonar-yellow:		rgba( 247, 199,   0, 1.0 );
+@sonar-green:		rgba(   0, 255, 178, 1.0 );
 
-@sonar-bass0:	rgba(  89,   0, 255, 0.4 );
-@sonar-bass1:	rgba( 178,   0,  89, 0.4 );
-@sonar-bass2:	rgba( 225,   0,  46, 0.4 );
+// bass
+@sonar-bikes:		rgba(  76,   0,  90, 0.8 );
+@sonar-traffic:		rgba( 192,  74,  89, 0.8 );
+@sonar-bus:			rgba( 243,  76,  62, 0.8 );
 
-@sonar-mid0:	rgba( 255, 178,   0, 0.4 );
-@sonar-mid1:	rgba( 178,  89,   0, 0.4 );
-@sonar-mid2:	rgba( 178, 255,   0, 0.4 );
+// mid
+@sonar-temperature:	rgba( 255, 235, 138, 0.8 );
+@sonar-humidity:	rgba( 102, 235, 200, 0.8 );
 
-@sonar-treble0:	rgba(   0, 255, 178, 0.4 );
-@sonar-treble1:	rgba(   0, 255, 255, 0.4 );
-@sonar-treble2:	rgba(   0, 178, 255, 0.4 );
+// treble
+// http://brandcolors.net/
+@sonar-twitter:		#00acef; // rgba(   0, 255, 178, 1.0 );
+@sonar-foursquare:	#25b1ca; // rgba(   0, 255, 255, 1.0 );
+@sonar-instagram:	#634d40; // rgba(   0, 178, 255, 1.0 );
 
 
 /* colors */
@@ -135,203 +139,162 @@
 
 /* tone colors */
 // bass
-// @sonar-tone-iterations: 3;
-// .toneLoop (@index) when (@index > -1) {
-// 	(~".trans@{index}") {
-// 		p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
-// 			color: @sonar-green;
-// 		}
-// 		&-link {
-// 			color: @sonar-green;
-// 			border-color: @sonar-green;
-// 		}
-// 		a:hover& {
-// 			color: @sonar-green;
-// 			border-color: @sonar-green;
-// 		}
-// 		div&, .page&, .pages&, .article& {
-// 			background-color: @sonar-green;
-// 		}
-// 	}
-// 	.toneLoop(@index - 1);
-// }
-// .toneLoop (-1) {}
-// .toneLoop (@trans-iterations);
-.sonar-bass0 {
+.sonar-bikes {
 	& {
-		color: @sonar-bass0;
+		color: @sonar-bikes;
 	}
 	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
-		color: @sonar-bass0;
+		color: @sonar-bikes;
 	}
 	&-link {
-		color: @sonar-bass0;
-		border-color: @sonar-bass0;
+		color: @sonar-bikes;
+		border-color: @sonar-bikes;
 	}
 	a:hover& {
-		color: @sonar-bass0;
-		border-color: @sonar-bass0;
+		color: @sonar-bikes;
+		border-color: @sonar-bikes;
 	}
 	div&, .page&, .pages&, .article& {
-		background-color: @sonar-bass0;
+		background-color: @sonar-bikes;
 	}
 }
-.sonar-bass1 {
+.sonar-traffic {
 	& {
-		color: @sonar-bass1;
+		color: @sonar-traffic;
 	}
 	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
-		color: @sonar-bass1;
+		color: @sonar-traffic;
 	}
 	&-link {
-		color: @sonar-bass1;
-		border-color: @sonar-bass1;
+		color: @sonar-traffic;
+		border-color: @sonar-traffic;
 	}
 	a:hover& {
-		color: @sonar-bass1;
-		border-color: @sonar-bass1;
+		color: @sonar-traffic;
+		border-color: @sonar-traffic;
 	}
 	div&, .page&, .pages&, .article& {
-		background-color: @sonar-bass1;
+		background-color: @sonar-traffic;
 	}
 }
-.sonar-bass2 {
+.sonar-bus {
 	& {
-		color: @sonar-bass2;
+		color: @sonar-bus;
 	}
 	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
-		color: @sonar-bass2;
+		color: @sonar-bus;
 	}
 	&-link {
-		color: @sonar-bass2;
-		border-color: @sonar-bass2;
+		color: @sonar-bus;
+		border-color: @sonar-bus;
 	}
 	a:hover& {
-		color: @sonar-bass2;
-		border-color: @sonar-bass2;
+		color: @sonar-bus;
+		border-color: @sonar-bus;
 	}
 	div&, .page&, .pages&, .article& {
-		background-color: @sonar-bass2;
+		background-color: @sonar-bus;
 	}
 }
 
 
 // mid
-.sonar-mid0 {
+.sonar-temperature {
 	& {
-		color: @sonar-mid0;
+		color: @sonar-temperature;
 	}
 	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
-		color: @sonar-mid0;
+		color: @sonar-temperature;
 	}
 	&-link {
-		color: @sonar-mid0;
-		border-color: @sonar-mid0;
+		color: @sonar-temperature;
+		border-color: @sonar-temperature;
 	}
 	a:hover& {
-		color: @sonar-mid0;
-		border-color: @sonar-mid0;
+		color: @sonar-temperature;
+		border-color: @sonar-temperature;
 	}
 	div&, .page&, .pages&, .article& {
-		background-color: @sonar-mid0;
+		background-color: @sonar-temperature;
 	}
 }
-.sonar-mid1 {
+.sonar-humidity {
 	& {
-		color: @sonar-mid1;
+		color: @sonar-humidity;
 	}
 	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
-		color: @sonar-mid1;
+		color: @sonar-humidity;
 	}
 	&-link {
-		color: @sonar-mid1;
-		border-color: @sonar-mid1;
+		color: @sonar-humidity;
+		border-color: @sonar-humidity;
 	}
 	a:hover& {
-		color: @sonar-mid1;
-		border-color: @sonar-mid1;
+		color: @sonar-humidity;
+		border-color: @sonar-humidity;
 	}
 	div&, .page&, .pages&, .article& {
-		background-color: @sonar-mid1;
-	}
-}
-.sonar-mid2 {
-	& {
-		color: @sonar-mid2;
-	}
-	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
-		color: @sonar-mid2;
-	}
-	&-link {
-		color: @sonar-mid2;
-		border-color: @sonar-mid2;
-	}
-	a:hover& {
-		color: @sonar-mid2;
-		border-color: @sonar-mid2;
-	}
-	div&, .page&, .pages&, .article& {
-		background-color: @sonar-mid2;
+		background-color: @sonar-humidity;
 	}
 }
 
 
 // treble
-.sonar-treble0 {
+.sonar-twitter {
 	& {
-		color: @sonar-treble0;
+		color: @sonar-twitter;
 	}
 	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
-		color: @sonar-treble0;
+		color: @sonar-twitter;
 	}
 	&-link {
-		color: @sonar-treble0;
-		border-color: @sonar-treble0;
+		color: @sonar-twitter;
+		border-color: @sonar-twitter;
 	}
 	a:hover& {
-		color: @sonar-treble0;
-		border-color: @sonar-treble0;
+		color: @sonar-twitter;
+		border-color: @sonar-twitter;
 	}
 	div&, .page&, .pages&, .article& {
-		background-color: @sonar-treble0;
+		background-color: @sonar-twitter;
 	}
 }
-.sonar-treble1 {
+.sonar-foursquare {
 	& {
-		color: @sonar-treble1;
+		color: @sonar-foursquare;
 	}
 	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
-		color: @sonar-treble1;
+		color: @sonar-foursquare;
 	}
 	&-link {
-		color: @sonar-treble1;
-		border-color: @sonar-treble1;
+		color: @sonar-foursquare;
+		border-color: @sonar-foursquare;
 	}
 	a:hover& {
-		color: @sonar-treble1;
-		border-color: @sonar-treble1;
+		color: @sonar-foursquare;
+		border-color: @sonar-foursquare;
 	}
 	div&, .page&, .pages&, .article& {
-		background-color: @sonar-treble1;
+		background-color: @sonar-foursquare;
 	}
 }
-.sonar-treble2 {
+.sonar-instagram {
 	& {
-		color: @sonar-treble2;
+		color: @sonar-instagram;
 	}
 	p&, h1&, h2&, h3&, h4&, h5&, h6&, span& {
-		color: @sonar-treble2;
+		color: @sonar-instagram;
 	}
 	&-link {
-		color: @sonar-treble2;
-		border-color: @sonar-treble2;
+		color: @sonar-instagram;
+		border-color: @sonar-instagram;
 	}
 	a:hover& {
-		color: @sonar-treble2;
-		border-color: @sonar-treble2;
+		color: @sonar-instagram;
+		border-color: @sonar-instagram;
 	}
 	div&, .page&, .pages&, .article& {
-		background-color: @sonar-treble2;
+		background-color: @sonar-instagram;
 	}
 }
 
@@ -346,3 +309,108 @@
 	border-left-style: none;
 }
 
+
+
+//  ------------------------------------------------------------------------
+//
+//  Begin CSS Structure
+//
+//  ------------------------------------------------------------------------
+/*
+ *	container div for text (season to taste)
+ */
+#sonar-top-text {
+	position: absolute;
+	top: 45px;
+	left: 0px;
+	width: 100%;
+
+	margin: 0px;
+	padding: 0px;
+	white-space: nowrap;
+	z-index: @layer6;
+}
+
+#sonar-bottom-text {
+	position: absolute;
+	bottom: 45px;
+	left: 0px;
+	width: 100%;
+
+	margin: 0px;
+	padding: 0px;
+	white-space: nowrap;
+	z-index: @layer6;
+}
+
+
+
+
+//  ------------------------------------------------------------------------
+//
+//  Begin CSS Animations
+//
+//  ------------------------------------------------------------------------
+// @index: 20;
+
+// .from(from-def){ 
+// 	.from-def( (@index*0.01) )
+// }
+// .to(to-def) {
+// 	.to-def(1.0)
+// }
+
+// // transportation
+// .pulse-keyframes(
+// 	'#bicing',
+// 	'bicing',
+// 	from-def,
+// 	to-def
+// );
+// .pulse-keyframes(
+// 	'#traffic',
+// 	'traffic',
+// 	from-def,
+// 	to-def
+// );
+// .pulse-keyframes(
+// 	'#bus',
+// 	'bus',
+// 	from-def,
+// 	to-def
+// );
+
+
+// // weather
+// .pulse-keyframes(
+// 	'#temperature',
+// 	'temperature',
+// 	from-def,
+// 	to-def
+// );
+// .pulse-keyframes(
+// 	'#humidity',
+// 	'humidity',
+// 	from-def,
+// 	to-def
+// );
+
+// // social
+// .pulse-keyframes(
+// 	'#twitter',
+// 	'twitter',
+// 	from-def,
+// 	to-def
+// );
+// .pulse-keyframes(
+// 	'#foursquare',
+// 	'foursquare',
+// 	from-def,
+// 	to-def
+// );
+// .pulse-keyframes(
+// 	'#instagram',
+// 	'instagram',
+// 	from-def,
+// 	to-def
+// );

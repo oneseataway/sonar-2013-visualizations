@@ -17,7 +17,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 		
-		<title>S&#243;nar Smart Nodes</title>
+		<title>S&#243;nar Weather</title>
 		
 		
 		<!-- CSS -->
@@ -39,93 +39,12 @@
 		<script type="text/javascript" charset="UTF-8" src="js/delaunay/Triangulate.js"></script>
 
 		<!-- LOAD PAPER SCRIPT -->
-		<script type="text/javascript" charset="UTF-8" src="scripts/smartNodes.js"></script>
+		<script type="text/javascript" charset="UTF-8" src="scripts/weather.js"></script>
 
 
 		<!-- ADDITIONAL JAVASCRIPT -->
 		<script type="text/javascript" charset="UTF-8" src="js/dat/dat.gui.min.js"></script>
-		<script type="text/javascript">
-			window.onload = function() {
-				// http://workshop.chromeexperiments.com/examples/gui/#1--Basic-Usage
-				var gui = new dat.GUI();
 
-				//
-				// general
-				//
-				// http://www.sitepoint.com/html5-full-screen-api/
-				var fullscreenToggle = gui.add(values, 'bFullscreen');
-				fullscreenToggle.onChange(function(value) {
-					if( value && !document.webkitIsFullScreen ) {
-						document.getElementById('canvas').webkitRequestFullScreen();
-					}
-					else {
-						document.webkitCancelFullScreen();
-					}
-				});
-
-
-				//
-				// data points
-				//
-
-				// transportation
-				var transportationF = gui.addFolder('Transportation');
-				transportationF.add(values, 'bBicing');
-				transportationF.add(values, 'bTraffic');
-				transportationF.add(values, 'bBus');
-
-				// weather
-				var weatherF = gui.addFolder('Weather');
-				weatherF.add(values, 'bTemperature');
-				weatherF.add(values, 'bHumidity');
-
-				// social
-				var socialF = gui.addFolder('Social');
-				socialF.add(values, 'bTwitter');
-				socialF.add(values, 'bFoursquare');
-				socialF.add(values, 'bInstagram');
-
-
-				//
-				// colors
-				//
-				// var colorsF = gui.addFolder('Colors');
-				// colorsF.addColor(values, 'sonar_black');
-
-				// var primaryF = colorsF.addFolder('Primary');
-				// primaryF.addColor(values, 'sonar_red');
-				// primaryF.addColor(values, 'sonar_blue');
-				// primaryF.addColor(values, 'sonar_yellow');
-				// primaryF.addColor(values, 'sonar_green');
-
-				// // bass
-				// var bassF = colorsF.addFolder('Bass');
-				// bassF.addColor(values, 'sonar_bikes');
-				// bassF.addColor(values, 'sonar_traffic');
-				// bassF.addColor(values, 'sonar_bus');
-
-				// // mid
-				// var midF = colorsF.addFolder('Mid');
-				// midF.addColor(values, 'sonar_temperature');
-				// midF.addColor(values, 'sonar_humidity');
-				// midF.addColor(values, 'sonar_mid2');
-
-				// // treble
-				// var trebleF = colorsF.addFolder('Treble');
-				// trebleF.addColor(values, 'sonar_twitter');
-				// trebleF.addColor(values, 'sonar_foursquare');
-				// trebleF.addColor(values, 'sonar_instagram');
-
-
-				//
-				// debug
-				//
-				gui.add(values, 'bVerbose');
-				gui.add(values, 'bDebug');
-
-			};
-
-		</script>
 
 
 		<meta http-equiv="x-dns-prefetch-control" content="off"/>
@@ -144,7 +63,7 @@
 			<div class="container-fluid">
 				<div class="row-fluid align-center">
 					<h4 class="white">S&#243;nar 2013<br />
-					<span class="futura-kf">Smart Nodes</span></h4>
+					<span class="futura-kf">Weather</span></h4>
 				</div>
 			</div>
 		</div>

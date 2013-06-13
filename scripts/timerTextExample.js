@@ -185,12 +185,12 @@ var Marker = function( content, point ) {
 		// the main text
 		main.justification = 'center';
 		main.fontSize = 72;
-		main.font = 'Futura-kf';
+		main.font = 'futura-kf';
 
 		// the side descriptor
 		desc.justification = 'center';
 		desc.fontSize = 15;
-		desc.font = 'Futura-kf-Bold';
+		desc.font = 'futura-kf-bold';
 
 		// set content
 		setContent( content );

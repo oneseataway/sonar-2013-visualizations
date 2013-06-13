@@ -1,4 +1,3 @@
-console.log( 'Sónar Visualization - core.js' );
 /**
  *	Sónar Visualization
  *	core.js
@@ -51,33 +50,56 @@ var transportation = {
 	bus:		[]
 };
 
+var bicingRefresh = 2*60*1000; // every 2 minutes
+var trafficRefresh = 16*60*1000; // every 16 minutes
+var busRefresh = 2*60*1000; // every 2 minutes
+
+
 /*
  *	Weather Data
  */
  var weather = {
-	// these are the temperature ranges
-	// we'll use for normalizing the current temperature
-	// http://de.wikipedia.org/wiki/Barcelona#Klima
-	temperatureMin:	15,
-	temperatureMax:	27,
-	temperature:	null,
+	conditions: 	'sunny',
+	wind: 			'',
+	time: 			'',
 
-	humidty:		null
+	temperature: {
+		// these are the temperature ranges
+		// we'll use for normalizing the current temperature
+		// http://de.wikipedia.org/wiki/Barcelona#Klima
+		min:		15,
+		max:		27,
+		current:	20,
+		bpm: 		20
+	},
+
+	humidity: {
+		current: 		65,
+		precipitation: 	0,
+		bpm: 			65
+	}
+
  };
+
+var weatherRefresh = 15*60*1000; // every 15 minutes
+
 
 /*
  *	Social Data
  */
 var social = {
-	twitter:	[],
-	instagram:	null,
-	foursquare:	[]
+	twitter:	[]
 };
+
+var twitterRefresh = 60*1000; // every minute
+
+
 
 /*
  *	Misc.
  */
 var bOffline = true; // assume we have no internet connections
+
 
 
 
@@ -90,13 +112,16 @@ var bOffline = true; // assume we have no internet connections
 $(function() {
 
 	/*
+	 *
 	 *	Check Connection status
+	 *
 	 */
 	console.log( 'online', navigator.onLine );
 	if(!(navigator.onLine) && bOffline ) {
 		// window.location = "./oops.html";
 		// bOffline = false;
 	}
+
 
 });
 
@@ -407,22 +432,41 @@ function loadBus(arr) {
  *	Weather Data
  */
 function loadWeather(arr) {
-	var jsonUrl = 'http://api.wunderground.com/api/b8ed943bbfbfffa7/conditions/q/Spain/Barcelona.json';
+	// var jsonUrl = 'http://api.wunderground.com/api/b8ed943bbfbfffa7/conditions/q/Spain/Barcelona.json';
+	var jsonUrl = 'http://barcelonaapi.marcpous.com/weather/barcelona.json';
 
 	$.ajax({
 		url: jsonUrl,
 		type: 'get',
-		dataType: 'json',
-		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
-		crossDomain: true,
-		cache: false,
-		async: true,
-	}).done(function(result) {
-		arr.temperature	= result.current_observation.feelslike_c;
-		arr.humidty	= parseInt(result.current_observation.relative_humidity);
+		dataType: 'json'
+	}).done(function(output) {
+		var result = output.data.weather[0];
+
+		// flush out the entries
+		// general
+		arr.id = result.id;
+		arr.conditions = result.weather;
+		arr.wind = result.wind; // 
+		arr.time = formatTime( result.timestamp );
+
+		arr.bpm = (parseInt( result.temp_c )/parseInt( result.humidity ))*100;
+
+		// temperature
+		arr.temperature.bpm 		= parseInt( result.temp_c );
+		arr.temperature.current		= parseInt( result.temp_c );
+
+		// humidity
+		arr.humidity.current		= parseInt( result.humidity );
+		arr.humidity.precipitation	= parseInt( result.precipitation );
+
+		return arr;
+
+	}).fail( function() {
+		// console.log( 'Loading Weather error');
+	}).always( function() {
+
 	});
 
-	return arr;
 };
 
 
@@ -430,154 +474,88 @@ function loadWeather(arr) {
  *	Social Data
  */
 function loadTwitter(arr) {
-	var jsonUrl = 'http://thethings.io/getJSON/TWITTER';
+	// var jsonUrl = 'http://thethings.io/getJSON/TWITTER';
 
-	$.ajax({
-		url: jsonUrl,
-		type: 'get',
-		dataType: 'json',
-	}).done(function(output) {
-		var result = output.Sonar2013.tweets;
+	// $.ajax({
+	// 	url: jsonUrl,
+	// 	type: 'get',
+	// 	dataType: 'json'
+	// }).done(function(output) {
+	// 	var result = output.Sonar2013.tweets;
 
-		// fake 
-		$.each(result, function(i, field) {
-			var lat, lon;
+	// 	// fake 
+	// 	$.each(result, function(i, field) {
+	// 		var lat, lon;
 
-			if( field.geo == null ) {
-				// this tweet has no geographic location
-				lat = Math.random() * (latThreshold.min - latThreshold.max) + latThreshold.max;
-				lon = Math.random() * (lonThreshold.min - lonThreshold.max) + lonThreshold.max;
-			}
-			else {
-				// bootleg way of confining the coordinates of
-				// tweets to stay within our defined (ie. bicing)
-				// geographic area
-				// TODO: maybe marc can/will define
-				lat = Calculation.map(
-					field.geo.coordinates[0],
-					latBarcelona.min, latBarcelona.max,
-					latThreshold.min, latThreshold.max
-				);
+	// 		if( field.geo == null ) {
+	// 			// this tweet has no geographic location
+	// 			lat = Math.random() * (latThreshold.min - latThreshold.max) + latThreshold.max;
+	// 			lon = Math.random() * (lonThreshold.min - lonThreshold.max) + lonThreshold.max;
+	// 		}
+	// 		else {
+	// 			// bootleg way of confining the coordinates of
+	// 			// tweets to stay within our defined (ie. bicing)
+	// 			// geographic area
+	// 			// TODO: maybe marc can/will define
+	// 			lat = map(
+	// 				field.geo.coordinates[0],
+	// 				latBarcelona.min, latBarcelona.max,
+	// 				latThreshold.min, latThreshold.max
+	// 			);
 
-				lon = Calculation.map(
-					field.geo.coordinates[1],
-					lonBarcelona.min, lonBarcelona.max,
-					lonThreshold.min, lonThreshold.max
-				);
+	// 			lon = map(
+	// 				field.geo.coordinates[1],
+	// 				lonBarcelona.min, lonBarcelona.max,
+	// 				lonThreshold.min, lonThreshold.max
+	// 			);
 
-				// lat = ( field.geo.coordinates[0] < latThreshold.min )
-				//	? latThreshold.min
-				//	: ( field.geo.coordinates[0] > latThreshold.min )
-				//		? latThreshold.max
-				//		: field.geo.coordinates[0];
-				// lon = ( field.geo.coordinates[1] < lonThreshold.min )
-				//	? lonThreshold.min
-				//	: ( field.geo.coordinates[1] > lonThreshold.min )
-				//		? lonThreshold.max
-				//		: field.geo.coordinates[1];
-			}
+	// 			// lat = ( field.geo.coordinates[0] < latThreshold.min )
+	// 			//	? latThreshold.min
+	// 			//	: ( field.geo.coordinates[0] > latThreshold.min )
+	// 			//		? latThreshold.max
+	// 			//		: field.geo.coordinates[0];
+	// 			// lon = ( field.geo.coordinates[1] < lonThreshold.min )
+	// 			//	? lonThreshold.min
+	// 			//	: ( field.geo.coordinates[1] > lonThreshold.min )
+	// 			//		? lonThreshold.max
+	// 			//		: field.geo.coordinates[1];
+	// 		}
 
-			var time = formatTime(field.created_at);
+	// 		var time = formatTime(field.created_at);
 
-			arr.push({
-				node:		null,  // keeps track of which node this data belongs to
+	// 		arr.push({
+	// 			node:		null,  // keeps track of which node this data belongs to
 
-				// flush out the entries
-				bpm:		output.Sonar2013.bpm,
+	// 			// flush out the entries
+	// 			bpm:		output.Sonar2013.bpm,
 
-				// general
-				id:			field.user.id,
-				// location:	'Barcelona',
-				lat:		lat,
-				lon:		lon,
-				time:		time,
+	// 			// general
+	// 			id:			field.user.id,
+	// 			location:	'Barcelona',
+	// 			lat:		lat,
+	// 			lon:		lon,
+	// 			time:		time,
 
-				// user
-				name:		field.user.screen_name,
-				img:		field.user.profile_image_url,
-				media:		field.entities.media,
+	// 			// user
+	// 			name:		field.user.screen_name,
+	// 			img:		field.user.profile_image_url,
+	// 			media:		field.entities.media,
 
-				// tweet
-				text:		result.text,
-				favorite:	field.entities.favorite_count,
-				hashtags:	field.entities.hashtags
-			});
+	// 			// tweet
+	// 			text:		field.text,
+	// 			favorite:	field.entities.favorite_count,
+	// 			hashtags:	field.entities.hashtags
+	// 		});
 
-		});
+	// 	});
 
-		return arr;
+	// 	return arr;
 
-	}).fail( function() {
-		// console.log( 'Loading Bus error');
-	}).always( function() {
+	// }).fail( function() {
+	// 	// console.log( 'Loading Bus error');
+	// }).always( function() {
 
-	});
-
-};
-
-// ------------------------------------------------------------------------
-function loadInstagram(arr) {
-	var jsonUrl = '';
-
-	$.ajax({
-		url: jsonUrl,
-		type: 'get',
-		dataType: 'json',
-		// dataType: 'jsonp', // use jsonp data type in order to perform cross domain ajax
-		crossDomain: true,
-		cache: false,
-		async: true,
-	}).done(function(result) {
-
-	});
-
-	return arr;
-};
-
-// ------------------------------------------------------------------------
-function loadFoursquare(arr) {
-	var jsonUrl = 'http://oneseataway.thethings.io/getFoursquare.php';
-
-	$.ajax({
-		url: jsonUrl,
-		type: 'get',
-		dataType: 'json',
-	}).done(function(output) {
-		var result = output.Sonar2013[0].results;
-
-		$.each(result, function(i, field) {
-			if( field.geo != null ) {
-				var time = formatTime(field.created_at);
-
-				arr.push({
-					node:		null,  // keeps track of which node this data belongs to
-
-					// flush out the entries
-					bpm:		output.Sonar2013.bpm,
-
-					// general
-					id:			field.from_user_id,
-					lat:		field.geo.coordinates[0],
-					lon:		field.geo.coordinates[1],
-					time:		time, // the time the check-in was logged
-
-					// user
-					name:		field.from_user_name,
-
-					// check-in
-					location:	field.location, //place.full_name, // the full name of the check-in
-					text:		field.text, // the text entered at check-in
-					img:		field.profile_image_url // profile image of the user
-				});
-			}
-
-		});
-
-	}).fail( function() {
-		// console.log( 'Loading Bus error');
-	}).always( function() {
-
-	});
+	// });
 
 };
 
@@ -590,12 +568,21 @@ loadBus( transportation.bus );
 loadWeather( weather );
 
 loadTwitter( social.twitter );
-loadInstagram( social.instagram );
-loadFoursquare( social.foursquare );
 
 
 
 // ------------------------------------------------------------------------
+/**
+ *
+ *	returns an array individidual time elements from a valid UTC timestamp
+ *	TODO: merge with FTime
+ *
+ *	@param {String} timestampStr
+ *				a valid UTC timestamp string
+ *
+ *	@return {Array} an array individidual time elements
+ *
+ */
 function formatTime( timestampStr ) {
 	var _t = Date.parse(timestampStr);
 	var _d = new Date(_t);
@@ -612,8 +599,18 @@ function formatTime( timestampStr ) {
 
 
 // ------------------------------------------------------------------------
-// http://davidwalsh.name/javascript-clone
-function clone(src) {
+/**
+ *
+ *	clones/copies any javascript item (except functions)
+ *	http://davidwalsh.name/javascript-clone
+ *
+ *	@param {Object} src
+ *				the src javascript object to clone/copy
+ *
+ *	@return {Object} a clone/copy of the src object
+ *
+ */
+function clone( src ) {
 	function mixin(dest, source, copyFunc) {
 		var name, s, i, empty = {};
 		for(name in source) {
@@ -696,7 +693,11 @@ function dynamicSort(property) {
 		property = property.substr(1, property.length - 1);
 	}
 	return function (a,b) {
-		var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+		var result = (a[property] < b[property])
+			? -1
+				: (a[property] > b[property])
+					? 1
+					: 0;
 		return result * sortOrder;
 	}
 };
@@ -712,38 +713,69 @@ Object.defineProperty(Array.prototype, 'sortBy', {
 
 
 // ------------------------------------------------------------------------
-// http://stackoverflow.com/questions/324486/how-do-you-read-css-rule-values-with-javascript
+function map(val, istart, istop, ostart, ostop) {
+	return ostart + (ostop - ostart) * ((val - istart) / (istop - istart));
+};
+
+
+
+// ------------------------------------------------------------------------
+// Gets
+// ------------------------------------------------------------------------
+/**
+ *	returns color components from a defined css color
+ *	http://stackoverflow.com/questions/324486/how-do-you-read-css-rule-values-with-javascript
+ *
+ *	@param {String} className
+ *					class name of css component (i.e '.color-black')
+ *
+ *	@return {String} css component as String (i.e. '.color-black { rgba( 11, 11, 11, 0.9 ); }')
+ *
+ */
 var getCSSStyle = function( className ) {
 	var x, sheets,classes;
 	for( sheets=document.styleSheets.length-1; sheets>=0; sheets-- ){
 		classes = document.styleSheets[sheets].rules || document.styleSheets[sheets].cssRules;
 		for(x=0; x<classes.length; x++) {
 			if(classes[x].selectorText === className) {
-				return (classes[x].cssText ? classes[x].cssText : classes[x].style.cssText);
+				return (classes[x].cssText 
+					? classes[x].cssText
+					: classes[x].style.cssText);
 			}
 		}
 	}
 	return false;
 };
 
-// super super super bootleg
-// don't judge me
-var getCSSColor = function( className, isNormalized ) {
-	isNormalized = ( isNormalized != undefined ) ? isNormalized : false;
-	var raw = getCSSStyle(className);
-	var key;
-	if( raw.indexOf('rgba(') !== -1 ) {
-		key = 'rgba(';
-	}
-	else {
-		key = 'rgb(';
-	}
 
-	var arr = raw.split(' ');
-	var r = parseInt( arr[3].split(key)[1] );
-	var g = parseInt( arr[4] );
-	var b = parseInt( arr[5] );
-	var a = parseFloat( arr[6].split(');')[0] );
+// ------------------------------------------------------------------------
+/**
+ *	returns color components from a defined css color
+ *
+ *	@param {String} className
+ *					class name of css color (i.e '.color-black')
+ *	@param {Boolean} isNormalized
+ *					should the returned values be normalized (i.e. red: 127 --> red: 0.5 )
+ *
+ *	@return {Array} named color components
+ *
+ */
+var getCSSColor = function( className, isNormalized ) {
+	isNormalized = ( isNormalized != undefined )
+		? isNormalized
+		: false;
+
+	var raw, rawSplit, arr, r,g,b,a;
+	raw = getCSSStyle(className);
+
+	// http://stackoverflow.com/questions/6208367/regex-to-match-stuff-between-parentheses
+	rawSplit = raw.split( /\(([^\)]+)\)/ );
+	arr = rawSplit[1].split(',');
+
+	r = parseInt( arr[0] );
+	g = parseInt( arr[1] );
+	b = parseInt( arr[2] );
+	a = parseFloat( arr[3] );
 
 	return {
 		red:	( isNormalized ) ? r/255 : r,
@@ -751,5 +783,41 @@ var getCSSColor = function( className, isNormalized ) {
 		blue:	( isNormalized ) ? b/255 : b,
 		alpha:	( isNaN(a) ) ? 1.0 : a // alpha is always normalized
 	}
-}
+};
+
+
+
+// ------------------------------------------------------------------------
+// Sets
+// ------------------------------------------------------------------------
+var setCSSAnimationDuration = function( name, ms ) {
+	$(name).css('-webkit-animation-duration',	ms+'ms'); 
+	$(name).css(   '-moz-animation-duration', 	ms+'ms'); 
+	$(name).css(	 '-o-animation-duration',	ms+'ms'); 
+	$(name).css(    '-ms-animation-duration',	ms+'ms'); 
+	$(name).css(        'animation-duration',	ms+'ms'); 
+};
+
+// ------------------------------------------------------------------------
+var setBpmText = function( name, dataArr ) {
+	// var bpm = ( dataArr[0].bpm != undefined ) 
+	// 	? ( dataArr.bpm != undefined )
+	// 		: dataArr.bpm
+	// 		: 1;
+	var bpm = 1;
+	if( typeof(dataArr[0]) != 'undefined' ) {
+		bpm = ( dataArr[0].bpm != undefined )
+			? parseInt( dataArr[0].bpm ):
+			1;
+	}
+	else if( dataArr.bpm != null ) {
+		bpm = parseInt( dataArr.bpm )
+	}
+
+	var bpmToMs = (60*1000)/bpm;
+	$(name + 'Bpm').text( bpm );
+
+	// setCSSAnimationDuration( name, bpmToMs );
+};
+
 

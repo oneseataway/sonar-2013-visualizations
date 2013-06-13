@@ -24,36 +24,36 @@
  *
  */
 @font-face {
-  font-family: 'Futura-kf';
+  font-family: 'futura-kf';
   src: url('../typefaces/FuturaOTKF/futuraotkf-book-webfont.eot');
   src: url('../typefaces/FuturaOTKF/futuraotkf-book-webfont.eot?#iefix') format('embedded-opentype'), url('../typefaces/FuturaOTKF/futuraotkf-book-webfont.woff') format('woff'), url('../typefaces/FuturaOTKF/futuraotkf-book-webfont.ttf') format('truetype'), url('../typefaces/FuturaOTKF/futuraotkf-book-webfont.svg#FuturaOTKFRegular') format('svg');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
-  font-family: 'Futura-kf-Bold';
+  font-family: 'futura-kf-bold';
   src: url('../typefaces/FuturaOTKF/futuraotkf-bold-webfont.eot');
   src: url('../typefaces/FuturaOTKF/futuraotkf-bold-webfont.eot?#iefix') format('embedded-opentype'), url('../typefaces/FuturaOTKF/futuraotkf-bold-webfont.woff') format('woff'), url('../typefaces/FuturaOTKF/futuraotkf-bold-webfont.ttf') format('truetype'), url('../typefaces/FuturaOTKF/futuraotkf-bold-webfont.svg#FuturaOTKFBold') format('svg');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
-  font-family: 'Futura-kf-Demi';
+  font-family: 'futura-kf-demi';
   src: url('../typefaces/FuturaOTKF/futuraotkf-demi-webfont.eot');
   src: url('../typefaces/FuturaOTKF/futuraotkf-demi-webfont.eot?#iefix') format('embedded-opentype'), url('../typefaces/FuturaOTKF/futuraotkf-demi-webfont.woff') format('woff'), url('../typefaces/FuturaOTKF/futuraotkf-demi-webfont.ttf') format('truetype'), url('../typefaces/FuturaOTKF/futuraotkf-demi-webfont.svg#FuturaOTKFDemi') format('svg');
   font-weight: normal;
   font-style: normal;
 }
 .futura-kf {
-  font-family: 'Futura-kf';
+  font-family: 'futura-kf';
   display: inline;
 }
 .futura-kf-demi {
-  font-family: 'Futura-kf-Demi';
+  font-family: 'futura-kf-demi';
   display: inline;
 }
 .futura-kf-bold {
-  font-family: 'Futura-kf-Bold';
+  font-family: 'futura-kf-bold';
   display: inline;
 }
 /*	------------------------------------------------------------------------
@@ -1033,7 +1033,7 @@ div.trans0,
  *
  *  ------------------------------------------------------------------------ */
 .ampersand-placeholder {
-  font-family: Futura-kf;
+  font-family: futura-kf;
 }
 /*
  *	<ul class="stats-tabs">
@@ -1122,26 +1122,6 @@ div.trans0,
  *  Begin Animation Definitions
  *
  *  ------------------------------------------------------------------------ */
-/*
- *	http://www.paulund.co.uk/create-pulse-effect-with-css3-animation
- */
-.pulse-fade {
-  -webkit-animation-name: 'pulse_fade';
-  -webkit-animation-duration: 1000ms;
-  -webkit-animation-iteration-count: infinite;
-  -webkit-animation-timing-function: ease-out;
-}
-@-webkit-keyframes pulse_fade {
-  0% {
-    opacity: 0.7;
-  }
-  50% {
-    opacity: 1.0;
-  }
-  100% {
-    opacity: 0.7;
-  }
-}
 .fadeOut {
   -webkit-transition: opacity 0.25s ease-in-out;
   -moz-transition: opacity 0.25s ease-in-out;
@@ -1585,248 +1565,221 @@ div.sonar-green,
   background-color: #00ffb2;
 }
 /* tone colors */
-.sonar-bass0 {
-  color: rgba(89, 0, 255, 0.4);
+.sonar-bikes {
+  color: rgba(76, 0, 90, 0.8);
 }
-p.sonar-bass0,
-h1.sonar-bass0,
-h2.sonar-bass0,
-h3.sonar-bass0,
-h4.sonar-bass0,
-h5.sonar-bass0,
-h6.sonar-bass0,
-span.sonar-bass0 {
-  color: rgba(89, 0, 255, 0.4);
+p.sonar-bikes,
+h1.sonar-bikes,
+h2.sonar-bikes,
+h3.sonar-bikes,
+h4.sonar-bikes,
+h5.sonar-bikes,
+h6.sonar-bikes,
+span.sonar-bikes {
+  color: rgba(76, 0, 90, 0.8);
 }
-.sonar-bass0-link {
-  color: rgba(89, 0, 255, 0.4);
-  border-color: rgba(89, 0, 255, 0.4);
+.sonar-bikes-link {
+  color: rgba(76, 0, 90, 0.8);
+  border-color: rgba(76, 0, 90, 0.8);
 }
-a:hover.sonar-bass0 {
-  color: rgba(89, 0, 255, 0.4);
-  border-color: rgba(89, 0, 255, 0.4);
+a:hover.sonar-bikes {
+  color: rgba(76, 0, 90, 0.8);
+  border-color: rgba(76, 0, 90, 0.8);
 }
-div.sonar-bass0,
-.page.sonar-bass0,
-.pages.sonar-bass0,
-.article.sonar-bass0 {
-  background-color: rgba(89, 0, 255, 0.4);
+div.sonar-bikes,
+.page.sonar-bikes,
+.pages.sonar-bikes,
+.article.sonar-bikes {
+  background-color: rgba(76, 0, 90, 0.8);
 }
-.sonar-bass1 {
-  color: rgba(178, 0, 89, 0.4);
+.sonar-traffic {
+  color: rgba(192, 74, 89, 0.8);
 }
-p.sonar-bass1,
-h1.sonar-bass1,
-h2.sonar-bass1,
-h3.sonar-bass1,
-h4.sonar-bass1,
-h5.sonar-bass1,
-h6.sonar-bass1,
-span.sonar-bass1 {
-  color: rgba(178, 0, 89, 0.4);
+p.sonar-traffic,
+h1.sonar-traffic,
+h2.sonar-traffic,
+h3.sonar-traffic,
+h4.sonar-traffic,
+h5.sonar-traffic,
+h6.sonar-traffic,
+span.sonar-traffic {
+  color: rgba(192, 74, 89, 0.8);
 }
-.sonar-bass1-link {
-  color: rgba(178, 0, 89, 0.4);
-  border-color: rgba(178, 0, 89, 0.4);
+.sonar-traffic-link {
+  color: rgba(192, 74, 89, 0.8);
+  border-color: rgba(192, 74, 89, 0.8);
 }
-a:hover.sonar-bass1 {
-  color: rgba(178, 0, 89, 0.4);
-  border-color: rgba(178, 0, 89, 0.4);
+a:hover.sonar-traffic {
+  color: rgba(192, 74, 89, 0.8);
+  border-color: rgba(192, 74, 89, 0.8);
 }
-div.sonar-bass1,
-.page.sonar-bass1,
-.pages.sonar-bass1,
-.article.sonar-bass1 {
-  background-color: rgba(178, 0, 89, 0.4);
+div.sonar-traffic,
+.page.sonar-traffic,
+.pages.sonar-traffic,
+.article.sonar-traffic {
+  background-color: rgba(192, 74, 89, 0.8);
 }
-.sonar-bass2 {
-  color: rgba(225, 0, 46, 0.4);
+.sonar-bus {
+  color: rgba(243, 76, 62, 0.8);
 }
-p.sonar-bass2,
-h1.sonar-bass2,
-h2.sonar-bass2,
-h3.sonar-bass2,
-h4.sonar-bass2,
-h5.sonar-bass2,
-h6.sonar-bass2,
-span.sonar-bass2 {
-  color: rgba(225, 0, 46, 0.4);
+p.sonar-bus,
+h1.sonar-bus,
+h2.sonar-bus,
+h3.sonar-bus,
+h4.sonar-bus,
+h5.sonar-bus,
+h6.sonar-bus,
+span.sonar-bus {
+  color: rgba(243, 76, 62, 0.8);
 }
-.sonar-bass2-link {
-  color: rgba(225, 0, 46, 0.4);
-  border-color: rgba(225, 0, 46, 0.4);
+.sonar-bus-link {
+  color: rgba(243, 76, 62, 0.8);
+  border-color: rgba(243, 76, 62, 0.8);
 }
-a:hover.sonar-bass2 {
-  color: rgba(225, 0, 46, 0.4);
-  border-color: rgba(225, 0, 46, 0.4);
+a:hover.sonar-bus {
+  color: rgba(243, 76, 62, 0.8);
+  border-color: rgba(243, 76, 62, 0.8);
 }
-div.sonar-bass2,
-.page.sonar-bass2,
-.pages.sonar-bass2,
-.article.sonar-bass2 {
-  background-color: rgba(225, 0, 46, 0.4);
+div.sonar-bus,
+.page.sonar-bus,
+.pages.sonar-bus,
+.article.sonar-bus {
+  background-color: rgba(243, 76, 62, 0.8);
 }
-.sonar-mid0 {
-  color: rgba(255, 178, 0, 0.4);
+.sonar-temperature {
+  color: rgba(255, 235, 138, 0.8);
 }
-p.sonar-mid0,
-h1.sonar-mid0,
-h2.sonar-mid0,
-h3.sonar-mid0,
-h4.sonar-mid0,
-h5.sonar-mid0,
-h6.sonar-mid0,
-span.sonar-mid0 {
-  color: rgba(255, 178, 0, 0.4);
+p.sonar-temperature,
+h1.sonar-temperature,
+h2.sonar-temperature,
+h3.sonar-temperature,
+h4.sonar-temperature,
+h5.sonar-temperature,
+h6.sonar-temperature,
+span.sonar-temperature {
+  color: rgba(255, 235, 138, 0.8);
 }
-.sonar-mid0-link {
-  color: rgba(255, 178, 0, 0.4);
-  border-color: rgba(255, 178, 0, 0.4);
+.sonar-temperature-link {
+  color: rgba(255, 235, 138, 0.8);
+  border-color: rgba(255, 235, 138, 0.8);
 }
-a:hover.sonar-mid0 {
-  color: rgba(255, 178, 0, 0.4);
-  border-color: rgba(255, 178, 0, 0.4);
+a:hover.sonar-temperature {
+  color: rgba(255, 235, 138, 0.8);
+  border-color: rgba(255, 235, 138, 0.8);
 }
-div.sonar-mid0,
-.page.sonar-mid0,
-.pages.sonar-mid0,
-.article.sonar-mid0 {
-  background-color: rgba(255, 178, 0, 0.4);
+div.sonar-temperature,
+.page.sonar-temperature,
+.pages.sonar-temperature,
+.article.sonar-temperature {
+  background-color: rgba(255, 235, 138, 0.8);
 }
-.sonar-mid1 {
-  color: rgba(178, 89, 0, 0.4);
+.sonar-humidity {
+  color: rgba(102, 235, 200, 0.8);
 }
-p.sonar-mid1,
-h1.sonar-mid1,
-h2.sonar-mid1,
-h3.sonar-mid1,
-h4.sonar-mid1,
-h5.sonar-mid1,
-h6.sonar-mid1,
-span.sonar-mid1 {
-  color: rgba(178, 89, 0, 0.4);
+p.sonar-humidity,
+h1.sonar-humidity,
+h2.sonar-humidity,
+h3.sonar-humidity,
+h4.sonar-humidity,
+h5.sonar-humidity,
+h6.sonar-humidity,
+span.sonar-humidity {
+  color: rgba(102, 235, 200, 0.8);
 }
-.sonar-mid1-link {
-  color: rgba(178, 89, 0, 0.4);
-  border-color: rgba(178, 89, 0, 0.4);
+.sonar-humidity-link {
+  color: rgba(102, 235, 200, 0.8);
+  border-color: rgba(102, 235, 200, 0.8);
 }
-a:hover.sonar-mid1 {
-  color: rgba(178, 89, 0, 0.4);
-  border-color: rgba(178, 89, 0, 0.4);
+a:hover.sonar-humidity {
+  color: rgba(102, 235, 200, 0.8);
+  border-color: rgba(102, 235, 200, 0.8);
 }
-div.sonar-mid1,
-.page.sonar-mid1,
-.pages.sonar-mid1,
-.article.sonar-mid1 {
-  background-color: rgba(178, 89, 0, 0.4);
+div.sonar-humidity,
+.page.sonar-humidity,
+.pages.sonar-humidity,
+.article.sonar-humidity {
+  background-color: rgba(102, 235, 200, 0.8);
 }
-.sonar-mid2 {
-  color: rgba(178, 255, 0, 0.4);
+.sonar-twitter {
+  color: #00acef;
 }
-p.sonar-mid2,
-h1.sonar-mid2,
-h2.sonar-mid2,
-h3.sonar-mid2,
-h4.sonar-mid2,
-h5.sonar-mid2,
-h6.sonar-mid2,
-span.sonar-mid2 {
-  color: rgba(178, 255, 0, 0.4);
+p.sonar-twitter,
+h1.sonar-twitter,
+h2.sonar-twitter,
+h3.sonar-twitter,
+h4.sonar-twitter,
+h5.sonar-twitter,
+h6.sonar-twitter,
+span.sonar-twitter {
+  color: #00acef;
 }
-.sonar-mid2-link {
-  color: rgba(178, 255, 0, 0.4);
-  border-color: rgba(178, 255, 0, 0.4);
+.sonar-twitter-link {
+  color: #00acef;
+  border-color: #00acef;
 }
-a:hover.sonar-mid2 {
-  color: rgba(178, 255, 0, 0.4);
-  border-color: rgba(178, 255, 0, 0.4);
+a:hover.sonar-twitter {
+  color: #00acef;
+  border-color: #00acef;
 }
-div.sonar-mid2,
-.page.sonar-mid2,
-.pages.sonar-mid2,
-.article.sonar-mid2 {
-  background-color: rgba(178, 255, 0, 0.4);
+div.sonar-twitter,
+.page.sonar-twitter,
+.pages.sonar-twitter,
+.article.sonar-twitter {
+  background-color: #00acef;
 }
-.sonar-treble0 {
-  color: rgba(0, 255, 178, 0.4);
+.sonar-foursquare {
+  color: #25b1ca;
 }
-p.sonar-treble0,
-h1.sonar-treble0,
-h2.sonar-treble0,
-h3.sonar-treble0,
-h4.sonar-treble0,
-h5.sonar-treble0,
-h6.sonar-treble0,
-span.sonar-treble0 {
-  color: rgba(0, 255, 178, 0.4);
+p.sonar-foursquare,
+h1.sonar-foursquare,
+h2.sonar-foursquare,
+h3.sonar-foursquare,
+h4.sonar-foursquare,
+h5.sonar-foursquare,
+h6.sonar-foursquare,
+span.sonar-foursquare {
+  color: #25b1ca;
 }
-.sonar-treble0-link {
-  color: rgba(0, 255, 178, 0.4);
-  border-color: rgba(0, 255, 178, 0.4);
+.sonar-foursquare-link {
+  color: #25b1ca;
+  border-color: #25b1ca;
 }
-a:hover.sonar-treble0 {
-  color: rgba(0, 255, 178, 0.4);
-  border-color: rgba(0, 255, 178, 0.4);
+a:hover.sonar-foursquare {
+  color: #25b1ca;
+  border-color: #25b1ca;
 }
-div.sonar-treble0,
-.page.sonar-treble0,
-.pages.sonar-treble0,
-.article.sonar-treble0 {
-  background-color: rgba(0, 255, 178, 0.4);
+div.sonar-foursquare,
+.page.sonar-foursquare,
+.pages.sonar-foursquare,
+.article.sonar-foursquare {
+  background-color: #25b1ca;
 }
-.sonar-treble1 {
-  color: rgba(0, 255, 255, 0.4);
+.sonar-instagram {
+  color: #634d40;
 }
-p.sonar-treble1,
-h1.sonar-treble1,
-h2.sonar-treble1,
-h3.sonar-treble1,
-h4.sonar-treble1,
-h5.sonar-treble1,
-h6.sonar-treble1,
-span.sonar-treble1 {
-  color: rgba(0, 255, 255, 0.4);
+p.sonar-instagram,
+h1.sonar-instagram,
+h2.sonar-instagram,
+h3.sonar-instagram,
+h4.sonar-instagram,
+h5.sonar-instagram,
+h6.sonar-instagram,
+span.sonar-instagram {
+  color: #634d40;
 }
-.sonar-treble1-link {
-  color: rgba(0, 255, 255, 0.4);
-  border-color: rgba(0, 255, 255, 0.4);
+.sonar-instagram-link {
+  color: #634d40;
+  border-color: #634d40;
 }
-a:hover.sonar-treble1 {
-  color: rgba(0, 255, 255, 0.4);
-  border-color: rgba(0, 255, 255, 0.4);
+a:hover.sonar-instagram {
+  color: #634d40;
+  border-color: #634d40;
 }
-div.sonar-treble1,
-.page.sonar-treble1,
-.pages.sonar-treble1,
-.article.sonar-treble1 {
-  background-color: rgba(0, 255, 255, 0.4);
-}
-.sonar-treble2 {
-  color: rgba(0, 178, 255, 0.4);
-}
-p.sonar-treble2,
-h1.sonar-treble2,
-h2.sonar-treble2,
-h3.sonar-treble2,
-h4.sonar-treble2,
-h5.sonar-treble2,
-h6.sonar-treble2,
-span.sonar-treble2 {
-  color: rgba(0, 178, 255, 0.4);
-}
-.sonar-treble2-link {
-  color: rgba(0, 178, 255, 0.4);
-  border-color: rgba(0, 178, 255, 0.4);
-}
-a:hover.sonar-treble2 {
-  color: rgba(0, 178, 255, 0.4);
-  border-color: rgba(0, 178, 255, 0.4);
-}
-div.sonar-treble2,
-.page.sonar-treble2,
-.pages.sonar-treble2,
-.article.sonar-treble2 {
-  background-color: rgba(0, 178, 255, 0.4);
+div.sonar-instagram,
+.page.sonar-instagram,
+.pages.sonar-instagram,
+.article.sonar-instagram {
+  background-color: #634d40;
 }
 .underline-thick {
   border-top-style: none;
@@ -1834,6 +1787,29 @@ div.sonar-treble2,
   border-bottom-width: 3px;
   border-bottom-style: solid;
   border-left-style: none;
+}
+/*
+ *	container div for text (season to taste)
+ */
+#sonar-top-text {
+  position: absolute;
+  top: 45px;
+  left: 0px;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+  white-space: nowrap;
+  z-index: 1000;
+}
+#sonar-bottom-text {
+  position: absolute;
+  bottom: 45px;
+  left: 0px;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+  white-space: nowrap;
+  z-index: 1000;
 }
 /*  ------------------------------------------------------------------------
  *
@@ -1843,7 +1819,7 @@ div.sonar-treble2,
 html {
   background-color: #ffffff;
   font-size: 13;
-  font-family: Futura-kf-Bold;
+  font-family: futura-kf-bold;
   font-smoothing: antialiased;
   -webkit-font-smoothing: antialiased;
   -webkit-touch-callout: none;
@@ -1874,7 +1850,7 @@ h1 {
   /*
      *  Display
      */
-  font-family: Futura-kf-Bold;
+  font-family: futura-kf-bold;
   font-size: 66px;
   font-weight: normal;
   line-height: 69px;
@@ -1887,10 +1863,10 @@ h1 a:hover {
   line-height: 60px;
 }
 h2 {
-  /*
+  /*   
      *  Title
      */
-  font-family: Futura-kf-Bold;
+  font-family: futura-kf-bold;
   font-size: 54px;
   font-weight: normal;
   line-height: 57px;
@@ -1903,7 +1879,7 @@ h2 a:hover {
   line-height: 48px;
 }
 h3 {
-  font-family: Futura-kf-Bold;
+  font-family: futura-kf-bold;
   font-size: 24px;
   font-weight: normal;
   line-height: 27px;
@@ -1920,7 +1896,7 @@ h4 {
      *  Body Copy
      */
 
-  font-family: Futura-kf-Bold;
+  font-family: futura-kf-bold;
   font-size: 13;
   font-weight: normal;
   line-height: 16px;
@@ -1937,7 +1913,7 @@ h5 {
      *  Caption
      */
 
-  font-family: Futura-kf;
+  font-family: futura-kf;
   font-size: 11px;
   font-weight: normal;
   line-height: 11px;

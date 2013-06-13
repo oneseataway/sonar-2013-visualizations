@@ -133,7 +133,7 @@ var frederickkPaper = frederickkPaper || {
 
 
 		// ------------------------------------------------------------------------
-		Draw(event);
+		// Draw();
 
 		
 		
@@ -141,6 +141,7 @@ var frederickkPaper = frederickkPaper || {
 		// Events
 		// ------------------------------------------------------------------------
 		view.onFrame = function(event) {
+			Draw(event);
 			// TODO: 	add a method which clears an "animation group" each frame
 			// ie. clear();
 			Update(event);

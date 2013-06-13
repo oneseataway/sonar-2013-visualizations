@@ -79,6 +79,20 @@ var busNodeGroup;
 
 
 /*
+ *	Weather
+ */
+// Temperature
+var temperature;
+var temperatureNodeGroup;
+var temperatureMask;
+
+// Humidty
+var humidity;
+var humidityNodeGroup;
+var humidityMask;
+
+
+/*
  *	Social
  */
 // Twitter
@@ -100,8 +114,13 @@ var instagramNodeGroup;
  *	Interface
  *
  */
-console.log( window.getComputedStyle );
 var InterfaceValues = function() {
+	//
+	// general
+	//
+	this.bFullscreen	= false;
+
+
 	//
 	// datapoints
 	//
@@ -109,16 +128,16 @@ var InterfaceValues = function() {
 	// transportation
 	this.bBicing		= true;
 	this.bTraffic		= true;
-	this.bBus			= false;
+	this.bBus			= true;
 
 	// weather
-	this.bTemperature	= false;
-	this.bHumidity		= false;
+	this.bTemperature	= true;
+	this.bHumidity		= true;
 
 	// social
 	this.bTwitter		= true;
-	this.bFoursquare	= false;
-	this.bInstagram		= false;
+	this.bFoursquare	= true;
+	this.bInstagram		= true;
 
 
 	//
@@ -126,34 +145,29 @@ var InterfaceValues = function() {
 	//
 	// pull color values in from CSS
 	// then convert to Paper.js compatible colors
-	this.sonar_black = new Color( getCSSColor('.sonar-black', true) ); 
+	this.sonar_black		= new Color( getCSSColor('.sonar-black', true) ); 
 
 	// primaries
-	this.sonar_red = new Color( getCSSColor('.sonar-red', true) ); 
-	this.sonar_yellow = new Color( getCSSColor('.sonar-yellow', true) ); 
-	this.sonar_blue = new Color( getCSSColor('.sonar-blue', true) ); 
-	this.sonar_green = new Color( getCSSColor('.sonar-green', true) ); 
+	this.sonar_red			= new Color( getCSSColor('.sonar-red', true) ); 
+	this.sonar_yellow		= new Color( getCSSColor('.sonar-yellow', true) ); 
+	this.sonar_blue			= new Color( getCSSColor('.sonar-blue', true) ); 
+	this.sonar_green		= new Color( getCSSColor('.sonar-green', true) ); 
 
 	// bass
-	this.sonar_bass = [
-		new Color( getCSSColor('.sonar-bass0', true) ),
-		new Color( getCSSColor('.sonar-bass1', true) ), 
-		new Color( getCSSColor('.sonar-bass2', true) ) 
-	];
+	this.sonar_bikes		= new Color( getCSSColor('.sonar-bikes', true) );
+	this.sonar_traffic		= new Color( getCSSColor('.sonar-traffic', true) );
+	this.sonar_bus			= new Color( getCSSColor('.sonar-bus', true) );
 
 	// mid
-	this.sonar_mid = [
-		new Color( getCSSColor('.sonar-mid0', true) ),
-		new Color( getCSSColor('.sonar-mid1', true) ), 
-		new Color( getCSSColor('.sonar-mid2', true) ) 
-	];
+	this.sonar_teperature	= new Color( getCSSColor('.sonar-temperature', true) );
+	this.sonar_humidity		= new Color( getCSSColor('.sonar-humidity', true) ); 
 
 	// treble	
-	this.sonar_treble = [
-		new Color( getCSSColor('.sonar-treble0', true) ),
-		new Color( getCSSColor('.sonar-treble1', true) ),
-		new Color( getCSSColor('.sonar-treble2', true) )
-	]; 
+	this.sonar_twitter		= new Color( getCSSColor('.sonar-twitter', true) );
+	this.sonar_foursquare	= new Color( getCSSColor('.sonar-foursquare', true) );
+	this.sonar_instagram	= new Color( getCSSColor('.sonar-instagram', true) );
+
+
 
 
 	//
@@ -312,6 +326,54 @@ function Setup() {
 	}
 
 
+	/*
+	 *
+	 *	create weather data mask shapes
+	 *
+	 */
+	// TODO:	make scalable for any col/row combination
+	//			each node as percentage of total col*row?
+	// Temperature
+	temperatureMask = new Path(
+		nodePoints[9],
+		nodePoints[25],
+		nodePoints[11],
+		nodePoints[27],
+		nodePoints[13],
+
+		nodePoints[37],
+		
+		nodePoints[79],
+		nodePoints[71],
+		nodePoints[78],
+
+		nodePoints[30]
+	);
+	temperatureMask.closed = true;
+	temperatureMask.fillColor = null;
+	temperatureMask.strokeColor = null;
+
+	// Humidty
+	humidityMask = new Path(
+		nodePoints[3],
+		nodePoints[11],
+		nodePoints[4],
+
+		nodePoints[52],
+
+		nodePoints[80],
+		nodePoints[64],
+		nodePoints[71],
+		nodePoints[63],
+		nodePoints[77],
+
+		nodePoints[45]
+	);
+	humidityMask.closed = true;
+	humidityMask.fillColor = null;
+	humidityMask.strokeColor = null;
+
+
 
 	/*
 	 *
@@ -338,10 +400,12 @@ function Setup() {
 
 	// create the data structures
 	bicing = new DataHandler( 
+		// the group of items to push the data into
 		bicingNodeGroup,
+		// the array of data
 		transportation.bicing, 
-
-		/* what is this */
+		// an object literal Array of the structure and
+		// keys which should be infused within the group
 		{
 			id:		[],	// keep track of what ids are represented by this node (array)
 			total:	0,	// the total number of bike represented = (##.free + ##.bikes) + (...)
@@ -349,8 +413,8 @@ function Setup() {
 			free:	0,	// the total number of "free" slots
 			radius: []	// two radii for pulsing between (pulsing optional)
 		},
-
-		/* what is this */
+		// the keys of the dataArray within the nodes
+		// which should be updated
 		[
 			'total',
 			'bikes',
@@ -364,8 +428,8 @@ function Setup() {
 
 	// create & set the style
 	var style = {
-		fillColor: values.sonar_bass[1],
-		opacity: 0.8
+		fillColor: values.sonar_bikes,
+		opacity: 0.4
 	};
 	bicing.setStyle(style);
 
@@ -380,16 +444,22 @@ function Setup() {
 
 	// create the data structures
 	traffic = new DataHandler( 
+		// the group of items to push the data into
 		trafficNodeGroup,
+		// the array of data
 		transportation.traffic, 
+		// an object literal Array of the structure and
+		// keys which should be infused within the group
 		{
-			id:			[],	// keep track of what ids are represented by this node (array)
+			id:			new Array(),	// keep track of what ids are represented by this node (array)
 			time:		0,	// what time is the traffic happening
 			current:	0,	// the current traffic situation
 			future:		0,	// the predicted traffic situation
-			radius:	[],	// two radii for pulsing between (pulsing optional)
+			radius:		new Array(),	// two radii for pulsing between (pulsing optional)
 			max:		7
 		},
+		// the keys of the dataArray within the nodes
+		// which should be updated
 		[
 			'time',
 			'current',
@@ -407,8 +477,8 @@ function Setup() {
 
 	// create & set the style
 	var style = {
-		fillColor: values.sonar_mid[1],
-		opacity: 0.8
+		fillColor: values.sonar_traffic,
+		opacity: 0.4
 	};
 	traffic.setStyle(style);
 
@@ -422,15 +492,21 @@ function Setup() {
 
 	// create the data structures
 	bus = new DataHandler( 
+		// the group of items to push the data into
 		busNodeGroup,
+		// the array of data
 		transportation.bus, 
+		// an object literal Array of the structure and
+		// keys which should be infused within the group
 		{
-			id:			[],	// keep track of what ids are represented by this node (array)
+			id:			new Array(),	// keep track of what ids are represented by this node (array)
 			current:	0,	// the current bus arriving
-			radius:	[],	// two radii for pulsing between (pulsing optional)
+			radius:		new Array(),	// two radii for pulsing between (pulsing optional)
 			size:		0,
-			sizeMax:	2
+			sizeMax:	2,
 		},
+		// the keys of the dataArray within the nodes
+		// which should be updated
 		[
 			'time',
 			'current',
@@ -448,10 +524,87 @@ function Setup() {
 
 	// create & set the style
 	var style = {
-		fillColor: values.sonar_treble[1],
-		opacity: 0.8
+		fillColor: values.sonar_bus,
+		opacity: 0.4
 	};
 	bus.setStyle(style);
+
+
+
+	// ------------------------------------
+	//
+	//	Transportation
+	//
+
+	// ------------------------------------
+	//
+	// Temperature
+	//
+	temperatureNodeGroup = triangles.clone();
+	temperatureNodeGroup.name = 'Temperature';
+
+	// create the data structures
+	temperature = new DataHandler(
+		// the group of items to push the data into
+		temperatureNodeGroup,
+		// the array of data
+		weather,
+		// an object literal Array of the structure and
+		// keys which should be infused within the group
+		{
+			temperature:	0,
+			radius: 		new Array(),	// two radii for pulsing between (pulsing optional)
+
+			temperatureMin:	0,
+			temperatureMax:	0
+		},
+		// the keys of the dataArray within the nodes
+		// which should be updated
+		[
+			'temperature'
+		]
+	);
+
+	// create & set the style
+	var style = {
+		fillColor: values.sonar_temperature,
+		opacity: 0.2
+	};
+	temperature.setStyle(style);
+
+
+	// ------------------------------------
+	//
+	// Humidty
+	//
+	humidityNodeGroup = triangles.clone();
+	humidityNodeGroup.name = 'Humidty';
+
+	// create the data structures
+	humidity = new DataHandler(
+		// the group of items to push the data into
+		humidityNodeGroup,
+		// the array of data
+		weather,
+		// an object literal Array of the structure and
+		// keys which should be infused within the group
+		{
+			humidity:		0,
+			radius: 		new Array()	// two radii for pulsing between (pulsing optional)
+		},
+		// the keys of the dataArray within the nodes
+		// which should be updated
+		[
+			'humidity'
+		]
+	);
+
+	// create & set the style
+	var style = {
+		fillColor: values.sonar_humidity,
+		opacity: 0.2
+	};
+	humidity.setStyle(style);
 
 
 
@@ -469,63 +622,86 @@ function Setup() {
 
 	// create the data structures
 	twitter = new DataHandler(
+		// the group of items to push the data into
 		twitterNodeGroup,
+		// the array of data
 		social.twitter,
+		// an object literal Array of the structure and
+		// keys which should be infused within the group
 		{
-			name:		'',
-			id:			'',
-			location:	'',
-			text:		'',
+			name:			' ',
+			id:				new Array(),
+			location:		' ',
+			text:			' ',
+
+			radius: 		new Array()	// two radii for pulsing between (pulsing optional)
 		},
+		// the keys of the dataArray within the nodes
+		// which should be updated
 		[
+			'name',
+			'location',
+			'text'
 		]
 	);
 
 	// create & set the style
 	var style = {
-		fillColor: values.sonar_treble[0],
-		opacity: 0.8
+		fillColor: values.sonar_twitter,
+		opacity: 0.2
 	};
 	twitter.setStyle(style);
 
 
 	// ------------------------------------
-	//
-	// Foursquare
-	//
+	// //
+	// // Foursquare
+	// //
 	// foursquareNodeGroup = grid.clone();
 	// foursquareNodeGroup.name = 'Foursquare';
 
 	// // create the data structures
 	// foursquare = new DataHandler( 
-	//	foursquareNodeGroup,
-	//	social.foursquare,
-	//	{
-	//		id:			[],	// keep track of what ids are represented by this node (array)
-	//		name:		'',	// keep track of the name of the user
-	//		location:	'', // keep track of the location of the user
-	//		img:		'', // keep track of the user's avatar
-	//		raster:		null,
-	//		text:		'', // keep track of the text the user enters
+	// 	// the group of items to push the data into
+	// 	foursquareNodeGroup,
+	// 	// the array of data
+	// 	social.foursquare,
+	// 	// an object literal Array of the structure and
+	// 	// keys which should be infused within the group
+	// 	{
+	// 		id:				new Array(),	// keep track of what ids are represented by this node (array)
+	// 		name:			' ',	// keep track of the name of the user
+	// 		location:		' ', // keep track of the location of the user
+	// 		img:			' ', // keep track of the user's avatar
+	// 		raster:			null,
+	// 		text:			' ', // keep track of the text the user enters
 
-	//		size:		1,
-	//		sizeMax:	8
+	// 		radius: 		new Array(),	// two radii for pulsing between (pulsing optional)
+	// 		size:			1,
+	// 		sizeMax:		8
 
-	//	},
-	//	[
-	//		{
-	//			radius1: ['size','sizeMax'],
-	//		}
-	//		// {
-	//		//	label: ['name', 'text']
-	//		//}
-	//	]
+	// 	},
+	// 	// the keys of the dataArray within the nodes
+	// 	// which should be updated
+	// 	[
+	// 		'name',
+	// 		'location',
+	// 		'img',
+	// 		'text',
+	// 		'size',
+	// 		{
+	// 			radius1: ['size','sizeMax'],
+	// 		}
+	// 		// {
+	// 		//	label: ['name', 'text']
+	// 		//}
+	// 	]
 	// );
 
 	// // create & set the style
 	// var style = {
-	//	fillColor: values.sonar_treble[2],
-	//	opacity: 0.8
+	// 	fillColor: values.sonar_foursquare,
+	// 	opacity: 0.2
 	// };
 	// foursquare.setStyle(style);
 
@@ -601,6 +777,8 @@ function Update(event) {
 		init();
 	}
 
+
+
 };
 
 
@@ -620,22 +798,27 @@ function Update(event) {
 var UpdateBicing = setInterval(
 	function() {
 		if( !bicing.isUpdated() && bicing.isLoaded() ) {
-			if( bOffline ) {
+			// if( bOffline ) {
 				// fake values for offline & testing only
+				var fakeBpm = parseInt( Math.random()*180 );
 				for( var i=0; i<transportation.bicing.length; i++ ) {
 					var b = transportation.bicing[i];
+					b.bpm = fakeBpm;
 					b.bikes	= Calculation.randomInt( b.total );
 					b.free	= b.total - b.bikes;
 				}
-			}
-			else {
+			// }
+			// else {
 				// get the new json feed
-				loadBicing( transportation.bicing );
-			}
+				// loadBicing( transportation.bicing );
+			// }
 
 			// push the data into the group
 			bicing.refresh( transportation.bicing );
 			bicing.isUpdated(true);
+
+			// update BPM
+			setBpmText( '#bicing', transportation.bicing );
 
 			if( values.bVerbose ) console.log( 'Updated Bicing', bicing.isUpdated() );
 		}
@@ -653,8 +836,10 @@ var UpdateTraffic = setInterval(
 
 			if( bOffline ) {
 				// fake values for offline & testing only
+				var fakeBpm = parseInt( Math.random()*180 );
 				for( var i=0; i<transportation.traffic.length; i++ ) {
 					var t = transportation.traffic[i];
+					t.bpm = fakeBpm;
 					if( i % 5 == 0 ) {
 						t.current = Calculation.randomInt( 1,7 );
 						t.future = Calculation.randomInt( 1,7 );
@@ -670,6 +855,9 @@ var UpdateTraffic = setInterval(
 			traffic.refresh( transportation.traffic );
 			traffic.isUpdated(true);
 
+			// update BPM
+			setBpmText( '#traffic', transportation.traffic );
+
 			if( values.bVerbose ) console.log( 'Updated Traffic', traffic.isUpdated() );
 		}
 	},
@@ -679,32 +867,74 @@ var UpdateTraffic = setInterval(
 // ------------------------------------------------------------------------
 // Bus
 // update every 16 minutes (16*60)
-// var UpdateBus = setInterval(
-//	function() {
-//		if( !bus.isUpdated() && bus.isLoaded() ) {
-//			// if( values.bVerbose ) console.log( 'UpdateTraffic', bTrafficUpdate );
+var UpdateBus = setInterval(
+	function() {
+		if( !bus.isUpdated() && bus.isLoaded() ) {
+			// if( values.bVerbose ) console.log( 'UpdateTraffic', bTrafficUpdate );
 
-//			if( bOffline ) {
-//				// fake values for offline & testing only
-//				for( var i=0; i<transportation.bus.length; i++ ) {
-//					var b = transportation.bus[i];
-//					b.current = Calculation.randomInt( 1,7 );
-//				}			
-//			}
-//			else {
-//				// get the new json feed
-//				// loadBus( transportation.bus );
-//			}
+			if( bOffline ) {
+				// fake values for offline & testing only
+				var fakeBpm = parseInt( Math.random()*180 );
+				for( var i=0; i<transportation.bus.length; i++ ) {
+					var b = transportation.bus[i];
+					b.bpm = fakeBpm;
+					b.current = Calculation.randomInt( 1,7 );
+				}			
+			}
+			else {
+				// get the new json feed
+				// loadBus( transportation.bus );
+			}
 
-//			// push the data into the group
-//			bus.refresh( transportation.bus );
-//			bus.isUpdated(true);
+			// push the data into the group
+			bus.refresh( transportation.bus );
+			bus.isUpdated(true);
 
-//			if( values.bVerbose ) console.log( 'Updated Bus', bus.isUpdated() );
-//		}
-//	},
-//	(12*1000)
-// );
+			// update BPM
+			setBpmText( '#bus', transportation.bus );
+
+			if( values.bVerbose ) console.log( 'Updated Bus', bus.isUpdated() );
+		}
+	},
+	(12*1000)
+);
+
+
+// ------------------------------------------------------------------------
+//
+// Weather
+//
+// update every hour
+var UpdateWeather = setInterval(
+	function() {
+		if( !temperature.isUpdated() && temperature.isLoaded() &&
+			!humidity.isUpdated() && humidity.isLoaded() ) {
+
+			// if( bOffline ) {
+			// }
+			// else {
+				// get the new json feed
+				loadWeather( weather );
+			// }
+
+			// push the data into the group
+			temperature.refresh( weather );
+			temperature.isUpdated(true);
+
+			// update BPM
+			setBpmText( '#temperature', weather.temperature );
+
+			humidity.refresh( weather );
+			humidity.isUpdated(true);
+
+			// update BPM
+			setBpmText( '#humidity', weather.humidity );
+
+			if( values.bVerbose ) console.log( 'Updated Weather' );
+		}
+	},
+	(2*1000)
+);
 
 
 // ------------------------------------------------------------------------
@@ -727,6 +957,9 @@ var UpdateTwitter = setInterval(
 			// push the data into the group
 			twitter.refresh( social.twitter );
 			twitter.isUpdated(true);
+
+			// update BPM
+			setBpmText( '#twitter', social.twitter );
 
 			if( values.bVerbose ) console.log( 'Updated Twitter', twitter.isUpdated() );
 		}
@@ -761,6 +994,9 @@ var UpdateTwitter = setInterval(
 //			foursquare.refresh( social.foursquare );
 //			foursquare.isUpdated(true);
 
+			// // update BPM
+			// setBpmText( '#foursquare', social.foursquare );
+
 //			if( values.bVerbose ) console.log( 'Updated FourSquare', foursquare.isUpdated() );
 //		}
 //	},
@@ -773,31 +1009,49 @@ var UpdateTwitter = setInterval(
 // Main
 // ------------------------------------------------------------------------
 function Draw(event) {
+
 	/*
 	 *
 	 *	Update Visualizations
 	 *
 	 */
 
-	//
-	// Transportation
-	//
-
-	// if( parseInt(event.time) % 3 === 1 ) {
+	// if( parseInt(event.time) % 1 === 1 ) {
+		//
+		// Transportation
+		//
 		bicing.draw( event, values.bBicing );
 		traffic.draw( event, values.bTraffic );
 		bus.draw( event, values.bBus );
+
+
+		//
+		// Weather
+		//
+		temperature.draw( event, values.bTemperature,
+			function( event, node, bUpdate ) {
+				node.fillColor = values.sonar_temperature;
+				node.opacity = 1.0;
+
+				console.log( 'temperature', node.data );
+
+				var p = new Path.Circle(
+					node.position,
+					12
+				);
+				p.fillColor = values.sonar_temperature;
+			}
+		);
+		humidity.draw( event, values.bHumidity );
+
 
 		//
 		// Social
 		//
 		twitter.draw( event, values.bTwitter,
 			function( event, node, bUpdate ) {
-				// if( values.bVerbose ) console.log( 'TwITTER', node.name );
-				// if( values.bVerbose ) console.log( 'TwITTER', node.position );
-
 				var data = node.data;
-
+				// console.log( 'TWITTER: id\t', data.current.id.length );
 
 				// var t = new PointText( node.position );
 				// t.content = node.data.current.text;
@@ -807,10 +1061,10 @@ function Draw(event) {
 				//	node.position,
 				//	10
 				// );
-				// t.fillColor = new Color( Math.random(), Math.random(), Math.random() );
+				// node.fillColor = new Color( Math.random(), Math.random(), Math.random(), Math.random() );
 
-				node.fillColor = values.sonar_treble[0];
-				// node.opacity = 0.2;
+				// node.fillColor = values.sonar_twitter;
+				// node.opacity = Math.random();
 
 			}
 		);
@@ -857,7 +1111,7 @@ function Draw(event) {
 //			}
 //		);
 
-	//} // end if( parseInt(event.time...
+	// } // end if( parseInt(event.time...
 
 };
 
@@ -867,8 +1121,6 @@ function Draw(event) {
 // Methods
 // ------------------------------------------------------------------------
 function init() {
-	// TODO: push creatio of BpmText into DataHandler?
-
 	/*
 	 *
 	 *	Transportation
@@ -878,6 +1130,14 @@ function init() {
 	traffic.init();
 	bus.init();
 
+
+	/*
+	 *
+	 *	Weather
+	 *
+	 */
+	temperature.init();
+	humidity.init();
 
 	/*
 	 *
@@ -896,7 +1156,7 @@ function init() {
  *	@param {Array} dataArray
  *					the array of data
  *	@param {Array} dataArrayStructure
- *					an object literal Array of the strucutre and
+ *					an object literal Array of the structure and
  *					keys which should be infused within the group
  *	@param {Array} dataKeys
  *					the keys of the dataArray within the nodes which should be updated
@@ -945,7 +1205,8 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 		// if data keys are added during init
 		setDataKeys( dataKeys );
 
-		if( _dataArr.length > 0 && !bLoad ) {
+		// if( _dataArr.length > 0 && !bLoad ) {
+		if( !bLoad ) {
 			for( var i=0; i<_dataArr.length; i++ ) {
 				// incoming data
 				var data = _dataArr[i];
@@ -976,11 +1237,14 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 						// this id hasn't been logged yet
 						// so push it's data into the node
 						for (var key in _dataStruct ) {
-							if( typeof current[ key ] === 'array' || 
-								typeof current[ key ] === 'object' ) {
+							if( current[ key ] instanceof Array ) {
 								current[ key ].push( data[ key ] );
 							}
-							else if( typeof current[ key ] === 'string' ) {
+							else if( typeof current[ key ] == 'object' ) {
+								// current[ key ].push( data[ key ] );
+								current[ key ] = data[ key ];
+							}
+							else if( typeof current[ key ] == 'string' ) {
 								current[ key ] = data[ key ];
 							}
 							else {
@@ -1023,12 +1287,12 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 					// and modify it's attributes
 					if( current.id.length >= 1 ) {
 						var pos = node.position;
-						node.bounds.size = new Size(
-							current.radius[0],
-							current.radius[0]
-						);
+						// node.bounds.size = new Size(
+						// 	current.radius[0],
+						// 	current.radius[0]
+						// );
 						node.position = pos;
-						// node.fillColor = values.sonar_bass[0].lerp( values.sonar_bass[1], 1/current.id.length );
+						// node.fillColor = values.sonar_bikes.lerp( values.sonar_traffic, 1/current.id.length );
 
 						// update node data
 						node.data = d;
@@ -1090,7 +1354,7 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 
 			// data loaded successfully
 			bLoad = true;
-			// if( values.bVerbose ) console.log( _group.name + ' loaded! ' + bLoad );
+			if( values.bVerbose ) console.log( _group.name + ' loaded! ' + bLoad );
 		}
 
 	};
@@ -1103,8 +1367,12 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 	 *					the array of data
 	 *	@param {Array} updatedDataKeys
 	 *					the keys of the dataArray within the nodes which should be updated
+	 *	@param {Function} func
+	 *					a function/callback which can be defined
+	 *					for "custom" node updating operations
+	 *					passed variables include: event, node, bUpdate
 	 */
-	function dataRefresh( updatedDataArray, updatedDataKeys ) {
+	function dataRefresh( updatedDataArray, updatedDataKeys, func ) {
 		// update data array
 		_dataArr = updatedDataArray;
 		// if data keys are added during refresh
@@ -1150,6 +1418,7 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 					data.current.radius = calcRadii( data.current );
 
 				} // end if( data.current...
+			
 			} 
 			catch(err) {
 				if( values.bVerbose ) console.log( _group.name + '.refresh() ERROR: ' + node + ': ' + err );
@@ -1157,7 +1426,8 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 
 		} // end for
 
-		// if( values.bVerbose ) console.log( _group.name + ' dataRefresh() ' + bUpdate );
+		// a method for creating a temp values
+		// _dataArr.temp = ( func( _dataArr ) != null ) ? func( _dataArr ) : null;
 	};
 
 	/**
@@ -1184,7 +1454,7 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 				// check if the node actually
 				// contains data, they're the only
 				// ones we actually care about
-				if( node.data.current != null && bDraw ) {
+				if( node.data.current != null ) { //&& bDraw ) {
 					// keep animator in sync
 					var animator = node.data.animator;
 					animator.update( event.time );
@@ -1201,8 +1471,8 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 				}
 				else {
 					// no data, no show
-					node.fillColor = null;
-					node.strokeColor = null;
+					// node.fillColor = null;
+					// node.strokeColor = null;
 				}  // end if( node.data.current...
 
 				// always put the node back where it should be
@@ -1359,7 +1629,7 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 					// if the value passed is a number
 					// i.e { radius: [1,8]} OR
 					// { radius: 0.5}
-					if( typeof _dataKeys[k][ key ] === 'number' ) {
+					if( typeof _dataKeys[k][ key ] == 'number' ) {
 						// a conditional for handling an
 						// array versus single value
 						if( _dataKeys[k][ key ].length == undefined ) {
@@ -1371,10 +1641,10 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 							den = _dataKeys[k][ key ][1];
 						}
 					}
-					// if the value passed is a string
+					// if the value passed is an object <strike>string</strike>
 					// it MUST match one of the data points
 					// i.e. { radius: ['value','maxValue']}
-					else if( typeof _dataKeys[k][ key ] === 'string' ) {
+					else if( typeof _dataKeys[k][ key ] == 'object' ) {
 						num = nodeDataArray[ _dataKeys[k][ key ][0] ];
 						den = nodeDataArray[ _dataKeys[k][ key ][1] ];
 					}
@@ -1531,36 +1801,14 @@ var DataHandler = function( pathGroup, dataArray, dataArrayStructure, dataKeys )
 };
 
 // ------------------------------------------------------------------------
-/*
- *	@param {DataHandler} dataHandler
- *					the main data handler
- *	@param {Array} dataArray
- *					the array of data
+/**
+ *	@param {Group} searchGroup
+ *
+ *	@param {Point} searchPoint
+ *
+ *	@return {Point} closest
+ *
  */
-var KeyText = function( dataHandler, dataArray ) {
-
-	// create the BPM key text
-	var bpm = dataArray[0].bpm;
-	bpmText = new Marker(
-		[bpm, dataHandler.getName()],
-		new Point( view.bounds.width*(1/8), view.bounds.height - 72 )
-	);
-	bpmText.setSize(15); // default size is 15
-	bpmText.path.style = dataHandler.getStyle();
-
-	// create the BPM pulse which 
-	bpmText.data = {
-		pulse: new ft.FStepper()
-	};
-	bpmText.data.pulse.setSeconds( 3 );
-	bpmText.data.pulse.toggle();
-
-	return bpmText;
-};
-
-
-
-// ------------------------------------------------------------------------
 var findClosest = function( searchGroup, searchPoint ) {
 	// assume the first point is the closest
 	var closest = searchGroup.children[0].position;
@@ -1581,6 +1829,14 @@ var findClosest = function( searchGroup, searchPoint ) {
 	return closest;
 };
 
+/**
+ *	@param {Group} searchGroup
+ *
+ *	@param {Point} searchPoint
+ *
+ *	@return {Item} closest
+ *
+ */
 var findClosestItem = function( searchGroup, searchPoint ) {
 	// assume the first item is the closest
 	var closest = searchGroup.children[0];
@@ -1658,11 +1914,11 @@ var Marker = function( content, point ) {
 
 		// the main text
 		main.justification = 'center';
-		main.font = 'Futura-kf';
+		main.font = 'futura-kf';
 
 		// the side descriptor
 		desc.justification = 'center';
-		desc.font = 'Futura-kf-Bold';
+		desc.font = 'futura-kf-bold';
 
 		// set content
 		// setContent( _content );
